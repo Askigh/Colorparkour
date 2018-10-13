@@ -1,11 +1,12 @@
-package net.starype.testjme.settings;
+package net.starype.colorparkour.settings;
 
 import com.jme3.input.KeyInput;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import net.starype.testjme.core.ColorParkourMain;
+import net.starype.colorparkour.core.ColorParkourMain;
+import net.starype.colorparkour.player.PlayerPhysicSY;
 
 public class Setup {
 
@@ -34,33 +35,34 @@ public class Setup {
     private void initKeys() {
 
         KeyboardManager kManager = new KeyboardManager(main);
+        PlayerPhysicSY physics = main.getPlayer().getPhysicPlayer();
 
         kManager.addLinkedKeyAction("Left", KeyInput.KEY_A, new KeyboardManager.Action() {
 
             @Override
             public void execute(boolean keyPressed) {
-                main.left = keyPressed;
+                physics.left = keyPressed;
             }
         }.withReleaseActive(true));
         kManager.addLinkedKeyAction("Right", KeyInput.KEY_D, new KeyboardManager.Action() {
 
             @Override
             public void execute(boolean keyPressed) {
-                main.right = keyPressed;
+                physics.right = keyPressed;
             }
         }.withReleaseActive(true));
         kManager.addLinkedKeyAction("Forward", KeyInput.KEY_W, new KeyboardManager.Action() {
 
             @Override
             public void execute(boolean keyPressed) {
-                main.forward = keyPressed;
+                physics.forward = keyPressed;
             }
         }.withReleaseActive(true));
         kManager.addLinkedKeyAction("Down", KeyInput.KEY_S, new KeyboardManager.Action() {
 
             @Override
             public void execute(boolean keyPressed) {
-                main.down = keyPressed;
+                physics.backward = keyPressed;
             }
         }.withReleaseActive(true));
 
