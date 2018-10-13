@@ -10,16 +10,12 @@ import net.starype.colorparkour.player.PlayerPhysicSY;
 
 public class Setup {
 
-    private ColorParkourMain main;
-
-    public Setup(ColorParkourMain main){ this.main = main; }
-
-    public void init() {
-        setUpLight();
-        initKeys();
+    public static void init(ColorParkourMain main) {
+        setUpLight(main);
+        initKeys(main);
     }
 
-    private void setUpLight() {
+    private static void setUpLight(ColorParkourMain main) {
         // We add light so we see the scene
         AmbientLight al = new AmbientLight();
         al.setColor(ColorRGBA.White.mult(1.3f));
@@ -32,7 +28,7 @@ public class Setup {
         main.attachLights(al, dl);
     }
 
-    private void initKeys() {
+    private static void initKeys(ColorParkourMain main) {
 
         KeyboardManager kManager = new KeyboardManager(main);
         PlayerPhysicSY physics = main.getPlayer().getPhysicPlayer();
