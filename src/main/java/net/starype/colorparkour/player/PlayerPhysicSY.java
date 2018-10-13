@@ -70,7 +70,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         if (backward) {
             walkDirection.addLocal(new Vector3f(-camForward.x,0,-camForward.z));
         }
-
+        // Warning: This whole system needs to be redone
         cam.setLocation(collisionBody.getPhysicsLocation());
         float speed = collisionBody.getLinearVelocity().length();
         boolean sameKeys = cBackward == backward
