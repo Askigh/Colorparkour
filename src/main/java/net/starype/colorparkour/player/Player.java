@@ -19,7 +19,6 @@ public class Player {
         body.initListener();
     }
 
-    public PlayerPmybad
-    hysicSY getPhysicPlayer() { return body; }
+    public PlayerPhysicSY getPhysicPlayer() { return body; }
     public CameraSY getCamera() { return camera; }
 }
