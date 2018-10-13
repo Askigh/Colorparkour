@@ -2,26 +2,14 @@ package net.starype.colorparkour.core;
 
 import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
-import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.PhysicsTickListener;
-import com.jme3.bullet.collision.shapes.BoxCollisionShape;
-import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.light.Light;
-import com.jme3.material.Material;
-import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Box;
-import com.jme3.scene.shape.Cylinder;
 import com.jme3.system.AppSettings;
-import com.jme3.texture.Texture;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.player.Player;
 import net.starype.colorparkour.settings.Setup;
 import net.starype.colorparkour.utils.ShapesSY;
-import net.starype.colorparkour.utils.VectorUtils;
 
 import java.util.Arrays;
 
