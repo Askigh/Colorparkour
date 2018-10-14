@@ -24,7 +24,7 @@ public class CameraSY implements AnalogListener {
     private Vector3f initialUp;
     private InputManager listener;
 
-    private static final int ROTATION_SPEED = 16000;
+    private static final int ROTATION_SPEED = 1600;
     private static final String[] MAPPINGS = {"left", "right", "top", "bottom"};
 
     protected CameraSY(ColorParkourMain main, Camera source) {

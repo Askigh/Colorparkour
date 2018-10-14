@@ -23,7 +23,6 @@ public class ColorParkourMain extends SimpleApplication {
     private ColorParkourMain() {
 
         setSettings(new AppSettings(true));
-
         // disables the default window that asks for settings
         setShowSettings(false);
         super.start();
@@ -45,22 +44,13 @@ public class ColorParkourMain extends SimpleApplication {
         Setup.init(this);
 
         Spatial cube = ShapesSY.loadCube(assetManager);
-        Spatial ninja = assetManager.loadModel("Models/Ninja/Ninja.mesh.xml");
-
-        /*
-            Important !
-            We must change these datas before creating collision objects
-         */
-        ninja.setLocalTranslation(5, 5, 5);
-        ninja.setLocalScale(0.04f);
 
         /* TODO: Change CollisionShape by the appropriated shape for a cube
            We set the mass to 0 in order to create static physics objects
          */
         collManager.loadObject(CollisionShape.class, 0, cube);
-        collManager.loadObject(CollisionShape.class, 0, ninja);
 
-        attachChild(cube, ninja);
+        attachChild(cube);
     }
 
     public void attachChild(Spatial... spatials) { Arrays.asList(spatials).forEach(s -> rootNode.attachChild(s)); }

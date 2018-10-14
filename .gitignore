@@ -1,0 +1,9 @@
+/.idea
+/gradle
+/gradlew
+/gradlew.bat
+/bulletjme.dll
+/lwjgl.dll
+/OpenAL32.dll
+/out
+/.gradle
