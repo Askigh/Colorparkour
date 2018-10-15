@@ -44,34 +44,22 @@ public class ColorParkourMain extends SimpleApplication {
 
         plat = new StandardPlatform(collManager, this, 5,1,5, new Vector3f(7,-1,7));
 
-        /*
-            Init keyboard inputs and light sources
-         */
+
+        // Init keyboard inputs and light sources
         Setup.init(this);
 
-        //Spatial cube = ShapesSY.loadCube(assetManager);
-
-        /* TODO: Change CollisionShape by the appropriated shape for a cube
-           We set the mass to 0 in order to create static physics objects
-         */
-        //collManager.loadObject(CollisionShape.class, 0, cube);
-
-        //attachChild(cube);
         Vector3f initial = new Vector3f(7,10,7);
         cam.setLocation(initial);
         player.setPosition(initial);
     }
 
     public void attachChild(Spatial... spatials) { Arrays.asList(spatials).forEach(s -> rootNode.attachChild(s)); }
-
     public void attachLights(Light... lights) { Arrays.asList(lights).forEach(l -> rootNode.addLight(l)); }
 
     private void disableDefaultOptions(){
-
         // disable FlyByCamera, replaced by CameraSY
         stateManager.detach(stateManager.getState(FlyCamAppState.class));
         inputManager.setCursorVisible(false);
     }
-
     public Player getPlayer(){ return player; }
 }

@@ -34,7 +34,6 @@ public class StandardPlatform extends PhysicEntity {
     }
 
     private Material loadMaterial() {
-
         Material mat = new Material(main.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         return mat;
     }
