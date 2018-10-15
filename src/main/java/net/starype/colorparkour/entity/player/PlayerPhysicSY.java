@@ -1,4 +1,4 @@
-package net.starype.colorparkour.player;
+package net.starype.colorparkour.entity.player;
 
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
@@ -7,13 +7,14 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import net.starype.colorparkour.collision.CollisionManager;
+import net.starype.colorparkour.core.ColorParkourMain;
 
 public class PlayerPhysicSY implements PhysicsTickListener {
 
     private CollisionManager manager;
     private Camera cam;
     private Player player;
-    private RigidBodyControl collisionBody;
+    private RigidBodyControl body;
 
     private Vector3f camForward, camLeft, walkDirection;
     public boolean left = false, right = false, forward = false, backward = false;
@@ -31,14 +32,15 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         camLeft = new Vector3f();
         walkDirection = new Vector3f();
         assignBools();
-        collisionBody = createBody();
+        this.body = createBody();
+        player.setBody(body);
     }
 
     private RigidBodyControl createBody() {
-        RigidBodyControl body = manager.loadObject(CapsuleCollisionShape.class, 10, 1.5f,6f,1);
+        RigidBodyControl body = manager.loadObject(CapsuleCollisionShape.class, 20, 1.5f,6f,1);
         body.setPhysicsLocation(cam.getLocation());
         body.setPhysicsRotation(cam.getRotation());
-        body.setGravity(new Vector3f());
+        body.setGravity(new Vector3f(0, ColorParkourMain.GAME_GRAVITY,0));
         return body;
     }
 
@@ -70,9 +72,10 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         if (backward) {
             walkDirection.addLocal(new Vector3f(-camForward.x,0,-camForward.z));
         }
-        // Warning: This whole system needs to be redone
-        cam.setLocation(collisionBody.getPhysicsLocation());
-        float speed = collisionBody.getLinearVelocity().length();
+        // Warning: This whole system needs to be redone ABSOLUTELY
+        // It actually isn't realistic nor optimized and creates conflicts with gravity
+        cam.setLocation(body.getPhysicsLocation());
+        float speed = body.getLinearVelocity().length();
         boolean sameKeys = cBackward == backward
                 && cForward == forward
                 && cRight == right
@@ -84,16 +87,16 @@ public class PlayerPhysicSY implements PhysicsTickListener {
             boolean shouldStop = speed < 0.25f;
 
             if (shouldStop) {
-                collisionBody.setLinearVelocity(new Vector3f());
+                body.setLinearVelocity(new Vector3f());
             } else {
-                collisionBody.setLinearVelocity(collisionBody.getLinearVelocity().mult(0.9f * tpf * TPF_COEFF_AVERAGE));
+                body.setLinearVelocity(body.getLinearVelocity().mult(0.9f * tpf * TPF_COEFF_AVERAGE));
             }
         }
 
         if(speed > 13 && !sameKeys)
-            collisionBody.setLinearVelocity(walkDirection.mult(1/(speed/13)));
+            body.setLinearVelocity(walkDirection.mult(1/(speed/13)));
         else if(speed < 13 && sameKeys)
-            collisionBody.applyCentralForce(walkDirection.mult(600*tpf*TPF_COEFF_AVERAGE));
+            body.applyCentralForce(walkDirection.mult(600*tpf*TPF_COEFF_AVERAGE));
 
         assignBools();
     }
@@ -105,10 +108,11 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         cBackward = backward;
     }
 
+    // non used overrided method
     @Override
-    public void physicsTick(PhysicsSpace space, float tpf) {
+    public void physicsTick(PhysicsSpace space, float tpf) { }
 
-    }
+    // "save" code (ancient method) in case it may be useful
     /*
             if(noKeyPressed) {
             boolean shouldStop = speed < 0.25f;

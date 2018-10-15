@@ -1,4 +1,4 @@
-package net.starype.colorparkour.player;
+package net.starype.colorparkour.entity.player;
 
 import com.jme3.input.InputManager;
 import com.jme3.input.MouseInput;

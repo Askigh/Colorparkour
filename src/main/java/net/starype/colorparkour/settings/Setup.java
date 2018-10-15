@@ -6,7 +6,7 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import net.starype.colorparkour.core.ColorParkourMain;
-import net.starype.colorparkour.player.PlayerPhysicSY;
+import net.starype.colorparkour.entity.player.PlayerPhysicSY;
 
 public class Setup {
 

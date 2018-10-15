@@ -6,6 +6,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.jme3.texture.Texture;
 
+// this class is pretty much totally useless, it will be deleted
 public class ShapesSY {
 
     public static Geometry loadCube(AssetManager assetManager) {

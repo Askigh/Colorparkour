@@ -24,7 +24,7 @@ public class CollisionManager {
     }
 
     /**
-     *
+     * Loads a defined object and add it in the current physics space
      * @param type The kind of shape you want to get
      * @param mass The mass of the body created. If non null, it will create a dynamic object
      * @param datas The parameters (only primitives or spatial) required in the constructeur of the type class
