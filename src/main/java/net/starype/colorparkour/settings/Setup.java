@@ -61,6 +61,12 @@ public class Setup {
                 physics.backward = keyPressed;
             }
         }.withReleaseActive(true));
+        kManager.addLinkedKeyAction("Jump", KeyInput.KEY_SPACE, new KeyboardManager.Action() {
+            @Override
+            public void execute(boolean keyPressed) {
+                physics.jump();
+            }
+        });
 
     }
 }

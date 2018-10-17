@@ -18,6 +18,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
     private Vector3f camForward, camLeft, walkDirection, previous;
     public boolean left = false, right = false, forward = false, backward = false;
+    private boolean jump = false;
 
     private float low_speed_friction;
     private float acceleration;
@@ -101,6 +102,13 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
         if(noKeyTouched() && speedXZ < 1)
             body.setLinearVelocity(new Vector3f(0,spaceSpeed.y,0));
+
+        jump = false;
+    }
+
+    public void jump() {
+        Vector3f spaceSpeed = body.getLinearVelocity();
+        body.setLinearVelocity(new Vector3f(spaceSpeed.x, 15, spaceSpeed.z));
     }
 
     private boolean noKeyTouched() {
