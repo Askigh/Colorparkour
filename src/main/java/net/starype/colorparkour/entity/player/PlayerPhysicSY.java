@@ -2,15 +2,12 @@ package net.starype.colorparkour.entity.player;
 
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
-import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.ConeCollisionShape;
-import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import net.starype.colorparkour.collision.CollisionManager;
-import net.starype.colorparkour.core.ColorParkourMain;
 
 public class PlayerPhysicSY implements PhysicsTickListener {
 
@@ -39,13 +36,16 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         walkDirection = new Vector3f();
         previous = new Vector3f();
         this.body = createBody();
+        loadDefaultValues();
+    }
+    private void loadDefaultValues() {
         low_speed_friction = -70f;
         standard_friction = -5;
         acceleration = 2500;
         friction_expansion = 1.3f;
     }
-
     private RigidBodyControl createBody() {
+
         RigidBodyControl body = manager.loadObject(ConeCollisionShape.class, 20, 1.6f,6f,1);
         body.setPhysicsLocation(cam.getLocation());
         body.setPhysicsRotation(cam.getRotation());
@@ -55,7 +55,6 @@ public class PlayerPhysicSY implements PhysicsTickListener {
     }
 
     protected void initListener() {
-
         manager.getAppState().getPhysicsSpace().addTickListener(this);
     }
 
@@ -86,7 +85,8 @@ public class PlayerPhysicSY implements PhysicsTickListener {
             walkDirection.addLocal(new Vector3f(-camForward.x,0, -camForward.z));
         }
 
-        Vector2f flatSpeed = new Vector2f(body.getLinearVelocity().x, body.getLinearVelocity().z);
+        Vector3f spaceSpeed = body.getLinearVelocity();
+        Vector2f flatSpeed = new Vector2f(spaceSpeed.x, spaceSpeed.z);
         float friction;
         float speedXZ = flatSpeed.length();
 
@@ -96,46 +96,23 @@ public class PlayerPhysicSY implements PhysicsTickListener {
             friction = standard_friction * (float) Math.pow(speedXZ, friction_expansion);
 
         Vector3f force = walkDirection.mult(acceleration)
-                .add(new Vector3f(flatSpeed.x * friction, body.getLinearVelocity().y, flatSpeed.y * friction));
+                .add(new Vector3f(flatSpeed.x * friction, spaceSpeed.y, flatSpeed.y * friction));
         body.applyCentralForce(force);
 
         if(noKeyTouched() && speedXZ < 1)
-            body.setLinearVelocity(new Vector3f(0,body.getLinearVelocity().y,0));
+            body.setLinearVelocity(new Vector3f(0,spaceSpeed.y,0));
     }
 
     private boolean noKeyTouched() {
         return !right && !left && !forward && !backward;
     }
 
+    public void setLowSpeedFriction(float low_speed_friction) { this.low_speed_friction = low_speed_friction; }
+    public void setAcceleration(float acceleration) { this.acceleration = acceleration; }
+    public void setStandardFriction(float standard_friction) { this.standard_friction = standard_friction; }
+    public void setFrictionExpansion(float friction_expansion) { this.friction_expansion = friction_expansion; }
+
     // non used overrided method
     @Override
     public void physicsTick(PhysicsSpace space, float tpf) { }
-
-    // "save" code (ancient method) in case it may be useful
-    /*
-            if(noKeyPressed) {
-            boolean shouldStop = speed < 0.25f;
-
-            if(shouldStop) {
-                collisionBody.setLinearVelocity(new Vector3f());
-            } else {
-                collisionBody.setLinearVelocity(collisionBody.getLinearVelocity().mult(0.9f*tpf*TPF_COEFF_AVERAGE));
-            }
-        }
-        if(!sameKeys && !noKeyPressed) {
-            redirect = true;
-            collisionBody.setLinearVelocity(collisionBody.getLinearVelocity()
-                    .mult(0.9f)
-                    .add(walkDirection.mult(speed/8*tpf*62.5f)).mult(0.5f*tpf*TPF_COEFF_AVERAGE));
-            if(speed < 10)
-                redirect = false;
-        }
-
-        if(speed < 13 && !noKeyPressed) {
-            collisionBody.applyCentralForce(walkDirection.mult(600*tpf*TPF_COEFF_AVERAGE));
-        }
-
-        if(!redirect)
-            assignBools();
-     */
 }
