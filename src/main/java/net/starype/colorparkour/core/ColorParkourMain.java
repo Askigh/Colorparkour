@@ -20,7 +20,7 @@ public class ColorParkourMain extends SimpleApplication {
     private CollisionManager collManager;
     private Player player;
     private StandardPlatform plat;
-    public static final float GAME_GRAVITY = -400f;
+    public static final float GAME_GRAVITY = -40f;
 
     public static void main(String[] args) { new ColorParkourMain(); }
 
@@ -29,6 +29,9 @@ public class ColorParkourMain extends SimpleApplication {
         setSettings(new AppSettings(true));
         // disables the default window that asks for settings
         setShowSettings(false);
+        settings.setSamples(8);
+        settings.setWidth(1500);
+        settings.setHeight(750);
         super.start();
     }
 
@@ -42,13 +45,13 @@ public class ColorParkourMain extends SimpleApplication {
         player = new Player(this, cam, collManager);
         player.initialize();
 
-        plat = new StandardPlatform(collManager, this, 5,1,5, new Vector3f(7,-1,7));
+        plat = new StandardPlatform(collManager, this, 60,1,60, new Vector3f(7,-1,7));
 
 
         // Init keyboard inputs and light sources
         Setup.init(this);
 
-        Vector3f initial = new Vector3f(7,10,7);
+        Vector3f initial = new Vector3f(7,20,7);
         cam.setLocation(initial);
         player.setPosition(initial);
     }
