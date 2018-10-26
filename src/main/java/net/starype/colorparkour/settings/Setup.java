@@ -64,9 +64,17 @@ public class Setup {
         kManager.addLinkedKeyAction("Jump", KeyInput.KEY_SPACE, new KeyboardManager.Action() {
             @Override
             public void execute(boolean keyPressed) {
-                physics.jump();
+                physics.jumpRequest();
             }
         });
+        kManager.addLinkedKeyAction("Sprint", KeyInput.KEY_F, new KeyboardManager.Action() {
+            @Override
+            public void execute(boolean keyPressed) {
+                if(keyPressed)
+                    physics.sprint();
+                else physics.walk();
+            }
+        }.withReleaseActive(true));
 
     }
 }

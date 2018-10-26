@@ -2,6 +2,7 @@ package net.starype.colorparkour.collision;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.HullCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -35,8 +36,9 @@ public class CollisionManager {
         if(datas.length == 0) throw new IllegalArgumentException("Constructor datas cannot be ommitted");
 
         // if a CollisionShapeFactory is required, for complex shapes
-        if(type.equals(CollisionShape.class) || type.equals(HullCollisionShape.class))
-            return processForSpatials(datas[0], mass);
+        if(type.equals(CollisionShape.class)
+                || type.equals(HullCollisionShape.class) || type.equals(BoxCollisionShape.class))
+            return processForSpatials(datas[0], mass, type);
 
         // loading a new instance of the type parameter
         Class<?>[] typeParams = new Class<?>[datas.length];
@@ -59,16 +61,26 @@ public class CollisionManager {
         return control;
     }
 
-    private RigidBodyControl processForSpatials(Object spatial, int mass) {
+    private RigidBodyControl processForSpatials(Object spatial, int mass, Class<? extends CollisionShape> type) {
 
         if(!(spatial instanceof Spatial))
             throw new IllegalArgumentException("Cannot load a CollisionShape if datas[0] is not a spatial");
 
-        CollisionShape shape = mass > 0
-                ? CollisionShapeFactory.createDynamicMeshShape(((Spatial) spatial))
-                : CollisionShapeFactory.createMeshShape((Spatial) spatial);
+        CollisionShape shape;
+        RigidBodyControl control;
 
-        RigidBodyControl control = new RigidBodyControl(shape, mass);
+        if(type.equals(BoxCollisionShape.class)) {
+            shape = CollisionShapeFactory.createBoxShape((Spatial) spatial);
+            control = new RigidBodyControl(shape, mass);
+        }
+        else {
+            shape = mass > 0
+                    ? CollisionShapeFactory.createDynamicMeshShape(((Spatial) spatial))
+                    : CollisionShapeFactory.createMeshShape((Spatial) spatial);
+
+            control = new RigidBodyControl(shape, mass);
+        }
+
         ((Spatial) spatial).addControl(control);
         appState.getPhysicsSpace().add(control);
         return control;

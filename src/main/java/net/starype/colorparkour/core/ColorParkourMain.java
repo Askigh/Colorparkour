@@ -4,6 +4,7 @@ import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.light.Light;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
@@ -19,7 +20,6 @@ public class ColorParkourMain extends SimpleApplication {
 
     private CollisionManager collManager;
     private Player player;
-    private StandardPlatform plat;
     public static final float GAME_GRAVITY = -40f;
 
     public static void main(String[] args) { new ColorParkourMain(); }
@@ -29,6 +29,7 @@ public class ColorParkourMain extends SimpleApplication {
         setSettings(new AppSettings(true));
         // disables the default window that asks for settings
         setShowSettings(false);
+        settings.setTitle("ColOrParkOur");
         settings.setSamples(8);
         settings.setWidth(1500);
         settings.setHeight(750);
@@ -39,14 +40,14 @@ public class ColorParkourMain extends SimpleApplication {
     public void simpleInitApp() {
 
         disableDefaultOptions();
+        viewPort.setBackgroundColor(ColorRGBA.Cyan);
         collManager = new CollisionManager(this);
         collManager.init();
 
         player = new Player(this, cam, collManager);
         player.initialize();
 
-        plat = new StandardPlatform(collManager, this, 60,1,60, new Vector3f(7,-1,7));
-
+        StandardPlatform plat = new StandardPlatform(collManager, this, 60,1,60, 7, -1, 7);
 
         // Init keyboard inputs and light sources
         Setup.init(this);
