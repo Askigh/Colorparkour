@@ -84,12 +84,11 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
     @Override
     public void prePhysicsTick(PhysicsSpace space, float tpf) {
-        // In case the body falls, one jump is removed
-        modifyJumps();
+        //modifyJumps();
 
         if(body.getPhysicsLocation().y < -60) {
             // TODO : Use the last check point location
-            body.setPhysicsLocation(new Vector3f(7, 16, 7));
+            body.setPhysicsLocation(new Vector3f(0, 16, 0));
         }
         camForward.set(cam.getDirection()).multLocal(0.6f*tpf*TPF_COEFF_AVERAGE);
         camLeft.set(cam.getLeft().multLocal(0.4f*tpf*TPF_COEFF_AVERAGE));
@@ -130,21 +129,20 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         if(noKeyTouched() && speedXZ < 1.5f)
             body.setLinearVelocity(new Vector3f(0,spaceSpeed.y,0));
     }
-    private void modifyJumps() {
+    /* private void modifyJumps() {
         if(!virtuallyZero(body.getLinearVelocity().y))
             inAir = true;
     }
 
     private boolean virtuallyZero(float y) {
         return y < 0.02f && y > -0.02f;
-    }
+    } */
     public void jump() {
         if(jumpAmount <= 0)
             return;
-        if(inAir)
-            jumpAmount = 0;
-        else
+        else {
             jumpAmount--;
+        }
 
         Vector3f spaceSpeed = body.getLinearVelocity();
         /*
@@ -165,23 +163,19 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     public void collision(PhysicsCollisionEvent event) {
         if(event.getNodeA().equals(player.getAppearance()) || event.getNodeB().equals(player.getAppearance())) {
             inAir = false;
-            /* TODO : Add jumpAmount depending of the platform, here we constantly set it to 2
-               Therefore the player always has a double jump
-             */
             if(!jumpReset) {
+
                 ColoredPlatform platform;
 
                 if(platformManager.getPlatformBySpatial(event.getNodeA()) != null) {
                     platform = platformManager.getPlatformBySpatial(event.getNodeA());
-                    System.out.println("A");
                 } else if(platformManager.getPlatformBySpatial(event.getNodeB()) != null) {
-                    System.out.println("B");
                     platform = platformManager.getPlatformBySpatial(event.getNodeB());
                 } else {
                     return;
                 }
-
                 jumpAmount = (short) (platform instanceof DoubleJumpPlatform ? 2 : 1);
+                System.out.println("Jumps given! "+jumpAmount);
                 jumpReset = true;
             }
         }

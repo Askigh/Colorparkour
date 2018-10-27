@@ -45,9 +45,9 @@ public class ColoredPlatform extends PhysicEntity {
     private Material loadMaterial(ColorRGBA color) {
         Material mat = new Material(main.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", color);
-        Texture t = main.getAssetManager().loadTexture("/assets/Textures/logo.png");
-        t.setWrap(Texture.WrapMode.Repeat);
-        mat.setTexture("ColorMap", t);
+        //Texture t = main.getAssetManager().loadTexture("/assets/Textures/logo.png");
+        //t.setWrap(Texture.WrapMode.Repeat);
+        //mat.setTexture("ColorMap", t);
         return mat;
     }
 

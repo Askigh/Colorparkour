@@ -53,8 +53,6 @@ public class KeyboardManager {
         }
 
     };
-
-
     public static abstract class Action {
 
         private String keyName;
