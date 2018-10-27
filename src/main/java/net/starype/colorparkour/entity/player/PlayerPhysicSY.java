@@ -13,6 +13,9 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.core.ColorParkourMain;
+import net.starype.colorparkour.entity.platform.ColoredPlatform;
+import net.starype.colorparkour.entity.platform.DoubleJumpPlatform;
+import net.starype.colorparkour.entity.platform.PlatformManager;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -38,10 +41,13 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     private float friction_expansion;
     private float jump_power;
 
+    private PlatformManager platformManager;
+
     // In average, TPF_COEFF_AVERAGE * tpf = 1
     private static final int TPF_COEFF_AVERAGE = 58;
 
-    protected PlayerPhysicSY(CollisionManager manager, Camera cam, Player player) {
+    protected PlayerPhysicSY(CollisionManager manager, Camera cam, Player player, PlatformManager platformManager) {
+        this.platformManager = platformManager;
         this.manager = manager;
         this.cam = cam;
         this.player = player;
@@ -163,7 +169,19 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
                Therefore the player always has a double jump
              */
             if(!jumpReset) {
-                jumpAmount = 2;
+                ColoredPlatform platform;
+
+                if(platformManager.getPlatformBySpatial(event.getNodeA()) != null) {
+                    platform = platformManager.getPlatformBySpatial(event.getNodeA());
+                    System.out.println("A");
+                } else if(platformManager.getPlatformBySpatial(event.getNodeB()) != null) {
+                    System.out.println("B");
+                    platform = platformManager.getPlatformBySpatial(event.getNodeB());
+                } else {
+                    return;
+                }
+
+                jumpAmount = (short) (platform instanceof DoubleJumpPlatform ? 2 : 1);
                 jumpReset = true;
             }
         }

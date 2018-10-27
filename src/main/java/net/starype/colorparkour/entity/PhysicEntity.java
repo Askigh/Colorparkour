@@ -29,4 +29,8 @@ public abstract class PhysicEntity {
     public void setPosition(Vector3f pos) {
         body.setPhysicsLocation(pos);
     }
+    public RigidBodyControl getBody() {
+        return body;
+    }
+    public Spatial getAppearance() { return appearance; }
 }

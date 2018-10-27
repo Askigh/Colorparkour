@@ -8,7 +8,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import net.starype.colorparkour.collision.CollisionManager;
-import net.starype.colorparkour.entity.platform.StandardPlatform;
+import net.starype.colorparkour.entity.platform.PlatformManager;
 import net.starype.colorparkour.entity.player.Player;
 import net.starype.colorparkour.settings.Setup;
 
@@ -19,6 +19,8 @@ public class ColorParkourMain extends SimpleApplication {
     private CollisionManager collManager;
     private Player player;
     public static final Vector3f GAME_GRAVITY = new Vector3f(0, -40f, 0);
+    public static final Vector3f LOW_GRAVITY = new Vector3f(0, -20f, 0);
+    public static final Vector3f HIGH_GRAVITY = new Vector3f(0, -55f, 0);
 
     public static void main(String[] args) { new ColorParkourMain(); }
 
@@ -43,15 +45,19 @@ public class ColorParkourMain extends SimpleApplication {
         collManager = new CollisionManager(this);
         collManager.init();
 
-        player = new Player(this, cam, collManager);
+
+
+        PlatformManager platformManager = new PlatformManager(collManager, this);
+        player = new Player(this, cam, collManager, platformManager);
         player.initialize();
 
-        new StandardPlatform(collManager, this, 60,1,60, 7, -1, 7);
+        platformManager.addColored(10, 0.1f, 10, 0, -1, 0, ColorRGBA.White);
+        platformManager.addDoubleJump(5, 0.1f, 5, 20, -1, 0, ColorRGBA.Blue);
 
         // Init keyboard inputs and light sources
         Setup.init(this);
 
-        Vector3f initial = new Vector3f(7,20,7);
+        Vector3f initial = new Vector3f(0,20,0);
         cam.setLocation(initial);
         player.setPosition(initial);
     }
@@ -60,7 +66,7 @@ public class ColorParkourMain extends SimpleApplication {
     public void attachLights(Light... lights) { Arrays.asList(lights).forEach(l -> rootNode.addLight(l)); }
 
     private void disableDefaultOptions(){
-        // disable FlyByCamera, replaced by CameraSY
+        // disables FlyByCamera, replaced by CameraSY
         stateManager.detach(stateManager.getState(FlyCamAppState.class));
         inputManager.setCursorVisible(false);
     }
