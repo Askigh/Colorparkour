@@ -57,6 +57,7 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         walkDirection = new Vector3f();
         loadDefaultValues();
     }
+
     private void loadDefaultValues() {
         low_speed_friction = -70f;
         standard_friction = -5;
@@ -64,9 +65,10 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         friction_expansion = 1.3f;
         jump_power = 22f;
     }
+
     private RigidBodyControl createBody() {
 
-        player.setAppearance(new Geometry("hit_box", new Box(1,2,1)));
+        player.setAppearance(new Geometry("hit_box", new Box(1, 2, 1)));
         RigidBodyControl body = manager.loadObject(BoxCollisionShape.class, 20, player.getAppearance());
         body.setPhysicsLocation(cam.getLocation());
         body.setPhysicsRotation(cam.getRotation());
@@ -84,61 +86,61 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
     @Override
     public void prePhysicsTick(PhysicsSpace space, float tpf) {
-        //modifyJumps();
+        checkInAir();
 
-        if(body.getPhysicsLocation().y < -60) {
+        if (body.getPhysicsLocation().y < -60) {
             // TODO : Use the last check point location
             body.setPhysicsLocation(new Vector3f(0, 16, 0));
         }
-        camForward.set(cam.getDirection()).multLocal(0.6f*tpf*TPF_COEFF_AVERAGE);
-        camLeft.set(cam.getLeft().multLocal(0.4f*tpf*TPF_COEFF_AVERAGE));
+        camForward.set(cam.getDirection()).multLocal(0.6f * tpf * TPF_COEFF_AVERAGE);
+        camLeft.set(cam.getLeft().multLocal(0.4f * tpf * TPF_COEFF_AVERAGE));
         walkDirection.set(0, 0, 0);
 
         // We want the camera to be at the top of the body
-        cam.setLocation(body.getPhysicsLocation().add(0,1,0));
+        cam.setLocation(body.getPhysicsLocation().add(0, 1, 0));
         /*
             Here we set the value of walkDirection depending of the key pressed.
             if left, we use the left value, if right we inverse the left value, and so on
          */
         if (left) {
-            walkDirection.addLocal(new Vector3f(camLeft.x,0, camLeft.z));
+            walkDirection.addLocal(new Vector3f(camLeft.x, 0, camLeft.z));
         }
         if (right) {
-            walkDirection.addLocal(new Vector3f(-camLeft.x,0, -camLeft.z));
+            walkDirection.addLocal(new Vector3f(-camLeft.x, 0, -camLeft.z));
         }
         if (forward) {
-            walkDirection.addLocal(new Vector3f(camForward.x,0, camForward.z));
+            walkDirection.addLocal(new Vector3f(camForward.x, 0, camForward.z));
         }
         if (backward) {
-            walkDirection.addLocal(new Vector3f(-camForward.x,0, -camForward.z));
+            walkDirection.addLocal(new Vector3f(-camForward.x, 0, -camForward.z));
         }
         Vector3f spaceSpeed = body.getLinearVelocity();
         Vector2f flatSpeed = new Vector2f(spaceSpeed.x, spaceSpeed.z);
         float friction;
         float speedXZ = flatSpeed.length();
 
-        if(speedXZ < 3 && speedXZ != 0)
+        if (speedXZ < 3 && speedXZ != 0)
             friction = low_speed_friction / speedXZ;
         else
             friction = standard_friction * (float) Math.pow(speedXZ, friction_expansion);
 
-        Vector3f force = walkDirection.mult(acceleration* speedBoost)
+        Vector3f force = walkDirection.mult(acceleration * speedBoost)
                 .add(new Vector3f(flatSpeed.x * friction, spaceSpeed.y, flatSpeed.y * friction));
         body.applyCentralForce(force);
 
-        if(noKeyTouched() && speedXZ < 1.5f)
-            body.setLinearVelocity(new Vector3f(0,spaceSpeed.y,0));
-    }
-    /* private void modifyJumps() {
-        if(!virtuallyZero(body.getLinearVelocity().y))
-            inAir = true;
+        if (noKeyTouched() && speedXZ < 1.5f)
+            body.setLinearVelocity(new Vector3f(0, spaceSpeed.y, 0));
     }
 
-    private boolean virtuallyZero(float y) {
-        return y < 0.02f && y > -0.02f;
-    } */
+    private void checkInAir() {
+        if (body.getLinearVelocity().y < 0) {
+            inAir = true;
+        }
+    }
+
     public void jump() {
-        if(jumpAmount <= 0)
+        // falling is considered as a jump
+        if (jumpAmount - (inAir ? 1 : 0) <= 0)
             return;
         else {
             jumpAmount--;
@@ -156,26 +158,25 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
             public void run() {
                 jumpReset = false;
             }
-        }, 25);
+        }, 30);
     }
 
     @Override
     public void collision(PhysicsCollisionEvent event) {
-        if(event.getNodeA().equals(player.getAppearance()) || event.getNodeB().equals(player.getAppearance())) {
+        if (event.getNodeA().equals(player.getAppearance()) || event.getNodeB().equals(player.getAppearance())) {
             inAir = false;
-            if(!jumpReset) {
+            if (!jumpReset) {
 
                 ColoredPlatform platform;
-
-                if(platformManager.getPlatformBySpatial(event.getNodeA()) != null) {
+                if (platformManager.getPlatformBySpatial(event.getNodeA()) != null) {
                     platform = platformManager.getPlatformBySpatial(event.getNodeA());
-                } else if(platformManager.getPlatformBySpatial(event.getNodeB()) != null) {
+                } else if (platformManager.getPlatformBySpatial(event.getNodeB()) != null) {
                     platform = platformManager.getPlatformBySpatial(event.getNodeB());
                 } else {
                     return;
                 }
+
                 jumpAmount = (short) (platform instanceof DoubleJumpPlatform ? 2 : 1);
-                System.out.println("Jumps given! "+jumpAmount);
                 jumpReset = true;
             }
         }
@@ -189,18 +190,22 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         this.low_speed_friction = low_speed_friction;
         return this;
     }
+
     public PlayerPhysicSY setAcceleration(float acceleration) {
         this.acceleration = acceleration;
         return this;
     }
+
     public PlayerPhysicSY setStandardFriction(float standard_friction) {
         this.standard_friction = standard_friction;
         return this;
     }
+
     public PlayerPhysicSY setFrictionExpansion(float friction_expansion) {
         this.friction_expansion = friction_expansion;
         return this;
     }
+
     public PlayerPhysicSY setJumpPower(float jump_power) {
         this.jump_power = jump_power;
         return this;
@@ -229,11 +234,13 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     public void sprint() {
         this.speedBoost = 2.7f;
     }
+
     public void walk() {
         this.speedBoost = 1f;
     }
 
     // non used overrided method
     @Override
-    public void physicsTick(PhysicsSpace space, float tpf) { }
+    public void physicsTick(PhysicsSpace space, float tpf) {
+    }
 }

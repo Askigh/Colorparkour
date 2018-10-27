@@ -15,6 +15,7 @@ import net.starype.colorparkour.entity.PhysicEntity;
 public class ColoredPlatform extends PhysicEntity {
 
     private ColorRGBA color;
+    private Material mat;
 
     public ColoredPlatform(CollisionManager manager, SimpleApplication main, float x, float y, float z, float posX,
                             float posY, float posZ, ColorRGBA color) {
@@ -31,7 +32,8 @@ public class ColoredPlatform extends PhysicEntity {
 
         Box box = new Box(x,y,z);
         appearance = new Geometry("box", box);
-        appearance.setMaterial(loadMaterial(color));
+        mat = loadMaterial(color);
+        appearance.setMaterial(mat);
         ((Geometry) appearance).getMesh().scaleTextureCoordinates(new Vector2f(x,z));
         main.getRootNode().attachChild(appearance);
         body = manager.loadObject(BoxCollisionShape.class, 0, appearance);
@@ -45,9 +47,6 @@ public class ColoredPlatform extends PhysicEntity {
     private Material loadMaterial(ColorRGBA color) {
         Material mat = new Material(main.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", color);
-        //Texture t = main.getAssetManager().loadTexture("/assets/Textures/logo.png");
-        //t.setWrap(Texture.WrapMode.Repeat);
-        //mat.setTexture("ColorMap", t);
         return mat;
     }
 
@@ -56,5 +55,6 @@ public class ColoredPlatform extends PhysicEntity {
     }
     public void setColor(ColorRGBA color) {
         this.color = color;
+        mat.setColor("Color", color);
     }
 }

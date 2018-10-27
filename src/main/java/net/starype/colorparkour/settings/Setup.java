@@ -6,6 +6,7 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import net.starype.colorparkour.core.ColorParkourMain;
+import net.starype.colorparkour.entity.platform.ColoredPlatform;
 import net.starype.colorparkour.entity.player.PlayerPhysicSY;
 
 public class Setup {
@@ -74,6 +75,13 @@ public class Setup {
                 else physics.walk();
             }
         }.withReleaseActive(true));
+        kManager.addLinkedKeyAction("SuperColor", KeyInput.KEY_TAB, new KeyboardManager.Action() {
+            @Override
+            public void execute(boolean keyPressed) {
+                for(ColoredPlatform plat : main.getPlatformManager().getPlatforms())
+                    plat.setColor(ColorRGBA.randomColor());
+            }
+        });
 
     }
 }
