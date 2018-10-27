@@ -24,10 +24,13 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     private Player player;
     private RigidBodyControl body;
 
-    private Vector3f camForward, camLeft, walkDirection, previous;
+    private Vector3f camForward, camLeft, walkDirection;
     public boolean left = false, right = false, forward = false, backward = false;
-    private boolean jumpRequested = false;
-    private float run = 1f;
+    private float speedBoost = 1f;
+
+    private short jumpAmount = 0;
+    private boolean inAir = false;
+    private boolean jumpReset = false;
 
     private float low_speed_friction;
     private float acceleration;
@@ -35,18 +38,17 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     private float friction_expansion;
     private float jump_power;
 
+    // In average, TPF_COEFF_AVERAGE * tpf = 1
     private static final int TPF_COEFF_AVERAGE = 58;
 
     protected PlayerPhysicSY(CollisionManager manager, Camera cam, Player player) {
-
         this.manager = manager;
         this.cam = cam;
         this.player = player;
+        this.body = createBody();
         camForward = new Vector3f();
         camLeft = new Vector3f();
         walkDirection = new Vector3f();
-        previous = new Vector3f();
-        this.body = createBody();
         loadDefaultValues();
     }
     private void loadDefaultValues() {
@@ -62,9 +64,9 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         RigidBodyControl body = manager.loadObject(BoxCollisionShape.class, 20, player.getAppearance());
         body.setPhysicsLocation(cam.getLocation());
         body.setPhysicsRotation(cam.getRotation());
-        body.setGravity(new Vector3f(0, ColorParkourMain.GAME_GRAVITY, 0));
-        body.setRestitution(0);
+        body.setGravity(ColorParkourMain.GAME_GRAVITY);
         body.setFriction(0);
+
         player.setBody(body);
         return body;
     }
@@ -76,10 +78,15 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
     @Override
     public void prePhysicsTick(PhysicsSpace space, float tpf) {
+        // In case the body falls, one jump is removed
+        modifyJumps();
 
+        if(body.getPhysicsLocation().y < -60) {
+            // TODO : Use the last check point location
+            body.setPhysicsLocation(new Vector3f(7, 16, 7));
+        }
         camForward.set(cam.getDirection()).multLocal(0.6f*tpf*TPF_COEFF_AVERAGE);
         camLeft.set(cam.getLeft().multLocal(0.4f*tpf*TPF_COEFF_AVERAGE));
-        previous.set(walkDirection);
         walkDirection.set(0, 0, 0);
 
         // We want the camera to be at the top of the body
@@ -110,40 +117,58 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         else
             friction = standard_friction * (float) Math.pow(speedXZ, friction_expansion);
 
-        Vector3f force = walkDirection.mult(acceleration*run)
+        Vector3f force = walkDirection.mult(acceleration* speedBoost)
                 .add(new Vector3f(flatSpeed.x * friction, spaceSpeed.y, flatSpeed.y * friction));
         body.applyCentralForce(force);
 
         if(noKeyTouched() && speedXZ < 1.5f)
             body.setLinearVelocity(new Vector3f(0,spaceSpeed.y,0));
-        System.out.println(run);
+    }
+    private void modifyJumps() {
+        if(!virtuallyZero(body.getLinearVelocity().y))
+            inAir = true;
     }
 
-    public void jumpRequest() {
-        jumpRequested = true;
+    private boolean virtuallyZero(float y) {
+        return y < 0.02f && y > -0.02f;
     }
-    public void forceJump() {
-        jump();
-    }
-    private void jump() {
+    public void jump() {
+        if(jumpAmount <= 0)
+            return;
+        if(inAir)
+            jumpAmount = 0;
+        else
+            jumpAmount--;
+
         Vector3f spaceSpeed = body.getLinearVelocity();
-        body.setLinearVelocity(new Vector3f(spaceSpeed.x, jump_power, spaceSpeed.z));
-
+        /*
+            Modification of the "classic" physics. If the body is falling, we still want
+            the jump to propulse the player upward
+        */
+        float y = spaceSpeed.y > 0 ? spaceSpeed.y : spaceSpeed.y / 2.5f;
+        body.setLinearVelocity(new Vector3f(spaceSpeed.x, y + jump_power, spaceSpeed.z));
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                jumpRequested = false;
+                jumpReset = false;
             }
-        },25);
+        }, 25);
     }
 
     @Override
     public void collision(PhysicsCollisionEvent event) {
         if(event.getNodeA().equals(player.getAppearance()) || event.getNodeB().equals(player.getAppearance())) {
-            if(jumpRequested)
-                jump();
+            inAir = false;
+            /* TODO : Add jumpAmount depending of the platform, here we constantly set it to 2
+               Therefore the player always has a double jump
+             */
+            if(!jumpReset) {
+                jumpAmount = 2;
+                jumpReset = true;
+            }
         }
     }
+
     private boolean noKeyTouched() {
         return !right && !left && !forward && !backward;
     }
@@ -190,10 +215,10 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     }
 
     public void sprint() {
-        this.run = 2.7f;
+        this.speedBoost = 2.7f;
     }
     public void walk() {
-        this.run = 1f;
+        this.speedBoost = 1f;
     }
 
     // non used overrided method

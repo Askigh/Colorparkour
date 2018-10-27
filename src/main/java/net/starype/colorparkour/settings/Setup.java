@@ -14,7 +14,6 @@ public class Setup {
         setUpLight(main);
         initKeys(main);
     }
-
     private static void setUpLight(ColorParkourMain main) {
         // We add light so we see the scene
         AmbientLight al = new AmbientLight();
@@ -64,7 +63,7 @@ public class Setup {
         kManager.addLinkedKeyAction("Jump", KeyInput.KEY_SPACE, new KeyboardManager.Action() {
             @Override
             public void execute(boolean keyPressed) {
-                physics.jumpRequest();
+                physics.jump();
             }
         });
         kManager.addLinkedKeyAction("Sprint", KeyInput.KEY_F, new KeyboardManager.Action() {

@@ -2,7 +2,6 @@ package net.starype.colorparkour.core;
 
 import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
-import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.light.Light;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -12,7 +11,6 @@ import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.entity.platform.StandardPlatform;
 import net.starype.colorparkour.entity.player.Player;
 import net.starype.colorparkour.settings.Setup;
-import net.starype.colorparkour.utils.ShapesSY;
 
 import java.util.Arrays;
 
@@ -20,7 +18,7 @@ public class ColorParkourMain extends SimpleApplication {
 
     private CollisionManager collManager;
     private Player player;
-    public static final float GAME_GRAVITY = -40f;
+    public static final Vector3f GAME_GRAVITY = new Vector3f(0, -40f, 0);
 
     public static void main(String[] args) { new ColorParkourMain(); }
 
@@ -33,6 +31,7 @@ public class ColorParkourMain extends SimpleApplication {
         settings.setSamples(8);
         settings.setWidth(1500);
         settings.setHeight(750);
+        super.setDisplayStatView(false);
         super.start();
     }
 
@@ -47,7 +46,7 @@ public class ColorParkourMain extends SimpleApplication {
         player = new Player(this, cam, collManager);
         player.initialize();
 
-        StandardPlatform plat = new StandardPlatform(collManager, this, 60,1,60, 7, -1, 7);
+        new StandardPlatform(collManager, this, 60,1,60, 7, -1, 7);
 
         // Init keyboard inputs and light sources
         Setup.init(this);
