@@ -28,6 +28,9 @@ public class PlatformManager {
     public ColoredPlatform colored(float x, float y, float z, float posX, float posY, float posZ, ColorRGBA color) {
         return new ColoredPlatform(manager, main, x, y, z, posX, posY, posZ, color);
     }
+    public ColoredPlatform ice(float x, float y, float z, float posX, float posY, float posZ, ColorRGBA color) {
+        return new IcePlatform(manager, main, x, y, z, posX, posY, posZ, color);
+    }
     public ColoredPlatform doubleJump(float x, float y, float z, float posX, float posY, float posZ, ColorRGBA color) {
         return new DoubleJumpPlatform(manager, main, x, y, z, posX, posY, posZ, color);
     }

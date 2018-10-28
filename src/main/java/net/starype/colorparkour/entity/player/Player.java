@@ -17,10 +17,10 @@ public class Player extends PhysicEntity {
         super(manager, main);
         camera = new CameraSY(main, source);
         physicBody = new PlayerPhysicSY(manager, source, this, platformManager);
-        physicBody.setAcceleration(2000)
-                .setLowSpeedFriction(-150)
-                .setFrictionExpansion(1.3f)
-                .setStandardFriction(-5)
+        physicBody.setAcceleration(1200)
+                .setLowSpeedFriction(-100)
+                .setFrictionExpansion(1.2f)
+                .setStandardFriction(-3)
                 .setJumpPower(19);
     }
 
