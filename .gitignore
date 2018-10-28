@@ -7,3 +7,5 @@ lwjgl.dll
 OpenAL32.dll
 /out
 /.gradle
+.floo
+.flooignore
