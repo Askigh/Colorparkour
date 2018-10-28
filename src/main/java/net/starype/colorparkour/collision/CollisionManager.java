@@ -56,7 +56,6 @@ public class CollisionManager {
 
         // creating the body
         RigidBodyControl control = new RigidBodyControl(shape, mass);
-        appState.getPhysicsSpace().add(control);
         return control;
     }
 

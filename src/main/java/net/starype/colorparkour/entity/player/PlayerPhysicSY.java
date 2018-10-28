@@ -42,6 +42,8 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     private float friction_expansion;
     private float jump_power;
 
+    private Vector3f force;
+
     private PlatformManager platformManager;
 
     // In average, TPF_COEFF_AVERAGE * tpf = 1
@@ -69,12 +71,12 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
     private RigidBodyControl createBody() {
 
-        player.setAppearance(new Geometry("hit_box", new Box(1, 2, 1)));
+        player.setAppearance(new Geometry("hit_box", new Box(0.1f, 1.8f, 0.1f)));
         RigidBodyControl body = manager.loadObject(BoxCollisionShape.class, 20, player.getAppearance());
         body.setPhysicsLocation(cam.getLocation());
         body.setPhysicsRotation(cam.getRotation());
         body.setGravity(ColorParkourMain.GAME_GRAVITY);
-        body.setFriction(0);
+        body.setFriction(1);
 
         player.setBody(body);
         return body;
@@ -91,7 +93,7 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
         if (body.getPhysicsLocation().y < -60) {
             // TODO : Use the last check point location
-            body.setPhysicsLocation(new Vector3f(0, 16, 0));
+            body.setPhysicsLocation(new Vector3f(0, 20, 0));
         }
         camForward.set(cam.getDirection()).multLocal(0.6f * tpf * TPF_COEFF_AVERAGE);
         camLeft.set(cam.getLeft().multLocal(0.4f * tpf * TPF_COEFF_AVERAGE));
@@ -125,12 +127,10 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         else
             friction = standard_friction * (float) Math.pow(speedXZ, friction_expansion);
 
-        Vector3f force = walkDirection.mult(acceleration * speedBoost)
+        force = walkDirection.mult(acceleration * speedBoost)
                 .add(new Vector3f(flatSpeed.x * friction, spaceSpeed.y, flatSpeed.y * friction));
-        body.applyCentralForce(force);
 
-        if (noKeyTouched() && speedXZ < 1.5f)
-            body.setLinearVelocity(new Vector3f(0, spaceSpeed.y, 0));
+        body.applyCentralForce(force);
     }
 
     private void checkInAir() {
@@ -181,8 +181,8 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
                 jumpReset = true;
 
                 if(platform instanceof StickyMovingPlatform) {
-                    System.out.println("speed");
-                    ((StickyMovingPlatform) platform).stick(body);
+                    System.out.println("Resetting dir");
+                    ((StickyMovingPlatform) platform).stick(this);
                 }
             }
         }
@@ -244,6 +244,8 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     public void walk() {
         this.speedBoost = 1f;
     }
+
+    public Vector3f getForce() { return force; }
 
     // non used overrided method
     @Override

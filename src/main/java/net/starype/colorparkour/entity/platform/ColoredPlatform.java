@@ -34,9 +34,9 @@ public class ColoredPlatform extends PhysicEntity {
         appearance = new Geometry("box", box);
         mat = loadMaterial(color);
         appearance.setMaterial(mat);
-        ((Geometry) appearance).getMesh().scaleTextureCoordinates(new Vector2f(x,z));
+        //((Geometry) appearance).getMesh().scaleTextureCoordinates(new Vector2f(x,z));
         main.getRootNode().attachChild(appearance);
-        int mass = this instanceof MovingPlatform ? 99999999 : 0;
+        int mass = this instanceof MovingPlatform ? Integer.MAX_VALUE : 0;
         body = manager.loadObject(BoxCollisionShape.class, mass, appearance);
 
         appearance.setLocalTranslation(pos);

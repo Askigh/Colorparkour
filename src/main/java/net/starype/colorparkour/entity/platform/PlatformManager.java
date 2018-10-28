@@ -6,6 +6,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import net.starype.colorparkour.collision.CollisionManager;
+import net.starype.colorparkour.entity.player.PlayerPhysicSY;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,21 +25,18 @@ public class PlatformManager {
 
     public void attachBody(RigidBodyControl body) { this.body = body; }
 
-    public PlatformManager addColored(float x, float y, float z, float posX, float posY, float posZ, ColorRGBA color) {
-        platforms.add(new ColoredPlatform(manager, main, x, y, z, posX, posY, posZ, color));
-        return this;
+    public ColoredPlatform colored(float x, float y, float z, float posX, float posY, float posZ, ColorRGBA color) {
+        return new ColoredPlatform(manager, main, x, y, z, posX, posY, posZ, color);
     }
-    public PlatformManager addDoubleJump(float x, float y, float z, float posX, float posY, float posZ, ColorRGBA color) {
-        platforms.add(new DoubleJumpPlatform(manager, main, x, y, z, posX, posY, posZ, color));
-        return this;
+    public ColoredPlatform doubleJump(float x, float y, float z, float posX, float posY, float posZ, ColorRGBA color) {
+        return new DoubleJumpPlatform(manager, main, x, y, z, posX, posY, posZ, color);
     }
-    public PlatformManager addMoving(float x, float y, float z, ColorRGBA color, Vector3f departure, Vector3f arrival, float speed) {
-        platforms.add(new MovingPlatform(manager, main, x, y, z, color, departure, arrival, speed));
-        return this;
+    public ColoredPlatform moving(float x, float y, float z, ColorRGBA color, Vector3f departure, Vector3f arrival, float speed) {
+        return new MovingPlatform(manager, main, x, y, z, color, departure, arrival, speed);
     }
-    public PlatformManager addSticky(float x, float y, float z, ColorRGBA color, Vector3f departure, Vector3f arrival, float speed) {
-        platforms.add(new StickyMovingPlatform(manager, main, x, y, z, color, departure, arrival, speed));
-        return this;
+    public ColoredPlatform sticky(float x, float y, float z, Vector3f departure, Vector3f arrival, float speed,
+                                  ColorRGBA color) {
+        return new StickyMovingPlatform(manager, main, x, y, z, color, departure, arrival, speed);
     }
     public ColoredPlatform getPlatformBySpatial(Spatial spatial) {
         for(ColoredPlatform plat : platforms) {
@@ -56,7 +54,8 @@ public class PlatformManager {
                 float distanceArr = position.add(movPlat.getArrival().mult(-1)).length();
 
                 boolean closeToArr = distanceArr < 0.5f && movPlat.getDirection().equals(movPlat.getInitialDirection());
-                boolean closeToDep = distanceDep < 0.5f && movPlat.getDirection().mult(-1).equals(movPlat.getInitialDirection());
+                boolean closeToDep = distanceDep < 0.5f && movPlat.getDirection().mult(-1)
+                        .equals(movPlat.getInitialDirection());
                 if(closeToArr || closeToDep) {
                     movPlat.setDirection(movPlat.getDirection().mult(-1));
                     movPlat.resetMovement();
