@@ -15,11 +15,14 @@ public class PlatformManager {
     private List<ColoredPlatform> platforms = new ArrayList<>();
     private CollisionManager manager;
     private SimpleApplication main;
+    private RigidBodyControl body;
 
     public PlatformManager(CollisionManager manager, SimpleApplication main) {
         this.manager = manager;
         this.main = main;
     }
+
+    public void attachBody(RigidBodyControl body) { this.body = body; }
 
     public PlatformManager addColored(float x, float y, float z, float posX, float posY, float posZ, ColorRGBA color) {
         platforms.add(new ColoredPlatform(manager, main, x, y, z, posX, posY, posZ, color));
@@ -31,6 +34,10 @@ public class PlatformManager {
     }
     public PlatformManager addMoving(float x, float y, float z, ColorRGBA color, Vector3f departure, Vector3f arrival, float speed) {
         platforms.add(new MovingPlatform(manager, main, x, y, z, color, departure, arrival, speed));
+        return this;
+    }
+    public PlatformManager addSticky(float x, float y, float z, ColorRGBA color, Vector3f departure, Vector3f arrival, float speed) {
+        platforms.add(new StickyMovingPlatform(manager, main, x, y, z, color, departure, arrival, speed));
         return this;
     }
     public ColoredPlatform getPlatformBySpatial(Spatial spatial) {
@@ -53,7 +60,6 @@ public class PlatformManager {
                 if(closeToArr || closeToDep) {
                     movPlat.setDirection(movPlat.getDirection().mult(-1));
                     movPlat.resetMovement();
-                    System.out.println(movPlat.getPosition());
                 }
             }
         }

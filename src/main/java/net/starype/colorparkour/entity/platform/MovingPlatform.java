@@ -7,11 +7,11 @@ import net.starype.colorparkour.collision.CollisionManager;
 
 public class MovingPlatform extends ColoredPlatform {
 
-    private Vector3f departure;
-    private Vector3f arrival;
-    private Vector3f initialDirection;
-    private Vector3f direction;
-    private float speed;
+    protected Vector3f departure;
+    protected Vector3f arrival;
+    protected Vector3f initialDirection;
+    protected Vector3f direction;
+    protected float speed;
 
     public MovingPlatform(CollisionManager manager, SimpleApplication main, float x, float y, float z,
                           Vector3f departure, Vector3f arrival, float speed) {

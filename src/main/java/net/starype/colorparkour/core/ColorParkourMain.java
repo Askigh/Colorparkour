@@ -49,12 +49,12 @@ public class ColorParkourMain extends SimpleApplication {
         platformManager = new PlatformManager(collManager, this);
         player = new Player(this, cam, collManager, platformManager);
         player.initialize();
+        platformManager.attachBody(player.getBody());
 
         platformManager.addColored(5, 0.3f, 5, 0, -1, 0, ColorRGBA.White)
                 .addDoubleJump(5, 0.3f, 5, 20, -1, 0, ColorRGBA.Blue)
                 .addColored(5, 0.8f, 5, 50, 1, 0, ColorRGBA.Orange)
-                .addMoving(5, 0.5f, 5, ColorRGBA.Black, new Vector3f(60, 1, 40), new Vector3f(70,1,-40),0.1f);
-
+                .addSticky(5, 0.5f, 5, ColorRGBA.Black, new Vector3f(60, 1, 40), new Vector3f(70,1,-40),0.1f);
 
         // Init keyboard inputs and light sources
         Setup.init(this);

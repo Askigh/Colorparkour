@@ -32,7 +32,6 @@ public class CollisionManager {
      * @return a RigidBodyControl created from the data added
      */
     public RigidBodyControl loadObject(Class<? extends CollisionShape> type, int mass, Object... datas) {
-        System.out.println("Object loading...");
         if(datas.length == 0) throw new IllegalArgumentException("Constructor datas cannot be ommitted");
 
         // if a CollisionShapeFactory is required, for complex shapes

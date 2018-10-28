@@ -16,6 +16,7 @@ import net.starype.colorparkour.core.ColorParkourMain;
 import net.starype.colorparkour.entity.platform.ColoredPlatform;
 import net.starype.colorparkour.entity.platform.DoubleJumpPlatform;
 import net.starype.colorparkour.entity.platform.PlatformManager;
+import net.starype.colorparkour.entity.platform.StickyMovingPlatform;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -165,19 +166,24 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     public void collision(PhysicsCollisionEvent event) {
         if (event.getNodeA().equals(player.getAppearance()) || event.getNodeB().equals(player.getAppearance())) {
             inAir = false;
+
+            ColoredPlatform platform;
+            if (platformManager.getPlatformBySpatial(event.getNodeA()) != null) {
+                platform = platformManager.getPlatformBySpatial(event.getNodeA());
+            } else if (platformManager.getPlatformBySpatial(event.getNodeB()) != null) {
+                platform = platformManager.getPlatformBySpatial(event.getNodeB());
+            } else {
+                return;
+            }
+
             if (!jumpReset) {
-
-                ColoredPlatform platform;
-                if (platformManager.getPlatformBySpatial(event.getNodeA()) != null) {
-                    platform = platformManager.getPlatformBySpatial(event.getNodeA());
-                } else if (platformManager.getPlatformBySpatial(event.getNodeB()) != null) {
-                    platform = platformManager.getPlatformBySpatial(event.getNodeB());
-                } else {
-                    return;
-                }
-
                 jumpAmount = (short) (platform instanceof DoubleJumpPlatform ? 2 : 1);
                 jumpReset = true;
+
+                if(platform instanceof StickyMovingPlatform) {
+                    System.out.println("speed");
+                    ((StickyMovingPlatform) platform).stick(body);
+                }
             }
         }
     }
