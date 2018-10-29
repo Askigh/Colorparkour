@@ -8,9 +8,14 @@ import com.jme3.bullet.collision.shapes.HullCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.scene.Spatial;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Constructor;
 
 public class CollisionManager {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(CollisionManager.class);
 
     private SimpleApplication main;
     private BulletAppState appState;
@@ -21,6 +26,7 @@ public class CollisionManager {
     }
 
     public void init() {
+        LOGGER.info("Initializing collisions");
         main.getStateManager().attach(appState);
     }
 
@@ -56,6 +62,7 @@ public class CollisionManager {
 
         // creating the body
         RigidBodyControl control = new RigidBodyControl(shape, mass);
+        LOGGER.debug("Initialized new RigibBodyControl");
         return control;
     }
 

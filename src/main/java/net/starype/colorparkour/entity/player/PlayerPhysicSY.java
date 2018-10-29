@@ -6,6 +6,7 @@ import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -14,13 +15,18 @@ import com.jme3.scene.shape.Box;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.core.ColorParkourMain;
 import net.starype.colorparkour.entity.platform.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionListener {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(PlayerPhysicSY.class);
+
     private CollisionManager manager;
+    private ColorParkourMain main;
     private Camera cam;
     private Player player;
     private RigidBodyControl body;
@@ -47,12 +53,13 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     private static final int TPF_COEFF_AVERAGE = 58;
     private boolean slide = false;
 
-    protected PlayerPhysicSY(CollisionManager manager, Camera cam, Player player, PlatformManager platformManager) {
+    protected PlayerPhysicSY(CollisionManager manager, Camera cam, Player player, PlatformManager platformManager, ColorParkourMain main) {
         this.platformManager = platformManager;
         this.manager = manager;
         this.cam = cam;
         this.player = player;
         this.body = createBody();
+        this.main = main;
         camForward = new Vector3f();
         camLeft = new Vector3f();
         walkDirection = new Vector3f();
@@ -92,6 +99,7 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         if (body.getPhysicsLocation().y < -30) {
             // TODO : Use the last check point location
             body.setPhysicsLocation(new Vector3f(0, 20, 0));
+            main.getViewPort().setBackgroundColor(ColorRGBA.randomColor());
             body.setLinearVelocity(new Vector3f());
         }
         camForward.set(cam.getDirection()).multLocal(0.6f * tpf * TPF_COEFF_AVERAGE);
@@ -167,10 +175,10 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
             inAir = false;
 
             ColoredPlatform platform;
-            if (platformManager.getPlatformBySpatial(event.getNodeA()) != null) {
-                platform = platformManager.getPlatformBySpatial(event.getNodeA());
-            } else if (platformManager.getPlatformBySpatial(event.getNodeB()) != null) {
-                platform = platformManager.getPlatformBySpatial(event.getNodeB());
+            if (platformManager.getPlatformBySpatial(event.getNodeA()).isPresent()) {
+                platform = platformManager.getPlatformBySpatial(event.getNodeA()).get();
+            } else if (platformManager.getPlatformBySpatial(event.getNodeB()).isPresent()) {
+                platform = platformManager.getPlatformBySpatial(event.getNodeB()).get();
             } else {
                 return;
             }
@@ -180,7 +188,7 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
                 jumpReset = true;
 
                 if (platform instanceof StickyMovingPlatform) {
-                    System.out.println("Resetting dir");
+                    LOGGER.debug("Resetting direction");
                     ((StickyMovingPlatform) platform).stick(this);
                 }
                 if (platform instanceof IcePlatform) {

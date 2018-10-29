@@ -10,12 +10,12 @@ public class IcePlatform extends ColoredPlatform {
     public static final float FRICTION_COEFF = 3f;
 
     public IcePlatform(CollisionManager manager, SimpleApplication main, float x, float y, float z, float posX,
-                       float posY, float posZ) {
-        this(manager, main, x, y, z, posX, posY, posZ, ColorRGBA.White);
+                       float posY, float posZ, String platformID) {
+        this(manager, main, x, y, z, posX, posY, posZ, ColorRGBA.White, platformID);
     }
 
     public IcePlatform(CollisionManager manager, SimpleApplication main, float x, float y, float z, float posX,
-                       float posY, float posZ, ColorRGBA color) {
-        super(manager, main, x, y, z, new Vector3f(posX, posY, posZ), color);
+                       float posY, float posZ, ColorRGBA color, String platformID) {
+        super(manager, main, x, y, z, new Vector3f(posX, posY, posZ), color, platformID);
     }
 }

@@ -4,12 +4,16 @@ import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 
 public class TimerSY {
 
-    private final String timerPrefix, pattern;
+    public static final Logger LOGGER = LoggerFactory.getLogger(TimerSY.class);
+
+    private final String timerPrefix, pattern, timerID;
     private float timeStamp;
     private BitmapText timerText;
 
@@ -23,10 +27,13 @@ public class TimerSY {
      * @param timerPrefix  This parameter defines which text should be displayed before the time
      * @param pattern      This parameter defines the time pattern.
      */
-    public TimerSY(BitmapFont guiFont, ColorRGBA color, Vector2f textPosition, String timerPrefix, String pattern) {
+    public TimerSY(BitmapFont guiFont, ColorRGBA color, Vector2f textPosition, String timerPrefix, String pattern, String timerID) {
         loadTimer(guiFont, color, textPosition);
         this.timerPrefix = timerPrefix;
         this.pattern = pattern != null ? pattern : "HH:mm:ss";
+        this.timerID = timerID;
+
+        LOGGER.debug("Timer " + timerID + " initialized !");
     }
 
     /**
@@ -81,6 +88,7 @@ public class TimerSY {
         timerText.setColor(color);
         timerText.setText("");
         timerText.setLocalTranslation(position.x, position.y, 0);
+        LOGGER.debug("Timer " + timerID + " : BitmapText initialized !");
         return timerText;
     }
 }

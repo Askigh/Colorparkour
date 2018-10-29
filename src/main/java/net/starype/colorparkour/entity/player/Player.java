@@ -16,7 +16,7 @@ public class Player extends PhysicEntity {
     public Player(ColorParkourMain main, Camera source, CollisionManager manager, PlatformManager platformManager) {
         super(manager, main);
         camera = new CameraSY(main, source);
-        physicBody = new PlayerPhysicSY(manager, source, this, platformManager);
+        physicBody = new PlayerPhysicSY(manager, source, this, platformManager, main);
         physicBody.setAcceleration(1200)
                 .setLowSpeedFriction(-100)
                 .setFrictionExpansion(1.2f)

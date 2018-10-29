@@ -14,13 +14,13 @@ public class MovingPlatform extends ColoredPlatform {
     protected float speed;
 
     public MovingPlatform(CollisionManager manager, SimpleApplication main, float x, float y, float z,
-                          Vector3f departure, Vector3f arrival, float speed) {
-        this(manager, main, x, y, z, ColorRGBA.White, departure, arrival, speed);
+                          Vector3f departure, Vector3f arrival, float speed, String platformID) {
+        this(manager, main, x, y, z, ColorRGBA.White, departure, arrival, speed, platformID);
     }
 
     public MovingPlatform(CollisionManager manager, SimpleApplication main, float x, float y, float z,
-                          ColorRGBA color, Vector3f departure, Vector3f arrival, float speed) {
-        super(manager, main, x, y, z, departure.x, departure.y, departure.z, color);
+                          ColorRGBA color, Vector3f departure, Vector3f arrival, float speed, String platformID) {
+        super(manager, main, x, y, z, departure.x, departure.y, departure.z, color, platformID);
         this.departure = departure;
         this.arrival = arrival;
         this.speed = speed;

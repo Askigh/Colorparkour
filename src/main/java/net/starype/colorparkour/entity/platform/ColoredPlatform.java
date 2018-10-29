@@ -4,11 +4,9 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
-import com.jme3.texture.Texture;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.entity.PhysicEntity;
 
@@ -16,18 +14,21 @@ public class ColoredPlatform extends PhysicEntity {
 
     private ColorRGBA color;
     private Material mat;
+    private final String platformID;
 
     public ColoredPlatform(CollisionManager manager, SimpleApplication main, float x, float y, float z, float posX,
-                            float posY, float posZ, ColorRGBA color) {
-        this(manager, main, x, y, z, new Vector3f(posX, posY, posZ), color);
+                           float posY, float posZ, ColorRGBA color, String platformID) {
+        this(manager, main, x, y, z, new Vector3f(posX, posY, posZ), color, platformID);
     }
 
     public ColoredPlatform(CollisionManager manager, SimpleApplication main, float x, float y, float z, Vector3f pos,
-                           ColorRGBA color) {
+                           ColorRGBA color, String platformID) {
         super(manager, main);
         this.color = color;
+        this.platformID = platformID;
         loadBody(x, y, z, pos, color);
     }
+
     protected void loadBody(float x, float y, float z, Vector3f pos, ColorRGBA color) {
 
         Box box = new Box(x,y,z);
@@ -52,9 +53,14 @@ public class ColoredPlatform extends PhysicEntity {
         return mat;
     }
 
+    public String getPlatformID() {
+        return platformID;
+    }
+
     public ColorRGBA getColor() {
         return color;
     }
+
     public void setColor(ColorRGBA color) {
         this.color = color;
         mat.setColor("Color", color);
