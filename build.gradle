@@ -35,3 +35,11 @@ dependencies {
     compile "com.simsilica:zay-es:1.2.1"
     compile "com.simsilica:zay-es-net:1.2.1"
 }
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'net.starype.colorparkour.core.ColorParkourMain'
+        )
+    }
+}

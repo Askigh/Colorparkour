@@ -4,7 +4,6 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.PhysicsSpace;
 import net.starype.colorparkour.entity.platform.ColoredPlatform;
 import net.starype.colorparkour.entity.platform.PlatformManager;
-import net.starype.colorparkour.entity.player.PlayerPhysicSY;
 
 import java.util.ArrayList;
 import java.util.Arrays;

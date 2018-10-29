@@ -13,10 +13,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.core.ColorParkourMain;
-import net.starype.colorparkour.entity.platform.ColoredPlatform;
-import net.starype.colorparkour.entity.platform.DoubleJumpPlatform;
-import net.starype.colorparkour.entity.platform.PlatformManager;
-import net.starype.colorparkour.entity.platform.StickyMovingPlatform;
+import net.starype.colorparkour.entity.platform.*;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -48,6 +45,7 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
     // In average, TPF_COEFF_AVERAGE * tpf = 1
     private static final int TPF_COEFF_AVERAGE = 58;
+    private boolean slide = false;
 
     protected PlayerPhysicSY(CollisionManager manager, Camera cam, Player player, PlatformManager platformManager) {
         this.platformManager = platformManager;
@@ -91,16 +89,17 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     public void prePhysicsTick(PhysicsSpace space, float tpf) {
         checkInAir();
 
-        if (body.getPhysicsLocation().y < -60) {
+        if (body.getPhysicsLocation().y < -30) {
             // TODO : Use the last check point location
             body.setPhysicsLocation(new Vector3f(0, 20, 0));
+            body.setLinearVelocity(new Vector3f());
         }
         camForward.set(cam.getDirection()).multLocal(0.6f * tpf * TPF_COEFF_AVERAGE);
         camLeft.set(cam.getLeft().multLocal(0.4f * tpf * TPF_COEFF_AVERAGE));
         walkDirection.set(0, 0, 0);
 
         // We want the camera to be at the top of the body
-        cam.setLocation(body.getPhysicsLocation().add(0, 1, 0));
+        cam.setLocation(body.getPhysicsLocation().add(0, 1.5f, 0));
         /*
             Here we set the value of walkDirection depending of the key pressed.
             if left, we use the left value, if right we inverse the left value, and so on
@@ -180,9 +179,16 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
                 jumpAmount = (short) (platform instanceof DoubleJumpPlatform ? 2 : 1);
                 jumpReset = true;
 
-                if(platform instanceof StickyMovingPlatform) {
+                if (platform instanceof StickyMovingPlatform) {
                     System.out.println("Resetting dir");
                     ((StickyMovingPlatform) platform).stick(this);
+                }
+                if (platform instanceof IcePlatform) {
+                    body.setFriction(0);
+                    slide = true;
+                } else {
+                    body.setFriction(1);
+                    slide = false;
                 }
             }
         }
@@ -245,7 +251,9 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         this.speedBoost = 1f;
     }
 
-    public Vector3f getForce() { return force; }
+    public Vector3f getForce() {
+        return force;
+    }
 
     // non used overrided method
     @Override

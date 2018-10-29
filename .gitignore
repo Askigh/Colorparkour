@@ -1,9 +1,14 @@
+/out
 /.idea
+/build
+/.gradle
 /gradle
 gradlew
 gradlew.bat
+.floo
+.flooignore
 bulletjme.dll
 lwjgl.dll
+lwjgl34.dll
 OpenAL32.dll
-/out
-/.gradle
+OpenAL64.dll
