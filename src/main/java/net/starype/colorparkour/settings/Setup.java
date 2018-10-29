@@ -78,7 +78,7 @@ public class Setup {
         kManager.addLinkedKeyAction("SuperColor", KeyInput.KEY_TAB, new KeyboardManager.Action() {
             @Override
             public void execute(boolean keyPressed) {
-                for(ColoredPlatform plat : main.getPlatformManager().getPlatforms())
+                for(ColoredPlatform plat : main.getModuleManager().getCurrentModule().getPlatforms())
                     plat.setColor(ColorRGBA.randomColor());
             }
         });

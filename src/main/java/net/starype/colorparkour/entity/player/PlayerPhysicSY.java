@@ -14,6 +14,8 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.core.ColorParkourMain;
+import net.starype.colorparkour.core.ModuleSY;
+import net.starype.colorparkour.core.ModuleManager;
 import net.starype.colorparkour.entity.platform.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,14 +49,14 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
     private Vector3f force;
 
-    private PlatformManager platformManager;
+    private ModuleManager moduleManager;
 
     // In average, TPF_COEFF_AVERAGE * tpf = 1
     private static final int TPF_COEFF_AVERAGE = 58;
     private boolean slide = false;
 
-    protected PlayerPhysicSY(CollisionManager manager, Camera cam, Player player, PlatformManager platformManager, ColorParkourMain main) {
-        this.platformManager = platformManager;
+    protected PlayerPhysicSY(CollisionManager manager, Camera cam, Player player, ModuleManager moduleManager, ColorParkourMain main) {
+        this.moduleManager = moduleManager;
         this.manager = manager;
         this.cam = cam;
         this.player = player;
@@ -175,11 +177,13 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
             inAir = false;
 
             ColoredPlatform platform;
-            if (platformManager.getPlatformBySpatial(event.getNodeA()).isPresent()) {
-                platform = platformManager.getPlatformBySpatial(event.getNodeA()).get();
-            } else if (platformManager.getPlatformBySpatial(event.getNodeB()).isPresent()) {
-                platform = platformManager.getPlatformBySpatial(event.getNodeB()).get();
+            ModuleSY current = moduleManager.getCurrentModule();
+            if (current.getPlatformBySpatial(event.getNodeA()).isPresent()) {
+                platform = current.getPlatformBySpatial(event.getNodeA()).get();
+            } else if (current.getPlatformBySpatial(event.getNodeB()).isPresent()) {
+                platform = current.getPlatformBySpatial(event.getNodeB()).get();
             } else {
+                LOGGER.error("Platform not found");
                 return;
             }
 
@@ -192,11 +196,11 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
                     ((StickyMovingPlatform) platform).stick(this);
                 }
                 if (platform instanceof IcePlatform) {
-                    body.setFriction(0);
                     slide = true;
+                    body.setFriction(0);
                 } else {
-                    body.setFriction(1);
                     slide = false;
+                    body.setFriction(1);
                 }
             }
         }

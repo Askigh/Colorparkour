@@ -10,7 +10,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import net.starype.colorparkour.collision.CollisionManager;
-import net.starype.colorparkour.entity.platform.PlatformManager;
+import net.starype.colorparkour.utils.PlatformBuilder;
 import net.starype.colorparkour.entity.player.Player;
 import net.starype.colorparkour.settings.Setup;
 import net.starype.colorparkour.utils.TimerSY;
@@ -24,7 +24,7 @@ public class ColorParkourMain extends SimpleApplication {
     public static final Logger LOGGER = LoggerFactory.getLogger(SimpleApplication.class);
 
     private CollisionManager collManager;
-    private PlatformManager platformManager;
+    private ModuleManager moduleManager;
     private Player player;
     public static final Vector3f GAME_GRAVITY = new Vector3f(0, -40f, 0);
     public static final Vector3f LOW_GRAVITY = new Vector3f(0, -20f, 0);
@@ -32,7 +32,9 @@ public class ColorParkourMain extends SimpleApplication {
 
     private TimerSY firstLevelTimer;
 
-    public static void main(String[] args) { new ColorParkourMain(); }
+    public static void main(String[] args) {
+        new ColorParkourMain();
+    }
 
     private ColorParkourMain() {
         LOGGER.info("Game initialization...");
@@ -48,6 +50,7 @@ public class ColorParkourMain extends SimpleApplication {
         settings.setHeight(700);
         super.setDisplayStatView(false);
         super.setDisplayFps(true);
+        this.moduleManager = new ModuleManager(this);
 
         //Starting the window.
         LOGGER.info("Window is opening.");
@@ -64,25 +67,26 @@ public class ColorParkourMain extends SimpleApplication {
         collManager = new CollisionManager(this);
         collManager.init();
 
-        platformManager = new PlatformManager(collManager, this);
+        PlatformBuilder builder = new PlatformBuilder(collManager, this);
 
         LOGGER.info("Initializing collisions");
-        player = new Player(this, cam, collManager, platformManager);
+        player = new Player(this, cam, collManager, moduleManager);
         player.initialize();
-        platformManager.attachBody(player.getBody());
+        builder.attachBody(player.getBody());
 
         PhysicsSpace space = collManager.getAppState().getPhysicsSpace();
-        Module firstMap = new Module(this, platformManager, space, new Vector3f(0, 0, 0) /*TODO: CHANGE HERE THE VECTOR3F VALUE*/);
-        firstMap.add(platformManager.ice(5, 3f, 5, 0, -3, 0, ColorRGBA.White, "0:0"),
-                platformManager.doubleJump(5, 1f, 5, 20, -1, 0, ColorRGBA.Blue, "0:1"),
-                platformManager.colored(5, 0.8f, 5, 50, 1, 0, ColorRGBA.Orange, "0:2"),
-                platformManager.sticky(5, 0.5f, 5, new Vector3f(65, 1, 30),
-                        new Vector3f(65, 1, -30), 0.1f, ColorRGBA.Black, "0:3"),
-                platformManager.doubleJump(2f, 0.5f, 2f, 80, 0, -20f, ColorRGBA.Red, "0:4"));
+        ModuleSY firstMap = new ModuleSY(this, builder, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
+                .add(builder.ice(5, 3f, 5, 0, -3, 0, ColorRGBA.White, "0:0"),
+                        builder.doubleJump(5, 1f, 5, 20, -1, 0, ColorRGBA.Blue, "0:1"),
+                        builder.colored(5, 0.8f, 5, 50, 1, 0, ColorRGBA.Orange, "0:2"),
+                        builder.sticky(5, 0.5f, 5, new Vector3f(65, 1, 30),
+                                new Vector3f(65, 1, -30), 0.1f, ColorRGBA.Black, "0:3"),
+                        builder.doubleJump(2f, 0.5f, 2f, 80, 0, -20f, ColorRGBA.Red, "0:4"))
+                .build();
 
-        firstMap.setActive(true);
-
-        Vector3f initial = new Vector3f(0,20,0);
+        moduleManager.add(firstMap);
+        moduleManager.start();
+        Vector3f initial = new Vector3f(0, 20, 0);
         cam.setLocation(initial);
         player.setPosition(initial);
 
@@ -95,21 +99,34 @@ public class ColorParkourMain extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
-        platformManager.reversePlatforms();
+        moduleManager.getCurrentModule().reversePlatforms();
         firstLevelTimer.updateTimer(tpf);
+        moduleManager.checkNext(player.getBody().getPhysicsLocation());
     }
 
-    public void attachChild(Spatial... spatials) { Arrays.asList(spatials).forEach(s -> rootNode.attachChild(s)); }
-    public void attachLights(Light... lights) { Arrays.asList(lights).forEach(l -> rootNode.addLight(l)); }
+    public void resetGame() {
+        player.setPosition(moduleManager.getModules().get(0).getInitialLocation());
+    }
+    public void attachChild(Spatial... spatials) {
+        Arrays.asList(spatials).forEach(s -> rootNode.attachChild(s));
+    }
 
-    private void disableDefaultOptions(){
+    public void attachLights(Light... lights) {
+        Arrays.asList(lights).forEach(l -> rootNode.addLight(l));
+    }
+
+    private void disableDefaultOptions() {
         // disables FlyByCamera, replaced by CameraSY
         guiNode.detachAllChildren();
         stateManager.detach(stateManager.getState(FlyCamAppState.class));
         inputManager.setCursorVisible(false);
     }
 
-    public Player getPlayer(){ return player; }
+    public Player getPlayer() {
+        return player;
+    }
 
-    public PlatformManager getPlatformManager() { return platformManager; }
+    public ModuleManager getModuleManager() {
+        return moduleManager;
+    }
 }

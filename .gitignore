@@ -9,6 +9,6 @@ gradlew.bat
 .flooignore
 bulletjme.dll
 lwjgl.dll
-lwjgl34.dll
+lwjgl64.dll
 OpenAL32.dll
 OpenAL64.dll

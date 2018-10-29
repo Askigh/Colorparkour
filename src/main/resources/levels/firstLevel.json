@@ -2,6 +2,7 @@
   "levelName": "firstLevel",
   "platforms": [
     {
+      "platformName":"0",
       "type": "ice",
       "sizeX": "5",
       "sizeY": "3f",
@@ -9,9 +10,51 @@
       "posX": "0",
       "posY": "-3",
       "posZ": "0",
-      "rgba": []
+      "rgba": [255, 255, 255, 255]
     },
     {
+      "platformName":"1",
+      "type": "doubleJump",
+      "sizeX": "5",
+      "sizeY": "1",
+      "sizeZ": "5",
+      "posX": "20",
+      "posY": "-1",
+      "posZ": "0",
+      "rgba": [0, 0, 255, 255]
+    },
+    {
+      "platformName":"2",
+      "type": "normal",
+      "sizeX": "5",
+      "sizeY": "0.8",
+      "sizeZ": "5",
+      "posX": "50",
+      "posY": "1",
+      "posZ": "0",
+      "rgba": [214, 107, 36, 255]
+    },
+    {
+      "platformName":"3",
+      "type": "sticky",
+      "sizeX": "5",
+      "sizeY": "0.5",
+      "sizeZ": "5",
+      "posX": "65",
+      "posY": "1",
+      "posZ": "30",
+      "rgba": [0, 0, 0, 255]
+    },
+    {
+      "platformName":"4",
+      "type": "doubleJump",
+      "sizeX": "2",
+      "sizeY": "0.5",
+      "sizeZ": "2",
+      "posX": "80",
+      "posY": "0",
+      "posZ": "-20",
+      "rgba": [255, 0, 0, 255]
     }
   ]
 }

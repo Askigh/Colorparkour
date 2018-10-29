@@ -28,12 +28,12 @@ public class TimerSY {
      * @param pattern      This parameter defines the time pattern.
      */
     public TimerSY(BitmapFont guiFont, ColorRGBA color, Vector2f textPosition, String timerPrefix, String pattern, String timerID) {
-        loadTimer(guiFont, color, textPosition);
         this.timerPrefix = timerPrefix;
         this.pattern = pattern != null ? pattern : "HH:mm:ss";
         this.timerID = timerID;
+        loadTimer(guiFont, color, textPosition);
 
-        LOGGER.debug("Timer " + timerID + " initialized !");
+        LOGGER.debug("Timer " + timerID + "'s initialization finished !");
     }
 
     /**

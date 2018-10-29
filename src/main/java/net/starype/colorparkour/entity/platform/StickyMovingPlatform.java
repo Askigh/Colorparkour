@@ -20,6 +20,8 @@ public class StickyMovingPlatform extends MovingPlatform {
     }
 
     public void stick(PlayerPhysicSY physics) {
-        physics.getForce().add(direction.mult(speed));
+        LOGGER.info(physics.getForce()+"");
+        physics.getForce().set(physics.getForce().add(direction.mult(10)));
+        LOGGER.info("Sticking player "+direction.mult(speed)+" "+physics.getForce()+" "+body.getLinearVelocity());
     }
 }

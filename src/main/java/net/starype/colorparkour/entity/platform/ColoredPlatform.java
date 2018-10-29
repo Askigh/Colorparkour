@@ -9,8 +9,12 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.entity.PhysicEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ColoredPlatform extends PhysicEntity {
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(ColoredPlatform.class);
 
     private ColorRGBA color;
     private Material mat;

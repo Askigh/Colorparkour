@@ -11,7 +11,7 @@
         </Console>
 
         <Console name="STDERR">
-            <PatternLayout pattern="%d{HH:mm} |%level| (%F-%M:%L): %msg%n"/>
+            <PatternLayout pattern="%d{HH:mm} |%level| [%F#%M() line:%L]: %msg%n"/>
 
             <Filters>
                 <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
@@ -20,7 +20,7 @@
     </Appenders>
 
     <Loggers>
-        <Root level="INFO">
+        <Root level="DEBUG">
             <AppenderRef ref="STDOUT"/>
             <AppenderRef ref="STDERR"/>
         </Root>
