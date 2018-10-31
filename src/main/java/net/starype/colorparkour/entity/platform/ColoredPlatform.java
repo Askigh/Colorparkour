@@ -20,22 +20,21 @@ public class ColoredPlatform extends PhysicEntity {
     private Material mat;
     private final String platformID;
 
-    public ColoredPlatform(CollisionManager manager, SimpleApplication main, float x, float y, float z, float posX,
-                           float posY, float posZ, ColorRGBA color, String platformID) {
-        this(manager, main, x, y, z, new Vector3f(posX, posY, posZ), color, platformID);
+    public ColoredPlatform(CollisionManager manager, SimpleApplication main, float[] size, float[] position, ColorRGBA color, String platformID) {
+        this(manager, main, size, new Vector3f(position[0], position[1], position[2]), color, platformID);
     }
 
-    public ColoredPlatform(CollisionManager manager, SimpleApplication main, float x, float y, float z, Vector3f pos,
+    public ColoredPlatform(CollisionManager manager, SimpleApplication main, float[] size, Vector3f pos,
                            ColorRGBA color, String platformID) {
         super(manager, main);
         this.color = color;
         this.platformID = platformID;
-        loadBody(x, y, z, pos, color);
+        loadBody(size[0], size[1], size[2], pos, color);
     }
 
-    protected void loadBody(float x, float y, float z, Vector3f pos, ColorRGBA color) {
+    protected void loadBody(float sizeX, float sizeY, float sizeZ, Vector3f pos, ColorRGBA color) {
 
-        Box box = new Box(x,y,z);
+        Box box = new Box(sizeX, sizeY, sizeZ);
         appearance = new Geometry("box", box);
         mat = loadMaterial(color);
         appearance.setMaterial(mat);

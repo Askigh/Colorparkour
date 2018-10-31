@@ -8,20 +8,14 @@ import net.starype.colorparkour.entity.player.PlayerPhysicSY;
 
 public class StickyMovingPlatform extends MovingPlatform {
 
-
-    public StickyMovingPlatform(CollisionManager manager, SimpleApplication main, float x, float y, float z,
-                                Vector3f departure, Vector3f arrival, float speed, String platformID) {
-        this(manager, main, x, y, z, ColorRGBA.White, departure, arrival, speed, platformID);
-    }
-
-    public StickyMovingPlatform(CollisionManager manager, SimpleApplication main, float x, float y, float z,
-                                ColorRGBA color, Vector3f departure, Vector3f arrival, float speed, String platformID) {
-        super(manager, main, x, y, z, color, departure, arrival, speed, platformID);
+    public StickyMovingPlatform(CollisionManager manager, SimpleApplication main, float[] size, Vector3f departure,
+                                Vector3f arrival, float speed, ColorRGBA color, String platformID) {
+        super(manager, main, size, departure, arrival, speed, color, platformID);
     }
 
     public void stick(PlayerPhysicSY physics) {
-        LOGGER.info(physics.getForce()+"");
+        LOGGER.info(String.valueOf(physics.getForce()));
         physics.getForce().set(physics.getForce().add(direction.mult(10)));
-        LOGGER.info("Sticking player "+direction.mult(speed)+" "+physics.getForce()+" "+body.getLinearVelocity());
+        LOGGER.info("Sticking player " + direction.mult(speed) + " " + physics.getForce() + " " + body.getLinearVelocity());
     }
 }

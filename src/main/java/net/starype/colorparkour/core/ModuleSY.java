@@ -3,13 +3,13 @@ package net.starype.colorparkour.core;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import net.starype.colorparkour.entity.platform.ColoredPlatform;
 import net.starype.colorparkour.entity.platform.MovingPlatform;
 import net.starype.colorparkour.utils.PlatformBuilder;
+import net.starype.colorparkour.utils.PlatformJSONBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,13 +24,13 @@ public class ModuleSY {
 
     private List<ColoredPlatform> platforms;
     private PlatformBuilder manager;
-    private SimpleApplication main;
+    private ColorParkourMain main;
     private PhysicsSpace space;
     private Vector3f finalPosition;
     private final String path;
     private String levelName;
 
-    public ModuleSY(SimpleApplication main, PlatformBuilder manager, PhysicsSpace space, String path) {
+    public ModuleSY(ColorParkourMain main, PlatformBuilder manager, PhysicsSpace space, String path) {
         this.manager = manager;
         this.platforms = new ArrayList<>();
         this.main = main;
@@ -55,15 +55,15 @@ public class ModuleSY {
         }
     }
 
-    public void loadPlatforms() throws FileNotFoundException {
+    public void loadPlatforms() throws FileNotFoundException, NullPointerException {
         Gson gson = new Gson();
         JsonObject datas = gson.fromJson(new FileReader(new File(path)), JsonObject.class);
+
         this.levelName = datas.get("levelName").getAsString();
+
         Iterator<JsonElement> platforms = datas.getAsJsonArray("platforms").iterator();
-        // TODO: Complete json reading
-        while(platforms.hasNext()){
-            JsonElement platform = platforms.next();
-        }
+        while (platforms.hasNext())
+            PlatformJSONBuilder.loadPlatform(platforms.next(), main);
     }
 
     public ModuleSY add(ColoredPlatform... plats) {

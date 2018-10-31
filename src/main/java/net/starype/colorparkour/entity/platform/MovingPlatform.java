@@ -13,14 +13,9 @@ public class MovingPlatform extends ColoredPlatform {
     protected Vector3f direction;
     protected float speed;
 
-    public MovingPlatform(CollisionManager manager, SimpleApplication main, float x, float y, float z,
-                          Vector3f departure, Vector3f arrival, float speed, String platformID) {
-        this(manager, main, x, y, z, ColorRGBA.White, departure, arrival, speed, platformID);
-    }
-
-    public MovingPlatform(CollisionManager manager, SimpleApplication main, float x, float y, float z,
-                          ColorRGBA color, Vector3f departure, Vector3f arrival, float speed, String platformID) {
-        super(manager, main, x, y, z, departure.x, departure.y, departure.z, color, platformID);
+    public MovingPlatform(CollisionManager manager, SimpleApplication main, float[] size, Vector3f departure, Vector3f arrival,
+                          float speed, ColorRGBA color, String platformID) {
+        super(manager, main, size, departure, color, platformID);
         this.departure = departure;
         this.arrival = arrival;
         this.speed = speed;
@@ -29,17 +24,32 @@ public class MovingPlatform extends ColoredPlatform {
 
     private void createMove() {
         direction = new Vector3f(arrival.x - departure.x,
-                arrival.y - departure.y, arrival.z -departure.z);
+                arrival.y - departure.y, arrival.z - departure.z);
         this.initialDirection = direction;
         resetMovement();
     }
+
     public void resetMovement() {
         body.setLinearVelocity(direction.mult(speed));
     }
 
-    public Vector3f getDirection() { return direction; }
-    public void setDirection(Vector3f direction) { this.direction = direction; }
-    public Vector3f getDeparture() { return departure; }
-    public Vector3f getArrival() { return arrival; }
-    public Vector3f getInitialDirection() { return initialDirection; }
+    public Vector3f getDirection() {
+        return direction;
+    }
+
+    public void setDirection(Vector3f direction) {
+        this.direction = direction;
+    }
+
+    public Vector3f getDeparture() {
+        return departure;
+    }
+
+    public Vector3f getArrival() {
+        return arrival;
+    }
+
+    public Vector3f getInitialDirection() {
+        return initialDirection;
+    }
 }

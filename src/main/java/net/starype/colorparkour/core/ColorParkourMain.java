@@ -10,9 +10,9 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import net.starype.colorparkour.collision.CollisionManager;
-import net.starype.colorparkour.utils.PlatformBuilder;
 import net.starype.colorparkour.entity.player.Player;
 import net.starype.colorparkour.settings.Setup;
+import net.starype.colorparkour.utils.PlatformBuilder;
 import net.starype.colorparkour.utils.TimerSY;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,19 +22,13 @@ import java.util.Arrays;
 public class ColorParkourMain extends SimpleApplication {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SimpleApplication.class);
-
-    private CollisionManager collManager;
-    private ModuleManager moduleManager;
-    private Player player;
     public static final Vector3f GAME_GRAVITY = new Vector3f(0, -40f, 0);
     public static final Vector3f LOW_GRAVITY = new Vector3f(0, -20f, 0);
     public static final Vector3f HIGH_GRAVITY = new Vector3f(0, -55f, 0);
-
+    private CollisionManager collManager;
+    private ModuleManager moduleManager;
+    private Player player;
     private TimerSY firstLevelTimer;
-
-    public static void main(String[] args) {
-        new ColorParkourMain();
-    }
 
     private ColorParkourMain() {
         LOGGER.info("Game initialization...");
@@ -57,6 +51,10 @@ public class ColorParkourMain extends SimpleApplication {
         super.start();
     }
 
+    public static void main(String[] args) {
+        new ColorParkourMain();
+    }
+
     @Override
     public void simpleInitApp() {
 
@@ -76,12 +74,12 @@ public class ColorParkourMain extends SimpleApplication {
 
         PhysicsSpace space = collManager.getAppState().getPhysicsSpace();
         ModuleSY firstMap = new ModuleSY(this, builder, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
-                .add(builder.ice(5, 3f, 5, 0, -3, 0, ColorRGBA.White, "0:0"),
-                        builder.doubleJump(5, 1f, 5, 20, -1, 0, ColorRGBA.Blue, "0:1"),
-                        builder.colored(5, 0.8f, 5, 50, 1, 0, ColorRGBA.Orange, "0:2"),
-                        builder.sticky(5, 0.5f, 5, new Vector3f(65, 1, 30),
+                .add(builder.ice(new float[]{5, 3f, 5}, new float[]{0, -3, 0}, ColorRGBA.White, "0:0"),
+                        builder.doubleJump(new float[]{5, 1f, 5}, new float[]{20, -1, 0}, ColorRGBA.Blue, "0:1"),
+                        builder.colored(new float[]{5, 0.8f, 5}, new float[]{50, 1, 0}, ColorRGBA.Orange, "0:2"),
+                        builder.sticky(new float[]{5, 0.5f, 5}, new Vector3f(65, 1, 30),
                                 new Vector3f(65, 1, -30), 0.1f, ColorRGBA.Black, "0:3"),
-                        builder.doubleJump(2f, 0.5f, 2f, 80, 0, -20f, ColorRGBA.Red, "0:4"))
+                        builder.doubleJump(new float[]{2f, 0.5f, 2f}, new float[]{80, 0, -20f}, ColorRGBA.Red, "0:4"))
                 .build();
 
         moduleManager.add(firstMap);
@@ -107,6 +105,7 @@ public class ColorParkourMain extends SimpleApplication {
     public void resetGame() {
         player.setPosition(moduleManager.getModules().get(0).getInitialLocation());
     }
+
     public void attachChild(Spatial... spatials) {
         Arrays.asList(spatials).forEach(s -> rootNode.attachChild(s));
     }
@@ -128,5 +127,9 @@ public class ColorParkourMain extends SimpleApplication {
 
     public ModuleManager getModuleManager() {
         return moduleManager;
+    }
+
+    public CollisionManager getCollisionManager() {
+        return collManager;
     }
 }
