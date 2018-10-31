@@ -19,6 +19,7 @@ public class ColoredPlatform extends PhysicEntity {
     private ColorRGBA color;
     private Material mat;
     private final String platformID;
+    private Vector3f size;
 
     public ColoredPlatform(CollisionManager manager, SimpleApplication main, float[] size, float[] position, ColorRGBA color, String platformID) {
         this(manager, main, size, new Vector3f(position[0], position[1], position[2]), color, platformID);
@@ -28,6 +29,7 @@ public class ColoredPlatform extends PhysicEntity {
                            ColorRGBA color, String platformID) {
         super(manager, main);
         this.color = color;
+        this.size = new Vector3f(size[0], size[1], size[2]);
         this.platformID = platformID;
         loadBody(size[0], size[1], size[2], pos, color);
     }
@@ -68,4 +70,5 @@ public class ColoredPlatform extends PhysicEntity {
         this.color = color;
         mat.setColor("Color", color);
     }
+    public Vector3f getSize() { return size; }
 }

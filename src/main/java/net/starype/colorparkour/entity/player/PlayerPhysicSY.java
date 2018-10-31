@@ -99,8 +99,8 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         checkInAir();
 
         if (body.getPhysicsLocation().y < -30) {
-            // TODO : Use the last check point location
-            body.setPhysicsLocation(new Vector3f(0, 20, 0));
+            Vector3f checkPoint = moduleManager.getCurrentModule().getInitialLocation();
+            body.setPhysicsLocation(checkPoint.add(0, 2, 0));
             main.getViewPort().setBackgroundColor(ColorRGBA.randomColor());
             body.setLinearVelocity(new Vector3f());
         }

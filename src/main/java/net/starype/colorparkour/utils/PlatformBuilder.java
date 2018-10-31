@@ -1,7 +1,6 @@
 package net.starype.colorparkour.utils;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import net.starype.colorparkour.collision.CollisionManager;
@@ -14,15 +13,12 @@ public class PlatformBuilder {
     public static final Logger LOGGER = LoggerFactory.getLogger(PlatformBuilder.class);
     private CollisionManager manager;
     private SimpleApplication main;
-    private RigidBodyControl body;
 
     public PlatformBuilder(CollisionManager manager, SimpleApplication main) {
         LOGGER.info("Initializing PlatformBuilder");
         this.manager = manager;
         this.main = main;
     }
-
-    public void attachBody(RigidBodyControl body) { this.body = body; }
 
     public ColoredPlatform colored(float[] size, float[] position, ColorRGBA color, String platformID) {
         LOGGER.debug("Created a colored platform.");

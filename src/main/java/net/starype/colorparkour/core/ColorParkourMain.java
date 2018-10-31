@@ -70,7 +70,6 @@ public class ColorParkourMain extends SimpleApplication {
         LOGGER.info("Initializing collisions");
         player = new Player(this, cam, collManager, moduleManager);
         player.initialize();
-        builder.attachBody(player.getBody());
 
         PhysicsSpace space = collManager.getAppState().getPhysicsSpace();
         ModuleSY firstMap = new ModuleSY(this, builder, space, this.getClass().getResource("/levels/firstLevel.json").getPath())

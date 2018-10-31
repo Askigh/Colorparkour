@@ -1,6 +1,7 @@
 package net.starype.colorparkour.core;
 
 import com.jme3.math.Vector3f;
+import net.starype.colorparkour.entity.platform.ColoredPlatform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,9 @@ public class ModuleManager {
     public void checkNext(Vector3f playerPos) {
         ModuleSY current = modules.get(currentModule);
         Vector3f end = current.getFinalPosition();
-        if (playerPos.add(0,-1,0).add(end.mult(-1)).length() < 1.5f) {
+        ColoredPlatform lastPlatform = current.getPlatforms().get(current.getPlatforms().size()-1);
+        float distanceMax = (lastPlatform.getSize().x + lastPlatform.getSize().y) / 2;
+        if (playerPos.add(0,-1,0).add(end.mult(-1)).length() < distanceMax) {
             if(currentModule < modules.size() -1) {
                 currentModule++;
                 current.setActive(false);

@@ -32,7 +32,7 @@ public enum PlatformJSONBuilder {
     private final Class<? extends ColoredPlatform> platformClass;
     private final String platformName;
 
-    private PlatformJSONBuilder(Class<? extends ColoredPlatform> platformClass, String platformName, Set<String> unsettableParameters) {
+    PlatformJSONBuilder(Class<? extends ColoredPlatform> platformClass, String platformName, Set<String> unsettableParameters) {
         this.platformClass = platformClass;
         this.platformName = platformName;
         this.unsettableParameters = unsettableParameters;
