@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import net.starype.colorparkour.entity.platform.ColoredPlatform;
 import net.starype.colorparkour.entity.platform.MovingPlatform;
+import net.starype.colorparkour.entity.platform.StickyMovingPlatform;
 import net.starype.colorparkour.utils.PlatformBuilder;
 import net.starype.colorparkour.utils.PlatformJSONBuilder;
 import org.slf4j.Logger;
@@ -23,15 +25,13 @@ public class ModuleSY {
     public static final Logger LOGGER = LoggerFactory.getLogger(ModuleSY.class);
 
     private List<ColoredPlatform> platforms;
-    private PlatformBuilder manager;
     private ColorParkourMain main;
     private PhysicsSpace space;
     private Vector3f finalPosition;
     private final String path;
     private String levelName;
 
-    public ModuleSY(ColorParkourMain main, PlatformBuilder manager, PhysicsSpace space, String path) {
-        this.manager = manager;
+    public ModuleSY(ColorParkourMain main, PhysicsSpace space, String path) {
         this.platforms = new ArrayList<>();
         this.main = main;
         this.space = space;
@@ -97,6 +97,13 @@ public class ModuleSY {
                 if(closeToArr || closeToDep) {
                     movPlat.setDirection(movPlat.getDirection().mult(-1));
                     movPlat.resetMovement();
+                    if(plat instanceof StickyMovingPlatform) {
+                        StickyMovingPlatform sticky = (StickyMovingPlatform) plat;
+                        RigidBodyControl player = main.getPlayer().getBody();
+                        if(sticky.getPosition().add(player.getPhysicsLocation().mult(-1)).length() < sticky.getSize().length()) {
+                            player.setLinearVelocity(new Vector3f());
+                        }
+                    }
                 }
             }
         }

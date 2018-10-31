@@ -8,14 +8,31 @@ import net.starype.colorparkour.entity.player.PlayerPhysicSY;
 
 public class StickyMovingPlatform extends MovingPlatform {
 
+    private boolean playerInContact;
+
     public StickyMovingPlatform(CollisionManager manager, SimpleApplication main, float[] size, Vector3f departure,
                                 Vector3f arrival, float speed, ColorRGBA color, String platformID) {
         super(manager, main, size, departure, arrival, speed, color, platformID);
+        body.setFriction(1);
+    }
+
+    public void stick(PlayerPhysicSY physics, boolean multiply) {
+        /*Vector3f spaceSpeed = physics.getBody().getLinearVelocity();
+        physics.getBody().setLinearVelocity(spaceSpeed.add(direction.mult(speed * (multiply ? 2 : 1))));
+        physics.getBody().applyImpulse(spaceSpeed.add(direction.mult(speed * (multiply ? 2 : 1))),physics.getBody().getPhysicsLocation());
+        LOGGER.info(""+direction.mult(speed* (multiply ? 2 : 1)));
+        playerInContact = true;*/
     }
 
     public void stick(PlayerPhysicSY physics) {
-        LOGGER.info(String.valueOf(physics.getForce()));
-        physics.getForce().set(physics.getForce().add(direction.mult(10)));
-        LOGGER.info("Sticking player " + direction.mult(speed) + " " + physics.getForce() + " " + body.getLinearVelocity());
+        stick(physics, false);
+    }
+
+    public boolean isPlayerInContact() {
+        return playerInContact;
+    }
+
+    public void setPlayerInContact(boolean playerInContact) {
+        this.playerInContact = playerInContact;
     }
 }

@@ -1,12 +1,17 @@
 package net.starype.colorparkour.entity.player;
 
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Spatial;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.core.ColorParkourMain;
 import net.starype.colorparkour.core.ModuleManager;
+import net.starype.colorparkour.core.ModuleSY;
 import net.starype.colorparkour.entity.PhysicEntity;
+import net.starype.colorparkour.entity.platform.ColoredPlatform;
+import net.starype.colorparkour.entity.platform.MovingPlatform;
 import net.starype.colorparkour.utils.PlatformBuilder;
 
 public class Player extends PhysicEntity {
@@ -28,6 +33,20 @@ public class Player extends PhysicEntity {
     public void initialize() {
         camera.initMappings();
         physicBody.initListener();
+    }
+
+    public void resetPosition(Vector3f pos, ModuleSY module) {
+        body.setLinearVelocity(new Vector3f());
+        System.out.println(pos);
+        setPosition(pos);
+        camera.getSource().setLocation(pos);
+        camera.getSource().setRotation(new Quaternion(0, 0.7f, 0, 0.7f));
+
+        for(ColoredPlatform col : module.getPlatforms()) {
+            if(col instanceof MovingPlatform) {
+                col.setPosition(((MovingPlatform) col).getDeparture());
+            }
+        }
     }
 
     public PlayerPhysicSY getPhysicPlayer() { return physicBody; }

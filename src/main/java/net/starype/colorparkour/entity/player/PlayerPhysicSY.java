@@ -7,6 +7,7 @@ import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -33,7 +34,7 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     private Player player;
     private RigidBodyControl body;
 
-    private Vector3f camForward, camLeft, walkDirection;
+    private final Vector3f camForward, camLeft, walkDirection;
     public boolean left = false, right = false, forward = false, backward = false;
     private float speedBoost = 1f;
 
@@ -47,7 +48,7 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     private float friction_expansion;
     private float jump_power;
 
-    private Vector3f force;
+    private final Vector3f force = new Vector3f();
 
     private ModuleManager moduleManager;
 
@@ -100,9 +101,10 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
         if (body.getPhysicsLocation().y < -30) {
             Vector3f checkPoint = moduleManager.getCurrentModule().getInitialLocation();
-            body.setPhysicsLocation(checkPoint.add(0, 2, 0));
-            main.getViewPort().setBackgroundColor(ColorRGBA.randomColor());
+            float ySize = moduleManager.first().getSize().y;
             body.setLinearVelocity(new Vector3f());
+            player.resetPosition(checkPoint.add(0, 2+ySize, 0), moduleManager.getCurrentModule());
+            main.getViewPort().setBackgroundColor(ColorRGBA.randomColor());
         }
         camForward.set(cam.getDirection()).multLocal(0.6f * tpf * TPF_COEFF_AVERAGE);
         camLeft.set(cam.getLeft().multLocal(0.4f * tpf * TPF_COEFF_AVERAGE));
@@ -136,15 +138,21 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         else
             friction = standard_friction * (float) Math.pow(speedXZ, friction_expansion);
 
-        force = walkDirection.mult(acceleration * speedBoost)
-                .add(new Vector3f(flatSpeed.x * friction, spaceSpeed.y, flatSpeed.y * friction));
-
+        force.set(walkDirection.mult(acceleration * speedBoost)
+                .add(new Vector3f(flatSpeed.x * friction, spaceSpeed.y, flatSpeed.y * friction)));
         body.applyCentralForce(force);
     }
 
     private void checkInAir() {
-        if (body.getLinearVelocity().y < 0) {
+        if (body.getLinearVelocity().y < -0.1f) {
             inAir = true;
+        }
+        if (inAir) {
+            for (ColoredPlatform plat : moduleManager.getCurrentModule().getPlatforms()) {
+                if (plat instanceof StickyMovingPlatform) {
+                    ((StickyMovingPlatform) plat).setPlayerInContact(false);
+                }
+            }
         }
     }
 
@@ -155,7 +163,7 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         else {
             jumpAmount--;
         }
-
+        inAir = true;
         Vector3f spaceSpeed = body.getLinearVelocity();
         /*
             Modification of the "classic" physics. If the body is falling, we still want
@@ -192,8 +200,8 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
                 jumpReset = true;
 
                 if (platform instanceof StickyMovingPlatform) {
-                    LOGGER.debug("Resetting direction");
                     ((StickyMovingPlatform) platform).stick(this);
+                    ((StickyMovingPlatform) platform).setPlayerInContact(true);
                 }
                 if (platform instanceof IcePlatform) {
                     slide = true;
@@ -265,6 +273,10 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
     public Vector3f getForce() {
         return force;
+    }
+
+    public RigidBodyControl getBody() {
+        return body;
     }
 
     // non used overrided method

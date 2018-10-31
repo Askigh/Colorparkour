@@ -5,6 +5,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.light.Light;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
@@ -70,9 +71,10 @@ public class ColorParkourMain extends SimpleApplication {
         LOGGER.info("Initializing collisions");
         player = new Player(this, cam, collManager, moduleManager);
         player.initialize();
+        moduleManager.attachPlayer(player);
 
         PhysicsSpace space = collManager.getAppState().getPhysicsSpace();
-        ModuleSY firstMap = new ModuleSY(this, builder, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
+        ModuleSY firstMap = new ModuleSY(this, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
                 .add(builder.ice(new float[]{5, 3f, 5}, new float[]{0, -3, 0}, ColorRGBA.White, "0:0"),
                         builder.doubleJump(new float[]{5, 0.1f, 5}, new float[]{20, -1, 0}, ColorRGBA.Blue, "0:1"),
                         builder.colored(new float[]{5, 0.1f, 5}, new float[]{50, 1, 0}, ColorRGBA.Orange, "0:2"),
@@ -85,6 +87,7 @@ public class ColorParkourMain extends SimpleApplication {
         moduleManager.start();
         Vector3f initial = new Vector3f(0, 20, 0);
         cam.setLocation(initial);
+        cam.setRotation(new Quaternion(0, 0.7f, 0, 0.7f));
         player.setPosition(initial);
 
         firstLevelTimer = new TimerSY(guiFont, ColorRGBA.Blue, new Vector2f(0, 50), "Timer: ", "mm:ss", "firstLevel");
@@ -99,10 +102,6 @@ public class ColorParkourMain extends SimpleApplication {
         moduleManager.getCurrentModule().reversePlatforms();
         firstLevelTimer.updateTimer(tpf);
         moduleManager.checkNext(player.getBody().getPhysicsLocation());
-    }
-
-    public void resetGame() {
-        player.setPosition(moduleManager.getModules().get(0).getInitialLocation());
     }
 
     public void attachChild(Spatial... spatials) {

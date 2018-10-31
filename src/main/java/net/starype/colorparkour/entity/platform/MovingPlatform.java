@@ -19,6 +19,7 @@ public class MovingPlatform extends ColoredPlatform {
         this.departure = departure;
         this.arrival = arrival;
         this.speed = speed;
+        body.setFriction(0);
         createMove();
     }
 

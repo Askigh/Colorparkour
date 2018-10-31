@@ -35,7 +35,7 @@ public class PlatformBuilder {
         return new DoubleJumpPlatform(manager, main, size, position, color, platformID);
     }
 
-    public ColoredPlatform moving(float[] size, ColorRGBA color, Vector3f departure, Vector3f arrival, float speed, String platformID) {
+    public ColoredPlatform moving(float[] size, Vector3f departure, Vector3f arrival, float speed, ColorRGBA color,String platformID) {
         LOGGER.debug("Created a moving platform.");
         return new MovingPlatform(manager, main, size, departure, arrival, speed, color, platformID);
     }

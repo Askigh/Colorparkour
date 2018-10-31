@@ -82,4 +82,5 @@ public class CameraSY implements AnalogListener {
 
         source.setAxes(q);
     }
+    public Camera getSource() { return source; }
 }
