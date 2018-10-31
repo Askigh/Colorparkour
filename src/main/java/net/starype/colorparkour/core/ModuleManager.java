@@ -44,7 +44,7 @@ public class ModuleManager {
         ModuleSY current = modules.get(currentModule);
         Vector3f end = current.getFinalPosition();
         ColoredPlatform lastPlatform = current.getPlatforms().get(current.getPlatforms().size()-1);
-        float distanceMax = (lastPlatform.getSize().x + lastPlatform.getSize().y) / 2;
+        float distanceMax = lastPlatform.getSize().x + lastPlatform.getSize().y / 2;
         if (playerPos.add(0,-1,0).add(end.mult(-1)).length() < distanceMax) {
             if(currentModule < modules.size() -1) {
                 currentModule++;

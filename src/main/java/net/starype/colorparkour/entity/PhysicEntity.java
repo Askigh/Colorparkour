@@ -19,7 +19,10 @@ public abstract class PhysicEntity {
     }
 
     protected void addInPhysicsSpace() {
-        manager.getAppState().getPhysicsSpace().add(body);
+        addInPhysicsSpace(body);
+    }
+    protected void addInPhysicsSpace(RigidBodyControl target) {
+        manager.getAppState().getPhysicsSpace().add(target);
     }
 
     public Vector3f getPosition() {

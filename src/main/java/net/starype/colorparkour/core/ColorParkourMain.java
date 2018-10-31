@@ -74,11 +74,11 @@ public class ColorParkourMain extends SimpleApplication {
         PhysicsSpace space = collManager.getAppState().getPhysicsSpace();
         ModuleSY firstMap = new ModuleSY(this, builder, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
                 .add(builder.ice(new float[]{5, 3f, 5}, new float[]{0, -3, 0}, ColorRGBA.White, "0:0"),
-                        builder.doubleJump(new float[]{5, 1f, 5}, new float[]{20, -1, 0}, ColorRGBA.Blue, "0:1"),
-                        builder.colored(new float[]{5, 0.8f, 5}, new float[]{50, 1, 0}, ColorRGBA.Orange, "0:2"),
-                        builder.sticky(new float[]{5, 0.5f, 5}, new Vector3f(65, 1, 30),
+                        builder.doubleJump(new float[]{5, 0.1f, 5}, new float[]{20, -1, 0}, ColorRGBA.Blue, "0:1"),
+                        builder.colored(new float[]{5, 0.1f, 5}, new float[]{50, 1, 0}, ColorRGBA.Orange, "0:2"),
+                        builder.sticky(new float[]{5, 0.1f, 5}, new Vector3f(65, 1, 30),
                                 new Vector3f(65, 1, -30), 0.1f, ColorRGBA.Black, "0:3"),
-                        builder.doubleJump(new float[]{2f, 0.5f, 2f}, new float[]{80, 0, -20f}, ColorRGBA.Red, "0:4"))
+                        builder.doubleJump(new float[]{2f, 0.3f, 2f}, new float[]{80, 0, -20f}, ColorRGBA.Red, "0:4"))
                 .build();
 
         moduleManager.add(firstMap);

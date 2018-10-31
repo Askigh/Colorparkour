@@ -2,6 +2,7 @@ package net.starype.colorparkour.entity.platform;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -37,19 +38,23 @@ public class ColoredPlatform extends PhysicEntity {
     protected void loadBody(float sizeX, float sizeY, float sizeZ, Vector3f pos, ColorRGBA color) {
 
         Box box = new Box(sizeX, sizeY, sizeZ);
+        Box hitBox = new Box(sizeX, sizeY+1, sizeZ);
         appearance = new Geometry("box", box);
         mat = loadMaterial(color);
         appearance.setMaterial(mat);
-        //((Geometry) appearance).getMesh().scaleTextureCoordinates(new Vector2f(x,z));
         main.getRootNode().attachChild(appearance);
+
         int mass = this instanceof MovingPlatform ? Integer.MAX_VALUE : 0;
-        body = manager.loadObject(BoxCollisionShape.class, mass, appearance);
+        body = manager.loadObject(BoxCollisionShape.class, mass, false, new Geometry("hitbox", hitBox));
+        body.setPhysicsLocation(pos.add(0, -1f, 0));
 
         appearance.setLocalTranslation(pos);
-        body.setPhysicsLocation(pos);
-        body.setRestitution(0);
+        appearance.addControl(body);
+
         super.addInPhysicsSpace();
+        //super.addInPhysicsSpace(underBody);
         body.setGravity(new Vector3f());
+        //underBody.setGravity(new Vector3f());
     }
 
     private Material loadMaterial(ColorRGBA color) {

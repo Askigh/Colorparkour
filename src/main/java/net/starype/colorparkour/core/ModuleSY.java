@@ -76,6 +76,12 @@ public class ModuleSY {
                 return Optional.of(plat);
         return Optional.empty();
     }
+    public Optional<ColoredPlatform> getUnderPlatformBySpatial(Spatial spatial) {
+        for (ColoredPlatform plat : platforms)
+            if(plat.getAppearance().equals(spatial))
+                return Optional.of(plat);
+        return Optional.empty();
+    }
 
     public void reversePlatforms() {
         for(ColoredPlatform plat : platforms) {

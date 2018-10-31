@@ -79,7 +79,7 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     private RigidBodyControl createBody() {
 
         player.setAppearance(new Geometry("hit_box", new Box(0.1f, 1.8f, 0.1f)));
-        RigidBodyControl body = manager.loadObject(BoxCollisionShape.class, 20, player.getAppearance());
+        RigidBodyControl body = manager.loadObject(BoxCollisionShape.class, 20, true, player.getAppearance());
         body.setPhysicsLocation(cam.getLocation());
         body.setPhysicsRotation(cam.getRotation());
         body.setGravity(ColorParkourMain.GAME_GRAVITY);
