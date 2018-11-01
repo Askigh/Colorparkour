@@ -147,13 +147,6 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         if (body.getLinearVelocity().y < -0.1f) {
             inAir = true;
         }
-        if (inAir) {
-            for (ColoredPlatform plat : moduleManager.getCurrentModule().getPlatforms()) {
-                if (plat instanceof StickyMovingPlatform) {
-                    ((StickyMovingPlatform) plat).setPlayerInContact(false);
-                }
-            }
-        }
     }
 
     public void jump() {
@@ -199,10 +192,6 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
                 jumpAmount = (short) (platform instanceof DoubleJumpPlatform ? 2 : 1);
                 jumpReset = true;
 
-                if (platform instanceof StickyMovingPlatform) {
-                    ((StickyMovingPlatform) platform).stick(this);
-                    ((StickyMovingPlatform) platform).setPlayerInContact(true);
-                }
                 if (platform instanceof IcePlatform) {
                     slide = true;
                     body.setFriction(0);

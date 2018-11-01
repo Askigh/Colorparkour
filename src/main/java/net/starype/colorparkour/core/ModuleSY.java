@@ -102,6 +102,7 @@ public class ModuleSY {
                         RigidBodyControl player = main.getPlayer().getBody();
                         if(sticky.getPosition().add(player.getPhysicsLocation().mult(-1)).length() < sticky.getSize().length()) {
                             player.setLinearVelocity(new Vector3f());
+                            player.clearForces();
                         }
                     }
                 }
