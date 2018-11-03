@@ -38,7 +38,7 @@ public class ColoredPlatform extends PhysicEntity {
     protected void loadBody(float sizeX, float sizeY, float sizeZ, Vector3f pos, ColorRGBA color) {
 
         Box box = new Box(sizeX, sizeY, sizeZ);
-        Box hitBox = new Box(sizeX, sizeY+1, sizeZ);
+        Box hitBox = new Box(sizeX+0.1f, sizeY+1, sizeZ+0.1f);
         appearance = new Geometry("box", box);
         mat = loadMaterial(color);
         appearance.setMaterial(mat);

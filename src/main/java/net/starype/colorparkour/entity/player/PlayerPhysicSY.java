@@ -18,6 +18,7 @@ import net.starype.colorparkour.core.ColorParkourMain;
 import net.starype.colorparkour.core.ModuleSY;
 import net.starype.colorparkour.core.ModuleManager;
 import net.starype.colorparkour.entity.platform.*;
+import net.starype.colorparkour.entity.platform.event.ContactEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,7 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     private Camera cam;
     private Player player;
     private RigidBodyControl body;
+    private ColoredPlatform currentContact;
 
     private final Vector3f camForward, camLeft, walkDirection;
     public boolean left = false, right = false, forward = false, backward = false;
@@ -81,6 +83,7 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
         player.setAppearance(new Geometry("hit_box", new Box(0.1f, 1.8f, 0.1f)));
         RigidBodyControl body = manager.loadObject(BoxCollisionShape.class, 20, true, player.getAppearance());
+        manager.getAppState().getPhysicsSpace().add(body);
         body.setPhysicsLocation(cam.getLocation());
         body.setPhysicsRotation(cam.getRotation());
         body.setGravity(ColorParkourMain.GAME_GRAVITY);
@@ -103,7 +106,7 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
             Vector3f checkPoint = moduleManager.getCurrentModule().getInitialLocation();
             float ySize = moduleManager.first().getSize().y;
             body.setLinearVelocity(new Vector3f());
-            player.resetPosition(checkPoint.add(0, 2+ySize, 0), moduleManager.getCurrentModule());
+            player.resetPosition(checkPoint.add(0, 2 + ySize, 0), moduleManager.getCurrentModule());
             main.getViewPort().setBackgroundColor(ColorRGBA.randomColor());
         }
         camForward.set(cam.getDirection()).multLocal(0.6f * tpf * TPF_COEFF_AVERAGE);
@@ -144,7 +147,7 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     }
 
     private void checkInAir() {
-        if (body.getLinearVelocity().y < -0.1f) {
+        if (body.getLinearVelocity().y < -1f) {
             inAir = true;
         }
     }
@@ -170,41 +173,70 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
                 jumpReset = false;
             }
         }, 30);
+
+
+        if (currentContact != null && currentContact instanceof ContactEvent) {
+            ((ContactEvent) currentContact).leaveByJump(this);
+            currentContact = null;
+        }
+
+    }
+
+    public void addJump() {
+        jumpAmount++;
     }
 
     @Override
     public void collision(PhysicsCollisionEvent event) {
-        if (event.getNodeA().equals(player.getAppearance()) || event.getNodeB().equals(player.getAppearance())) {
-            inAir = false;
 
-            ColoredPlatform platform;
-            ModuleSY current = moduleManager.getCurrentModule();
-            if (current.getPlatformBySpatial(event.getNodeA()).isPresent()) {
-                platform = current.getPlatformBySpatial(event.getNodeA()).get();
-            } else if (current.getPlatformBySpatial(event.getNodeB()).isPresent()) {
-                platform = current.getPlatformBySpatial(event.getNodeB()).get();
+        if (event.getNodeA() == null || event.getNodeB() == null)
+            return;
+        if (!(event.getNodeA().equals(player.getAppearance()) || event.getNodeB().equals(player.getAppearance()))) {
+            return;
+        }
+
+        ColoredPlatform platform;
+        ModuleSY current = moduleManager.getCurrentModule();
+        if (current.getPlatformBySpatial(event.getNodeA()).isPresent()) {
+            platform = current.getPlatformBySpatial(event.getNodeA()).get();
+        } else if (current.getPlatformBySpatial(event.getNodeB()).isPresent()) {
+            platform = current.getPlatformBySpatial(event.getNodeB()).get();
+        } else {
+            LOGGER.error("Platform not found");
+            return;
+        }
+        currentContact = platform;
+
+        executePlatformEvents(inAir);
+
+        if (!jumpReset) {
+            System.out.println("Reset");
+            jumpAmount = 1;//(short) (platform instanceof DoubleJumpPlatform ? 2 : 1);
+            jumpReset = true;
+        /*
+            if (platform instanceof IcePlatform) {
+                slide = true;
+                body.setFriction(0);
             } else {
-                LOGGER.error("Platform not found");
-                return;
-            }
+                slide = false;
+                body.setFriction(1);
+            }*/
+        }
+        inAir = false;
 
-            if (!jumpReset) {
-                jumpAmount = (short) (platform instanceof DoubleJumpPlatform ? 2 : 1);
-                jumpReset = true;
+    }
 
-                if (platform instanceof IcePlatform) {
-                    slide = true;
-                    body.setFriction(0);
-                } else {
-                    slide = false;
-                    body.setFriction(1);
+    public void executePlatformEvents(boolean inAir) {
+        for (ColoredPlatform plat : moduleManager.getCurrentModule().getPlatforms()) {
+            if (plat instanceof ContactEvent) {
+                ContactEvent contactEventPlatform = (ContactEvent) plat;
+                contactEventPlatform.collision(this);
+
+                if (inAir && !jumpReset) {
+                    contactEventPlatform.collided(this);
                 }
             }
         }
-    }
-
-    private boolean noKeyTouched() {
-        return !right && !left && !forward && !backward;
     }
 
     public PlayerPhysicSY setLowSpeedFriction(float low_speed_friction) {

@@ -19,7 +19,9 @@ public class PlatformBuilder {
         this.manager = manager;
         this.main = main;
     }
-
+    public ColoredPlatform debug(float[] size, Vector3f position, ColorRGBA color, String platformID) {
+        return new DebugPlatform(manager, main, size, position, color, platformID);
+    }
     public ColoredPlatform colored(float[] size, float[] position, ColorRGBA color, String platformID) {
         LOGGER.debug("Created a colored platform.");
         return new ColoredPlatform(manager, main, size, position, color, platformID);

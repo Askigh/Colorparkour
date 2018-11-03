@@ -38,12 +38,29 @@ public class CollisionManager {
      * @return a RigidBodyControl created from the data added
      */
     public RigidBodyControl loadObject(Class<? extends CollisionShape> type, int mass, boolean addControl, Object... datas) {
-        if(datas.length == 0) throw new IllegalArgumentException("Constructor datas cannot be ommitted");
-
+        LOGGER.info("Loading an object");
+        CollisionShape shape;
         // if a CollisionShapeFactory is required, for complex shapes
         if(type.equals(CollisionShape.class)
-                || type.equals(HullCollisionShape.class) || type.equals(BoxCollisionShape.class))
-            return processForSpatials(datas[0], mass, type, addControl);
+                || type.equals(HullCollisionShape.class) || type.equals(BoxCollisionShape.class)) {
+            shape = loadSpatialShape(datas[0], mass, type);
+            LOGGER.info("Box / CollisionShape");
+        }
+        else {
+            LOGGER.info("Other collisionshape");
+            shape = loadShape(type, datas);
+        }
+
+        RigidBodyControl control = new RigidBodyControl(shape, mass);
+        if(datas[0] instanceof Spatial && addControl) {
+            ((Spatial) datas[0]).addControl(control);
+        }
+        LOGGER.debug("Initialized new RigibBodyControl");
+        return control;
+    }
+
+    public CollisionShape loadShape(Class<? extends CollisionShape> type, Object... datas) {
+        if(datas.length == 0) throw new IllegalArgumentException("Constructor datas cannot be ommitted");
 
         // loading a new instance of the type parameter
         Class<?>[] typeParams = new Class<?>[datas.length];
@@ -59,36 +76,25 @@ public class CollisionManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        // creating the body
-        RigidBodyControl control = new RigidBodyControl(shape, mass);
-        LOGGER.debug("Initialized new RigibBodyControl");
-        return control;
+        return shape;
     }
 
-    private RigidBodyControl processForSpatials(Object spatial, int mass, Class<? extends CollisionShape> type, boolean addControl) {
+    public CollisionShape loadSpatialShape(Object spatial, int mass, Class<? extends CollisionShape> type) {
 
         if(!(spatial instanceof Spatial))
             throw new IllegalArgumentException("Cannot load a CollisionShape if datas[0] is not a spatial");
 
         CollisionShape shape;
-        RigidBodyControl control;
 
         if(type.equals(BoxCollisionShape.class)) {
             shape = CollisionShapeFactory.createBoxShape((Spatial) spatial);
-            control = new RigidBodyControl(shape, mass);
         }
         else {
             shape = mass > 0
                     ? CollisionShapeFactory.createDynamicMeshShape(((Spatial) spatial))
                     : CollisionShapeFactory.createMeshShape((Spatial) spatial);
-
-            control = new RigidBodyControl(shape, mass);
         }
-        if(addControl)
-            ((Spatial) spatial).addControl(control);
-        appState.getPhysicsSpace().add(control);
-        return control;
+        return shape;
     }
 
     public BulletAppState getAppState() { return appState; }
