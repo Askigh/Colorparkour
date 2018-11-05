@@ -22,6 +22,11 @@ public class StickyMovingPlatform extends MovingPlatform implements ContactEvent
     }
 
     @Override
+    public void collision(PlayerPhysicSY physicSY) {
+        referential.update();
+    }
+
+    @Override
     public void collided(PlayerPhysicSY physicSY) {
         LOGGER.warn("Enabling referential");
         ((ColorParkourMain) main).getPlayer().getBody().setFriction(0);

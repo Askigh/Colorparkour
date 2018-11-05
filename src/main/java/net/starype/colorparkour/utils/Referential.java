@@ -93,9 +93,8 @@ public class Referential {
             if (!ref.isEnabled()) {
                 continue;
             }
-            ref.getExternalBody().setPhysicsLocation(ref.getAttachment().getPhysicsLocation());
             if (ref.getReferentialBody().isPresent()) {
-                ref.referentialPos.set(ref.getReferentialBody().get().getPhysicsLocation().add(0, 2.5f, 0));
+                ref.referentialPos.set(ref.getReferentialBody().get().getPhysicsLocation());
                 ref.referentialSpeed.set(ref.getReferentialBody().get().getLinearVelocity());
             }
             ref.invisibleBody.setPhysicsLocation(new Vector3f(0,-10,0));
@@ -129,9 +128,8 @@ public class Referential {
             LOGGER.error("Cannot update a disabled or destroyed referential");
             return;
         }
-        getExternalBody().setPhysicsLocation(getAttachment().getPhysicsLocation());
         if (getReferentialBody().isPresent()) {
-            referentialPos.set(getReferentialBody().get().getPhysicsLocation().add(0, 2.5f, 0));
+            referentialPos.set(getReferentialBody().get().getPhysicsLocation());
             referentialSpeed.set(getReferentialBody().get().getLinearVelocity());
         }
         invisibleBody.setPhysicsLocation(new Vector3f(0,-10,0));
