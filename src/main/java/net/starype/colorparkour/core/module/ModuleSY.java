@@ -1,4 +1,4 @@
-package net.starype.colorparkour.core;
+package net.starype.colorparkour.core.module;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -7,10 +7,10 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
+import net.starype.colorparkour.core.ColorParkourMain;
 import net.starype.colorparkour.entity.platform.ColoredPlatform;
 import net.starype.colorparkour.entity.platform.MovingPlatform;
 import net.starype.colorparkour.entity.platform.StickyMovingPlatform;
-import net.starype.colorparkour.utils.PlatformBuilder;
 import net.starype.colorparkour.utils.PlatformJSONBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,20 +91,13 @@ public class ModuleSY {
                 float distanceDep = position.add(movPlat.getDeparture().mult(-1)).length();
                 float distanceArr = position.add(movPlat.getArrival().mult(-1)).length();
 
-                boolean closeToArr = distanceArr < 0.5f && movPlat.getDirection().equals(movPlat.getInitialDirection());
-                boolean closeToDep = distanceDep < 0.5f && movPlat.getDirection().mult(-1)
-                        .equals(movPlat.getInitialDirection());
+                Vector3f dir = movPlat.getDirection();
+                boolean closeToArr = distanceArr < 0.5f && dir.equals(movPlat.getInitialDirection());
+                boolean closeToDep = distanceDep < 0.5f && dir.mult(-1).equals(movPlat.getInitialDirection());
+
                 if(closeToArr || closeToDep) {
                     movPlat.setDirection(movPlat.getDirection().mult(-1));
                     movPlat.resetMovement();
-                    if(plat instanceof StickyMovingPlatform) {
-                        StickyMovingPlatform sticky = (StickyMovingPlatform) plat;
-                        RigidBodyControl player = main.getPlayer().getBody();
-                        if(sticky.getPosition().add(player.getPhysicsLocation().mult(-1)).length() < sticky.getSize().length()) {
-                            player.setLinearVelocity(new Vector3f());
-                            player.clearForces();
-                        }
-                    }
                 }
             }
         }

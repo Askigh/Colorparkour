@@ -1,6 +1,7 @@
-package net.starype.colorparkour.core;
+package net.starype.colorparkour.core.module;
 
 import com.jme3.math.Vector3f;
+import net.starype.colorparkour.core.ColorParkourMain;
 import net.starype.colorparkour.entity.platform.ColoredPlatform;
 import net.starype.colorparkour.entity.player.Player;
 import org.slf4j.Logger;

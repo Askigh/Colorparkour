@@ -11,6 +11,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import net.starype.colorparkour.collision.CollisionManager;
+import net.starype.colorparkour.core.module.ModuleManager;
+import net.starype.colorparkour.core.module.ModuleSY;
 import net.starype.colorparkour.entity.player.Player;
 import net.starype.colorparkour.settings.Setup;
 import net.starype.colorparkour.utils.PlatformBuilder;
@@ -31,7 +33,6 @@ public class ColorParkourMain extends SimpleApplication {
     private ModuleManager moduleManager;
     private Player player;
     private TimerSY firstLevelTimer;
-    private Referential ref;
 
     private ColorParkourMain() {
         LOGGER.info("Game initialization...");
@@ -97,10 +98,6 @@ public class ColorParkourMain extends SimpleApplication {
 
         // Init keyboard inputs and light sources
         Setup.init(this);
-
-        // TEST
-        ref = new Referential(moduleManager.first().getBody(), player.getBody(),
-                collManager.getAppState().getPhysicsSpace());
     }
 
     @Override

@@ -52,9 +52,7 @@ public class ColoredPlatform extends PhysicEntity {
         appearance.addControl(body);
 
         super.addInPhysicsSpace();
-        //super.addInPhysicsSpace(underBody);
         body.setGravity(new Vector3f());
-        //underBody.setGravity(new Vector3f());
     }
 
     private Material loadMaterial(ColorRGBA color) {

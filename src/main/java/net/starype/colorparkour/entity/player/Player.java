@@ -7,12 +7,11 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Spatial;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.core.ColorParkourMain;
-import net.starype.colorparkour.core.ModuleManager;
-import net.starype.colorparkour.core.ModuleSY;
+import net.starype.colorparkour.core.module.ModuleManager;
+import net.starype.colorparkour.core.module.ModuleSY;
 import net.starype.colorparkour.entity.PhysicEntity;
 import net.starype.colorparkour.entity.platform.ColoredPlatform;
 import net.starype.colorparkour.entity.platform.MovingPlatform;
-import net.starype.colorparkour.utils.PlatformBuilder;
 
 public class Player extends PhysicEntity {
 

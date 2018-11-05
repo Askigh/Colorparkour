@@ -1,6 +1,5 @@
 package net.starype.colorparkour.utils;
 
-import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import org.slf4j.Logger;
@@ -47,10 +46,9 @@ public class Referential {
      *
      * @param referentialBody the referential
      * @param attachment      the body attached to the referential
-     * @param space           in which physics space you want the referential to be
      */
-    public Referential(RigidBodyControl referentialBody, @Nonnull RigidBodyControl attachment, PhysicsSpace space) {
-        this(referentialBody.getLinearVelocity(), referentialBody.getPhysicsLocation(), attachment, space);
+    public Referential(RigidBodyControl referentialBody, @Nonnull RigidBodyControl attachment) {
+        this(referentialBody.getLinearVelocity(), referentialBody.getPhysicsLocation(), attachment);
         this.referentialBody = referentialBody;
     }
 
@@ -58,13 +56,15 @@ public class Referential {
      * @param referentialSpeed the defined speed of your referential, can be null or changed
      * @param referentialPos   the defined position of your referential, can be null or changed
      * @param attachment       the body linked to the referential
-     * @param space
      */
-    public Referential(Vector3f referentialSpeed, Vector3f referentialPos, @Nonnull RigidBodyControl attachment, PhysicsSpace space) {
+    public Referential(Vector3f referentialSpeed, Vector3f referentialPos, @Nonnull RigidBodyControl attachment) {
         this.referentialPos.set(referentialPos == null ? this.referentialPos : referentialPos);
         this.referentialSpeed.set(referentialSpeed == null ? this.referentialSpeed : referentialSpeed);
         this.attachment = attachment;
         this.invisibleBody = createGhostBody(attachment);
+        this.invisibleBody.setLinearVelocity(new Vector3f());
+        this.invisibleBody.setGravity(new Vector3f());
+
         if (Referential.of(attachment) != null) {
             LOGGER.error("The given body already belongs to a referential");
         }
@@ -75,14 +75,13 @@ public class Referential {
      * @param body
      * @return The Referential the body belongs to
      */
-    public static Referential of(RigidBodyControl body) {
+    public static Optional<Referential> of(RigidBodyControl body) {
         for (Referential ref : referentials) {
             if (ref.getAttachment().equals(body) && ref.getReferentialBody().isPresent()) {
-                return ref;
+                return Optional.of(ref);
             }
         }
-        LOGGER.error("The given body doesn't have any specific referential");
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -94,35 +93,14 @@ public class Referential {
             if (!ref.isEnabled()) {
                 continue;
             }
-            ref.getInvisibleBody().setPhysicsLocation(ref.getAttachment().getPhysicsLocation());
+            ref.getExternalBody().setPhysicsLocation(ref.getAttachment().getPhysicsLocation());
             if (ref.getReferentialBody().isPresent()) {
-                ref.referentialPos.set(ref.getReferentialBody().get().getPhysicsLocation());
+                ref.referentialPos.set(ref.getReferentialBody().get().getPhysicsLocation().add(0, 2.5f, 0));
                 ref.referentialSpeed.set(ref.getReferentialBody().get().getLinearVelocity());
             }
+            ref.invisibleBody.setPhysicsLocation(new Vector3f(0,-10,0));
+            ref.attachment.setLinearVelocity(ref.getReferentialSpeed().add(ref.invisibleBody.getLinearVelocity()));
         }
-    }
-
-    /**
-     * Sets the body to the relative position of the referential
-     *
-     * @param relative the relative position
-     */
-    public void setBodyPosition(Vector3f relative) {
-        this.attachment.setPhysicsLocation(relative.add(referentialPos));
-    }
-
-    /**
-     * @return the relative position of the body
-     */
-    public Vector3f getBodyPosition() {
-        return this.attachment.getPhysicsLocation().add(referentialPos.mult(-1));
-    }
-
-    /**
-     * @return the referential body if present
-     */
-    public Optional<RigidBodyControl> getReferentialBody() {
-        return Optional.of(referentialBody);
     }
 
     /**
@@ -132,7 +110,9 @@ public class Referential {
      * @return the invisible body
      */
     public RigidBodyControl createGhostBody(RigidBodyControl attachment) {
-        return (RigidBodyControl) attachment.jmeClone();
+        RigidBodyControl ghost = (RigidBodyControl) attachment.jmeClone();
+        attachment.getPhysicsSpace().add(ghost);
+        return ghost;
     }
 
     public void destroy() {
@@ -203,7 +183,29 @@ public class Referential {
      * @return the invisible body that is constantly teleported at the location of the attached body
      * if {@link Referential#update()} or {@link Referential#updateAll()} is called
      */
-    public RigidBodyControl getInvisibleBody() {
+    public RigidBodyControl getExternalBody() {
         return invisibleBody;
+    }
+    /**
+     * Sets the body to the relative position of the referential
+     *
+     * @param relative the relative position
+     */
+    public void setBodyPosition(Vector3f relative) {
+        this.attachment.setPhysicsLocation(relative.add(referentialPos));
+    }
+
+    /**
+     * @return the relative position of the body
+     */
+    public Vector3f getBodyPosition() {
+        return this.attachment.getPhysicsLocation().add(referentialPos.mult(-1));
+    }
+
+    /**
+     * @return the referential body if present
+     */
+    public Optional<RigidBodyControl> getReferentialBody() {
+        return Optional.of(referentialBody);
     }
 }

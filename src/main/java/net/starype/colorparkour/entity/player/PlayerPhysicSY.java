@@ -7,7 +7,6 @@ import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -15,13 +14,15 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.core.ColorParkourMain;
-import net.starype.colorparkour.core.ModuleSY;
-import net.starype.colorparkour.core.ModuleManager;
+import net.starype.colorparkour.core.module.ModuleSY;
+import net.starype.colorparkour.core.module.ModuleManager;
 import net.starype.colorparkour.entity.platform.*;
 import net.starype.colorparkour.entity.platform.event.ContactEvent;
+import net.starype.colorparkour.utils.Referential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -56,7 +57,6 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
     // In average, TPF_COEFF_AVERAGE * tpf = 1
     private static final int TPF_COEFF_AVERAGE = 58;
-    private boolean slide = false;
 
     protected PlayerPhysicSY(CollisionManager manager, Camera cam, Player player, ModuleManager moduleManager, ColorParkourMain main) {
         this.moduleManager = moduleManager;
@@ -101,12 +101,12 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     @Override
     public void prePhysicsTick(PhysicsSpace space, float tpf) {
         checkInAir();
-
         if (body.getPhysicsLocation().y < -30) {
             Vector3f checkPoint = moduleManager.getCurrentModule().getInitialLocation();
             float ySize = moduleManager.first().getSize().y;
             body.setLinearVelocity(new Vector3f());
             player.resetPosition(checkPoint.add(0, 2 + ySize, 0), moduleManager.getCurrentModule());
+            Referential.of(body).get().setEnabled(false);
             main.getViewPort().setBackgroundColor(ColorRGBA.randomColor());
         }
         camForward.set(cam.getDirection()).multLocal(0.6f * tpf * TPF_COEFF_AVERAGE);
@@ -115,6 +115,7 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
         // We want the camera to be at the top of the body
         cam.setLocation(body.getPhysicsLocation().add(0, 1.5f, 0));
+
         /*
             Here we set the value of walkDirection depending of the key pressed.
             if left, we use the left value, if right we inverse the left value, and so on
@@ -131,7 +132,20 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         if (backward) {
             walkDirection.addLocal(new Vector3f(-camForward.x, 0, -camForward.z));
         }
-        Vector3f spaceSpeed = body.getLinearVelocity();
+
+        Optional<Referential> optionalRef = Referential.of(body);
+
+        if(!optionalRef.isPresent() || !optionalRef.get().isEnabled()) {
+            body.setGravity(ColorParkourMain.GAME_GRAVITY);
+            applyForces(body);
+        }
+        else {
+            body.setGravity(new Vector3f());
+            applyForces(optionalRef.get().getExternalBody());
+        }
+    }
+    private void applyForces(RigidBodyControl control) {
+        Vector3f spaceSpeed = control.getLinearVelocity();
         Vector2f flatSpeed = new Vector2f(spaceSpeed.x, spaceSpeed.z);
         float friction;
         float speedXZ = flatSpeed.length();
@@ -143,12 +157,17 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
         force.set(walkDirection.mult(acceleration * speedBoost)
                 .add(new Vector3f(flatSpeed.x * friction, spaceSpeed.y, flatSpeed.y * friction)));
-        body.applyCentralForce(force);
+        control.applyCentralForce(force);
     }
 
     private void checkInAir() {
         if (body.getLinearVelocity().y < -1f) {
             inAir = true;
+            /*for(ColoredPlatform plat : moduleManager.getCurrentModule().getPlatforms()) {
+                if(plat instanceof ContactEvent) {
+                    ((ContactEvent) plat).leave();
+                }
+            }*/
         }
     }
 
@@ -207,36 +226,28 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         }
         currentContact = platform;
 
-        executePlatformEvents(inAir);
+        executePlatformEvents(platform, inAir);
 
         if (!jumpReset) {
-            System.out.println("Reset");
-            jumpAmount = 1;//(short) (platform instanceof DoubleJumpPlatform ? 2 : 1);
+            jumpAmount = 1;
             jumpReset = true;
-        /*
-            if (platform instanceof IcePlatform) {
-                slide = true;
-                body.setFriction(0);
-            } else {
-                slide = false;
-                body.setFriction(1);
-            }*/
         }
         inAir = false;
 
     }
 
-    public void executePlatformEvents(boolean inAir) {
-        for (ColoredPlatform plat : moduleManager.getCurrentModule().getPlatforms()) {
-            if (plat instanceof ContactEvent) {
-                ContactEvent contactEventPlatform = (ContactEvent) plat;
-                contactEventPlatform.collision(this);
+    public void executePlatformEvents(ColoredPlatform platform, boolean inAir) {
 
-                if (inAir && !jumpReset) {
-                    contactEventPlatform.collided(this);
-                }
+        if (platform instanceof ContactEvent) {
+            ContactEvent contactEventPlatform = (ContactEvent) platform;
+            contactEventPlatform.collision(this);
+
+            if (inAir && !jumpReset) {
+                System.out.println("Enabling collided");
+                contactEventPlatform.collided(this);
             }
         }
+
     }
 
     public PlayerPhysicSY setLowSpeedFriction(float low_speed_friction) {
