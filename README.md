@@ -10,7 +10,7 @@ To keep yourself updated about was has been done or what needs to be done, you c
 
 * Sample - Make a player follow a vehicle smoothly (pseudo code)
 
-```
+```java
 RigidBodyControl car = (...);
 
 RigidBodyControl player = (...)
