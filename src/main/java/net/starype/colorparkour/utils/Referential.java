@@ -129,7 +129,13 @@ public class Referential {
             LOGGER.error("Cannot update a disabled or destroyed referential");
             return;
         }
-        invisibleBody.setPhysicsLocation(attachment.getPhysicsLocation());
+        getExternalBody().setPhysicsLocation(getAttachment().getPhysicsLocation());
+        if (getReferentialBody().isPresent()) {
+            referentialPos.set(getReferentialBody().get().getPhysicsLocation().add(0, 2.5f, 0));
+            referentialSpeed.set(getReferentialBody().get().getLinearVelocity());
+        }
+        invisibleBody.setPhysicsLocation(new Vector3f(0,-10,0));
+        attachment.setLinearVelocity(getReferentialSpeed().add(invisibleBody.getLinearVelocity()));
     }
 
     /**
