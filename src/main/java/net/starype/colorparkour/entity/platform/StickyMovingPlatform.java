@@ -16,26 +16,19 @@ public class StickyMovingPlatform extends MovingPlatform implements ContactEvent
     public StickyMovingPlatform(CollisionManager manager, SimpleApplication main, float[] size, Vector3f departure,
                                 Vector3f arrival, float speed, ColorRGBA color, String platformID) {
         super(manager, main, size, departure, arrival, speed, color, platformID);
-        body.setFriction(0.5f);
         referential = new Referential(body, ((ColorParkourMain) main).getPlayer().getBody());
         referential.setEnabled(false);
-    }
-
-    @Override
-    public void collision(PlayerPhysicSY physicSY) {
-        referential.update();
+        body.setFriction(1);
     }
 
     @Override
     public void collided(PlayerPhysicSY physicSY) {
         LOGGER.warn("Enabling referential");
-        ((ColorParkourMain) main).getPlayer().getBody().setFriction(0);
         referential.setEnabled(true);
     }
 
     @Override
     public void leaveByJump(PlayerPhysicSY physicSY) {
-        //((ColorParkourMain) main).getPlayer().getBody().setFriction(1);
         referential.setEnabled(false);
     }
 }

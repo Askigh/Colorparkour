@@ -45,7 +45,7 @@ public class ColorParkourMain extends SimpleApplication {
         settings.setTitle("ColOrParkOur");
         settings.setSamples(8);
         settings.setWidth(1500);
-        settings.setHeight(700);
+        settings.setHeight(500);
         super.setDisplayStatView(false);
         super.setDisplayFps(true);
         this.moduleManager = new ModuleManager(this);
@@ -78,17 +78,17 @@ public class ColorParkourMain extends SimpleApplication {
 
         PhysicsSpace space = collManager.getAppState().getPhysicsSpace();
         ModuleSY firstMap = new ModuleSY(this, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
-                .add(builder.debug(new float[]{5, 3f, 5}, new Vector3f(0, -3, 0), ColorRGBA.White, "0:0"),
+                .add(builder.ice(new float[]{5, 3f, 5}, new float[]{0f, -3f, 0f}, ColorRGBA.White, "0:0"),
                         builder.doubleJump(new float[]{5, 0.1f, 5}, new float[]{20, -1, 0}, ColorRGBA.Blue, "0:1"),
                         builder.colored(new float[]{5, 0.1f, 5}, new float[]{50, 1, 0}, ColorRGBA.Orange, "0:2"),
                         builder.sticky(new float[]{5, 0.1f, 5}, new Vector3f(65, 1, 30),
-                                new Vector3f(65, 1, -30), 0.1f, ColorRGBA.Black, "0:3"),
+                                new Vector3f(65, 1, -30), 0.2f, ColorRGBA.Black, "0:3"),
                         builder.doubleJump(new float[]{2f, 0.3f, 2f}, new float[]{80, 0, -20f}, ColorRGBA.Red, "0:4"))
                 .build();
 
         moduleManager.add(firstMap);
         moduleManager.start();
-        Vector3f initial = new Vector3f(0, 20, 0);
+        Vector3f initial = moduleManager.first().getPosition().add(0, 2, 0);
         cam.setLocation(initial);
         cam.setRotation(new Quaternion(0, 0.7f, 0, 0.7f));
         player.setPosition(initial);
@@ -98,6 +98,7 @@ public class ColorParkourMain extends SimpleApplication {
 
         // Init keyboard inputs and light sources
         Setup.init(this);
+        //collManager.getAppState().setDebugEnabled(true);
     }
 
     @Override
@@ -108,7 +109,7 @@ public class ColorParkourMain extends SimpleApplication {
         moduleManager.checkNext(player.getBody().getPhysicsLocation());
     }
 
-    public void attachChild(Spatial... spatials) {
+    public void attachChilds(Spatial... spatials) {
         Arrays.asList(spatials).forEach(s -> rootNode.attachChild(s));
     }
 

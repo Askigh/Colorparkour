@@ -46,10 +46,9 @@ public class ColoredPlatform extends PhysicEntity {
 
         int mass = this instanceof MovingPlatform ? Integer.MAX_VALUE : 0;
         body = manager.loadObject(BoxCollisionShape.class, mass, false, new Geometry("hitbox", hitBox));
-        body.setPhysicsLocation(pos.add(0, -1f, 0));
 
         appearance.setLocalTranslation(pos);
-        appearance.addControl(body);
+        body.setPhysicsLocation(pos.add(0, -1.1f, 0));
 
         super.addInPhysicsSpace();
         body.setGravity(new Vector3f());

@@ -76,9 +76,9 @@ public class ModuleSY {
                 return Optional.of(plat);
         return Optional.empty();
     }
-    public Optional<ColoredPlatform> getUnderPlatformBySpatial(Spatial spatial) {
+    public Optional<ColoredPlatform> getPlatformByBody(RigidBodyControl body) {
         for (ColoredPlatform plat : platforms)
-            if(plat.getAppearance().equals(spatial))
+            if(plat.getBody().equals(body))
                 return Optional.of(plat);
         return Optional.empty();
     }
@@ -87,13 +87,14 @@ public class ModuleSY {
         for(ColoredPlatform plat : platforms) {
             if(plat instanceof MovingPlatform) {
                 MovingPlatform movPlat = (MovingPlatform) plat;
+                movPlat.getAppearance().setLocalTranslation(movPlat.getBody().getPhysicsLocation().add(0, 1.1f, 0));
                 Vector3f position = movPlat.getPosition();
                 float distanceDep = position.add(movPlat.getDeparture().mult(-1)).length();
                 float distanceArr = position.add(movPlat.getArrival().mult(-1)).length();
 
                 Vector3f dir = movPlat.getDirection();
-                boolean closeToArr = distanceArr < 0.5f && dir.equals(movPlat.getInitialDirection());
-                boolean closeToDep = distanceDep < 0.5f && dir.mult(-1).equals(movPlat.getInitialDirection());
+                boolean closeToArr = distanceArr < 2f && dir.equals(movPlat.getInitialDirection());
+                boolean closeToDep = distanceDep < 2f && dir.mult(-1).equals(movPlat.getInitialDirection());
 
                 if(closeToArr || closeToDep) {
                     movPlat.setDirection(movPlat.getDirection().mult(-1));

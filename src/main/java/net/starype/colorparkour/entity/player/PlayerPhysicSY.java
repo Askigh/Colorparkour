@@ -4,9 +4,11 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
+import com.jme3.bullet.collision.PhysicsRayTestResult;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -22,11 +24,12 @@ import net.starype.colorparkour.utils.Referential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionListener {
+public class PlayerPhysicSY implements PhysicsTickListener {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(PlayerPhysicSY.class);
 
@@ -35,15 +38,15 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
     private Camera cam;
     private Player player;
     private RigidBodyControl body;
-    private ColoredPlatform currentContact;
+    private ColoredPlatform lastContact;
 
     private final Vector3f camForward, camLeft, walkDirection;
     public boolean left = false, right = false, forward = false, backward = false;
     private float speedBoost = 1f;
 
     private short jumpAmount = 0;
-    private boolean inAir = false;
     private boolean jumpReset = false;
+    private boolean onGround;
 
     private float low_speed_friction;
     private float acceleration;
@@ -81,7 +84,7 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
     private RigidBodyControl createBody() {
 
-        player.setAppearance(new Geometry("hit_box", new Box(0.1f, 1.8f, 0.1f)));
+        player.setAppearance(new Geometry("hit_box", new Box(0.1f, 0.1f, 0.1f)));
         RigidBodyControl body = manager.loadObject(BoxCollisionShape.class, 20, true, player.getAppearance());
         manager.getAppState().getPhysicsSpace().add(body);
         body.setPhysicsLocation(cam.getLocation());
@@ -95,12 +98,12 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
     protected void initListener() {
         manager.getAppState().getPhysicsSpace().addTickListener(this);
-        manager.getAppState().getPhysicsSpace().addCollisionListener(this);
     }
 
     @Override
     public void prePhysicsTick(PhysicsSpace space, float tpf) {
-        checkInAir();
+
+        manageCollisions();
         if (body.getPhysicsLocation().y < -30) {
             Vector3f checkPoint = moduleManager.getCurrentModule().getInitialLocation();
             float ySize = moduleManager.first().getSize().y;
@@ -135,15 +138,15 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
 
         Optional<Referential> optionalRef = Referential.of(body);
 
-        if(!optionalRef.isPresent() || !optionalRef.get().isEnabled()) {
+        if (!optionalRef.isPresent() || !optionalRef.get().isEnabled()) {
             body.setGravity(ColorParkourMain.GAME_GRAVITY);
             applyForces(body);
-        }
-        else {
+        } else {
             body.setGravity(new Vector3f());
             applyForces(optionalRef.get().getExternalBody());
         }
     }
+
     private void applyForces(RigidBodyControl control) {
         Vector3f spaceSpeed = control.getLinearVelocity();
         Vector2f flatSpeed = new Vector2f(spaceSpeed.x, spaceSpeed.z);
@@ -160,25 +163,12 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         control.applyCentralForce(force);
     }
 
-    private void checkInAir() {
-        if (body.getLinearVelocity().y < -1f) {
-            inAir = true;
-            /*for(ColoredPlatform plat : moduleManager.getCurrentModule().getPlatforms()) {
-                if(plat instanceof ContactEvent) {
-                    ((ContactEvent) plat).leave();
-                }
-            }*/
-        }
-    }
 
     public void jump() {
-        // falling is considered as a jump
-        if (jumpAmount - (inAir ? 1 : 0) <= 0)
+
+        if (jumpAmount <= 0)
             return;
-        else {
-            jumpAmount--;
-        }
-        inAir = true;
+
         Vector3f spaceSpeed = body.getLinearVelocity();
         /*
             Modification of the "classic" physics. If the body is falling, we still want
@@ -194,60 +184,70 @@ public class PlayerPhysicSY implements PhysicsTickListener, PhysicsCollisionList
         }, 30);
 
 
-        if (currentContact != null && currentContact instanceof ContactEvent) {
-            ((ContactEvent) currentContact).leaveByJump(this);
-            currentContact = null;
+        if (lastContact != null && lastContact instanceof ContactEvent) {
+            ((ContactEvent) lastContact).leaveByJump(this);
         }
 
     }
 
-    public void addJump() {
-        jumpAmount++;
+    public void setJumpAmount(short jumpAmount) {
+        this.jumpAmount = jumpAmount;
     }
 
-    @Override
-    public void collision(PhysicsCollisionEvent event) {
+    public short getJumpAmount() {
+        return jumpAmount;
+    }
 
-        if (event.getNodeA() == null || event.getNodeB() == null)
-            return;
-        if (!(event.getNodeA().equals(player.getAppearance()) || event.getNodeB().equals(player.getAppearance()))) {
-            return;
-        }
+    public void manageCollisions() {
 
-        ColoredPlatform platform;
-        ModuleSY current = moduleManager.getCurrentModule();
-        if (current.getPlatformBySpatial(event.getNodeA()).isPresent()) {
-            platform = current.getPlatformBySpatial(event.getNodeA()).get();
-        } else if (current.getPlatformBySpatial(event.getNodeB()).isPresent()) {
-            platform = current.getPlatformBySpatial(event.getNodeB()).get();
-        } else {
-            LOGGER.error("Platform not found");
+        if (!isOnGround(body)) {
+
+            if (lastContact != null && lastContact instanceof ContactEvent) {
+                jumpAmount--;
+                System.out.println("Loosing jump");
+                ((ContactEvent) lastContact).leave(this);
+                lastContact = null;
+                onGround = false;
+            }
             return;
         }
-        currentContact = platform;
-
-        executePlatformEvents(platform, inAir);
-
-        if (!jumpReset) {
+        // If the boolean onGround hasn't been set to true yet (We want to set the jumpAmount only once)
+        if (!onGround) {
             jumpAmount = 1;
-            jumpReset = true;
         }
-        inAir = false;
+        if (lastContact instanceof ContactEvent) {
+            ContactEvent contactPlatform = (ContactEvent) lastContact;
 
-    }
-
-    public void executePlatformEvents(ColoredPlatform platform, boolean inAir) {
-
-        if (platform instanceof ContactEvent) {
-            ContactEvent contactEventPlatform = (ContactEvent) platform;
-            contactEventPlatform.collision(this);
-
-            if (inAir && !jumpReset) {
-                System.out.println("Enabling collided");
-                contactEventPlatform.collided(this);
+            contactPlatform.collision(this);
+            if (!onGround) {
+                contactPlatform.collided(this);
+                LOGGER.info("COLLISION : " + jumpAmount);
+                body.setPhysicsRotation(new Quaternion(0, 1, 0, 0));
             }
         }
+        onGround = true;
+    }
 
+    protected boolean isOnGround(RigidBodyControl body) {
+
+        Vector3f location = new Vector3f();
+        Vector3f rayVector = new Vector3f();
+        float playerHeight = 0.1f;
+        location.set(new Vector3f(0, 1, 0)).multLocal(playerHeight).addLocal(body.getPhysicsLocation());
+        rayVector.set(new Vector3f(0, 1, 0)).multLocal(-playerHeight - 0.1f).addLocal(location);
+        List<PhysicsRayTestResult> results = body.getPhysicsSpace().rayTest(location, rayVector);
+        for (PhysicsRayTestResult physicsRayTestResult : results) {
+            if (!physicsRayTestResult.getCollisionObject().equals(body)) {
+                ModuleSY currentModule = moduleManager.getCurrentModule();
+                Optional<ColoredPlatform> optionalPlatform = currentModule.getPlatformByBody(
+                        (RigidBodyControl) physicsRayTestResult.getCollisionObject());
+                if (optionalPlatform.isPresent()) {
+                    this.lastContact = optionalPlatform.get();
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     public PlayerPhysicSY setLowSpeedFriction(float low_speed_friction) {

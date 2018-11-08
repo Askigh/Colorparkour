@@ -16,10 +16,12 @@ public class IcePlatform extends ColoredPlatform implements ContactEvent {
     @Override
     public void collided(PlayerPhysicSY physicSY) {
         physicSY.getBody().setFriction(0);
+        body.setFriction(0);
     }
 
     @Override
     public void leaveByJump(PlayerPhysicSY physicSY) {
         physicSY.getBody().setFriction(1);
+        body.setFriction(1);
     }
 }

@@ -11,5 +11,5 @@ public interface ContactEvent {
     default void collided(PlayerPhysicSY physicSY){}
     default void collision(PlayerPhysicSY physicSY){}
     default void leaveByJump(PlayerPhysicSY physicSY){}
-    default void leave(){}
+    default void leave(PlayerPhysicSY physicSY){}
 }

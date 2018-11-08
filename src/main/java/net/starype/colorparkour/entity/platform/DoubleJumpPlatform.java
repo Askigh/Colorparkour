@@ -6,6 +6,9 @@ import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.entity.platform.event.ContactEvent;
 import net.starype.colorparkour.entity.player.PlayerPhysicSY;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class DoubleJumpPlatform extends ColoredPlatform implements ContactEvent {
 
     public DoubleJumpPlatform(CollisionManager manager, SimpleApplication main, float[] size, float[] position, ColorRGBA color, String platformID) {
@@ -13,7 +16,7 @@ public class DoubleJumpPlatform extends ColoredPlatform implements ContactEvent 
     }
 
     @Override
-    public void leaveByJump(PlayerPhysicSY physicSY) {
-        physicSY.addJump();
+    public void collided(PlayerPhysicSY physicSY) {
+        physicSY.setJumpAmount((short) 2);
     }
 }
