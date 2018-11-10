@@ -16,6 +16,7 @@ import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.core.module.ModuleManager;
 import net.starype.colorparkour.core.module.ModuleSY;
 import net.starype.colorparkour.entity.player.Player;
+import net.starype.colorparkour.entity.player.PlayerInventory;
 import net.starype.colorparkour.settings.Setup;
 import net.starype.colorparkour.utils.PlatformBuilder;
 import net.starype.colorparkour.utils.Referential;
@@ -29,12 +30,13 @@ public class ColorParkourMain extends SimpleApplication {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SimpleApplication.class);
     public static final Vector3f GAME_GRAVITY = new Vector3f(0, -50f, 0);
-    public static final Vector3f LOW_GRAVITY = new Vector3f(0, -20f, 0);
-    public static final Vector3f HIGH_GRAVITY = new Vector3f(0, -75f, 0);
     private CollisionManager collManager;
     private ModuleManager moduleManager;
     private Player player;
-    private TimerSY firstLevelTimer;
+    private TimerSY gameTimer;
+    public static final Quaternion INITIAL_ROTATION = new Quaternion(0, 0.7f, 0, 0.7f);
+    public static final int WIDTH = 1500;
+    public static final int HEIGHT = 500;
 
     private ColorParkourMain() {
         LOGGER.info("Game initialization...");
@@ -46,8 +48,8 @@ public class ColorParkourMain extends SimpleApplication {
         //Settings
         settings.setTitle("ColOrParkOur");
         settings.setSamples(8);
-        settings.setWidth(1500);
-        settings.setHeight(500);
+        settings.setWidth(WIDTH);
+        settings.setHeight(HEIGHT);
         super.setDisplayStatView(false);
         super.setDisplayFps(true);
         this.moduleManager = new ModuleManager(this);
@@ -66,8 +68,6 @@ public class ColorParkourMain extends SimpleApplication {
 
         disableDefaultOptions();
         loadAudio();
-
-        viewPort.setBackgroundColor(ColorRGBA.randomColor());
 
         collManager = new CollisionManager(this);
         collManager.init();
@@ -91,23 +91,22 @@ public class ColorParkourMain extends SimpleApplication {
 
         moduleManager.add(firstMap);
         moduleManager.start();
-        Vector3f initial = moduleManager.first().getPosition().add(0, 2, 0);
-        cam.setLocation(initial);
-        cam.setRotation(new Quaternion(0, 0.7f, 0, 0.7f));
-        player.setPosition(initial);
+        player.resetPosition(moduleManager.getCurrentModule());
 
-        firstLevelTimer = new TimerSY(guiFont, ColorRGBA.Blue, new Vector2f(0, 50), "Timer: ", "mm:ss", "firstLevel");
-        guiNode.attachChild(firstLevelTimer.getBitmapText());
+        gameTimer = new TimerSY(guiFont, ColorRGBA.Blue, new Vector2f(0, 50), "Timer: ", "mm:ss", "firstLevel");
+        guiNode.attachChild(gameTimer.getBitmapText());
 
         // Init keyboard inputs and light sources
         Setup.init(this);
         //collManager.getAppState().setDebugEnabled(true);
+        PlayerInventory inventory = new PlayerInventory(this);
+        stateManager.attach(inventory);
     }
 
     @Override
     public void simpleUpdate(float tpf) {
         Referential.updateAll();
-        firstLevelTimer.updateTimer(tpf);
+        gameTimer.updateTimer(tpf);
         moduleManager.getCurrentModule().reversePlatforms();
         moduleManager.checkNext(player.getBody().getPhysicsLocation());
     }
@@ -129,20 +128,17 @@ public class ColorParkourMain extends SimpleApplication {
         attachChilds(node);
     }
     private void disableDefaultOptions() {
-        // disables FlyByCamera, replaced by CameraSY
+        // disables FlyByCamera and mappings, replaced by CameraSY and Setup
+        inputManager.clearMappings();
         guiNode.detachAllChildren();
         stateManager.detach(stateManager.getState(FlyCamAppState.class));
         inputManager.setCursorVisible(false);
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
+    public Player getPlayer() { return player; }
     public ModuleManager getModuleManager() {
         return moduleManager;
     }
-
     public CollisionManager getCollisionManager() {
         return collManager;
     }

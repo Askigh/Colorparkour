@@ -28,7 +28,7 @@ public class StickyMovingPlatform extends MovingPlatform implements ContactEvent
     }
 
     @Override
-    public void leaveByJump(PlayerPhysicSY physicSY) {
+    public void leave(PlayerPhysicSY physicSY) {
         referential.setEnabled(false);
     }
 }

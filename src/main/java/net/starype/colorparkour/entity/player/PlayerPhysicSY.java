@@ -2,13 +2,9 @@ package net.starype.colorparkour.entity.player;
 
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
-import com.jme3.bullet.collision.PhysicsCollisionEvent;
-import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.PhysicsRayTestResult;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -34,7 +30,6 @@ public class PlayerPhysicSY implements PhysicsTickListener {
     public static final Logger LOGGER = LoggerFactory.getLogger(PlayerPhysicSY.class);
 
     private CollisionManager manager;
-    private ColorParkourMain main;
     private Camera cam;
     private Player player;
     private RigidBodyControl body;
@@ -45,7 +40,6 @@ public class PlayerPhysicSY implements PhysicsTickListener {
     private float speedBoost = 1f;
 
     private short jumpAmount = 0;
-    private boolean jumpReset = false;
     private boolean onGround;
 
     private float low_speed_friction;
@@ -62,13 +56,12 @@ public class PlayerPhysicSY implements PhysicsTickListener {
     private static final int TPF_COEFF_AVERAGE = 58;
     private boolean isJumping = false;
 
-    protected PlayerPhysicSY(CollisionManager manager, Camera cam, Player player, ModuleManager moduleManager, ColorParkourMain main) {
+    PlayerPhysicSY(CollisionManager manager, Camera cam, Player player, ModuleManager moduleManager, ColorParkourMain main) {
         this.moduleManager = moduleManager;
         this.manager = manager;
         this.cam = cam;
         this.player = player;
         this.body = createBody();
-        this.main = main;
         camForward = new Vector3f();
         camLeft = new Vector3f();
         walkDirection = new Vector3f();
@@ -97,7 +90,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         return body;
     }
 
-    protected void initListener() {
+    void initListener() {
         manager.getAppState().getPhysicsSpace().addTickListener(this);
     }
 
@@ -105,12 +98,8 @@ public class PlayerPhysicSY implements PhysicsTickListener {
     public void prePhysicsTick(PhysicsSpace space, float tpf) {
 
         manageCollisions();
-        if (body.getPhysicsLocation().y < -30) {
-            Vector3f checkPoint = moduleManager.getCurrentModule().getInitialLocation();
-            float ySize = moduleManager.first().getSize().y;
-            body.setLinearVelocity(new Vector3f());
-            player.resetPosition(checkPoint.add(0, 2 + ySize, 0), moduleManager.getCurrentModule());
-            main.getViewPort().setBackgroundColor(ColorRGBA.randomColor());
+        if (body.getPhysicsLocation().y < -10) {
+            player.resetPosition(moduleManager.getCurrentModule());
         }
         camForward.set(cam.getDirection()).multLocal(0.6f * tpf * TPF_COEFF_AVERAGE);
         camLeft.set(cam.getLeft().multLocal(0.4f * tpf * TPF_COEFF_AVERAGE));
@@ -140,14 +129,14 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
         if (!optionalRef.isPresent() || !optionalRef.get().isEnabled()) {
             body.setGravity(ColorParkourMain.GAME_GRAVITY);
-            applyForces(body);
+            applyForcesTo(body);
         } else {
             body.setGravity(new Vector3f());
-            applyForces(optionalRef.get().getExternalBody());
+            applyForcesTo(optionalRef.get().getExternalBody());
         }
     }
 
-    private void applyForces(RigidBodyControl control) {
+    private void applyForcesTo(RigidBodyControl control) {
         Vector3f spaceSpeed = control.getLinearVelocity();
         Vector2f flatSpeed = new Vector2f(spaceSpeed.x, spaceSpeed.z);
         float friction;
@@ -179,15 +168,8 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         */
         float y = spaceSpeed.y > 0 ? spaceSpeed.y : spaceSpeed.y / 2.5f;
         body.setLinearVelocity(new Vector3f(spaceSpeed.x, y + jump_power, spaceSpeed.z));
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                jumpReset = false;
-            }
-        }, 10);
 
-
-        if (lastContact != null && lastContact instanceof ContactEvent) {
+        if (lastContact instanceof ContactEvent) {
             ((ContactEvent) lastContact).leaveByJump(this);
         }
 
@@ -197,16 +179,11 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         this.jumpAmount = jumpAmount;
     }
 
-    public short getJumpAmount() {
-        return jumpAmount;
-    }
-
-    public void manageCollisions() {
+    private void manageCollisions() {
 
         if (!isOnGround(body)) {
             if (lastContact != null) {
                 if(!isJumping) {
-                    LOGGER.info("LOOSING A JUMP");
                     jumpAmount--;
                 }
                 onGround = false;
@@ -221,7 +198,6 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         }
         // If the boolean onGround hasn't been set to true yet (We want to set the jumpAmount only once)
         if (!onGround) {
-            LOGGER.info("JUMP GIVEN");
             jumpAmount = 1;
         }
         if (lastContact instanceof ContactEvent) {
@@ -235,56 +211,55 @@ public class PlayerPhysicSY implements PhysicsTickListener {
                         contactPlatform.collided(getInstance());
                     }
                 }, 120);
-
-                //body.setPhysicsRotation(new Quaternion(0, 1, 0, 0));
             }
         }
         onGround = true;
     }
     private PlayerPhysicSY getInstance() { return this;}
-    protected boolean isOnGround(RigidBodyControl body) {
 
+    private boolean isOnGround(RigidBodyControl body) {
         Vector3f location = new Vector3f();
         Vector3f rayVector = new Vector3f();
-        float playerHeight = 0.3f;
-        location.set(new Vector3f(0, 1, 0)).multLocal(playerHeight).addLocal(body.getPhysicsLocation());
-        rayVector.set(new Vector3f(0, 1, 0)).multLocal(-playerHeight - 0.1f).addLocal(location);
+
+        location.set(new Vector3f(0, 1, 0)).addLocal(body.getPhysicsLocation());
+        rayVector.set(new Vector3f(0, 1, 0)).multLocal(-1 - 0.1f).addLocal(location);
         List<PhysicsRayTestResult> results = body.getPhysicsSpace().rayTest(location, rayVector);
+
         for (PhysicsRayTestResult physicsRayTestResult : results) {
             if (!physicsRayTestResult.getCollisionObject().equals(body)) {
+
                 ModuleSY currentModule = moduleManager.getCurrentModule();
                 Optional<ColoredPlatform> optionalPlatform = currentModule.getPlatformByBody(
                         (RigidBodyControl) physicsRayTestResult.getCollisionObject());
-                if (optionalPlatform.isPresent()) {
-                    this.lastContact = optionalPlatform.get();
-                }
+
+                optionalPlatform.ifPresent(x -> this.lastContact = optionalPlatform.get());
                 return true;
             }
         }
         return false;
     }
 
-    public PlayerPhysicSY setLowSpeedFriction(float low_speed_friction) {
+    PlayerPhysicSY setLowSpeedFriction(float low_speed_friction) {
         this.low_speed_friction = low_speed_friction;
         return this;
     }
 
-    public PlayerPhysicSY setAcceleration(float acceleration) {
+    PlayerPhysicSY setAcceleration(float acceleration) {
         this.acceleration = acceleration;
         return this;
     }
 
-    public PlayerPhysicSY setStandardFriction(float standard_friction) {
+    PlayerPhysicSY setStandardFriction(float standard_friction) {
         this.standard_friction = standard_friction;
         return this;
     }
 
-    public PlayerPhysicSY setFrictionExpansion(float friction_expansion) {
+    PlayerPhysicSY setFrictionExpansion(float friction_expansion) {
         this.friction_expansion = friction_expansion;
         return this;
     }
 
-    public PlayerPhysicSY setJumpPower(float jump_power) {
+    PlayerPhysicSY setJumpPower(float jump_power) {
         this.jump_power = jump_power;
         return this;
     }
@@ -317,9 +292,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         this.speedBoost = 1f;
     }
 
-    public Vector3f getForce() {
-        return force;
-    }
+    public Vector3f getForce() { return force; }
 
     public RigidBodyControl getBody() {
         return body;
@@ -327,6 +300,5 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
     // non used overrided method
     @Override
-    public void physicsTick(PhysicsSpace space, float tpf) {
-    }
+    public void physicsTick(PhysicsSpace space, float tpf) { }
 }

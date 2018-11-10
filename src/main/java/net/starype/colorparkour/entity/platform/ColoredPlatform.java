@@ -63,11 +63,9 @@ public class ColoredPlatform extends PhysicEntity {
     public String getPlatformID() {
         return platformID;
     }
-
     public ColorRGBA getColor() {
         return color;
     }
-
     public void setColor(ColorRGBA color) {
         this.color = color;
         mat.setColor("Color", color);

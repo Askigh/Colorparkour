@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 
+/**
+ * @author Lolilolulolilol
+ */
 public class TimerSY {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TimerSY.class);
@@ -19,13 +22,13 @@ public class TimerSY {
 
 
     /**
-     * This constructor is setting up the timer.
+     * Sets up the timer.
      *
      * @param guiFont      See {@link #loadTimer(BitmapFont, ColorRGBA, Vector2f)} guiFont parameter
      * @param color        See {@link #loadTimer(BitmapFont, ColorRGBA, Vector2f)} color parameter
      * @param textPosition See {@link #loadTimer(BitmapFont, ColorRGBA, Vector2f)} textPosition parameter
      * @param timerPrefix  This parameter defines which text should be displayed before the time
-     * @param pattern      This parameter defines the time pattern.
+     * @param pattern      The defined time pattern.
      */
     public TimerSY(BitmapFont guiFont, ColorRGBA color, Vector2f textPosition, String timerPrefix, String pattern, String timerID) {
         this.timerPrefix = timerPrefix;
@@ -78,9 +81,9 @@ public class TimerSY {
     /**
      * This method load the BitmapText object.
      *
-     * @param guiFont  This parameter is the text font.
-     * @param color    This parameter is the text color.
-     * @param position This parameter is the text position.
+     * @param guiFont  The text font.
+     * @param color    The text color.
+     * @param position The text position.
      */
     private BitmapText loadTimer(BitmapFont guiFont, ColorRGBA color, Vector2f position) {
         timerText = new BitmapText(guiFont, false);

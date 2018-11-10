@@ -37,7 +37,6 @@ public class ModuleManager {
                 LOGGER.error("ModuleSY configuration file not found !");
             }
         }
-
     }
 
     public void start() {
@@ -54,11 +53,11 @@ public class ModuleManager {
             if(currentModule < modules.size() -1) {
                 currentModule++;
                 current.setActive(false);
-                player.resetPosition(first().getPosition().add(0, 2+ySize, 0), getCurrentModule());
+                player.resetPosition(getCurrentModule());
                 start();
             } else {
                 System.out.println("Félicitations vous avez fini le jeu !");
-                player.resetPosition(first().getPosition().add(0, 2+ySize, 0), getCurrentModule());
+                player.resetPosition(getCurrentModule());
             }
         }
     }

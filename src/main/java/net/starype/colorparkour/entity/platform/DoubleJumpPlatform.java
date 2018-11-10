@@ -16,7 +16,5 @@ public class DoubleJumpPlatform extends ColoredPlatform implements ContactEvent 
     }
 
     @Override
-    public void collided(PlayerPhysicSY physicSY) {
-        physicSY.setJumpAmount((short) 2);
-    }
+    public void collided(PlayerPhysicSY physicSY) { physicSY.setJumpAmount((short) 2); }
 }

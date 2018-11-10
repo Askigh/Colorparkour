@@ -46,6 +46,9 @@ public class CameraSY implements AnalogListener {
     @Override
     public void onAnalog(String name, float value, float tpf) {
 
+        if(listener.isCursorVisible()) {
+            return;
+        }
         switch (name) {
             case "left":
                 rotateCamera(value * tpf, initialUp);
