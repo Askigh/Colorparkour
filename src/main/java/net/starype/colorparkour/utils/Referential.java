@@ -77,7 +77,7 @@ public class Referential {
 
     /**
      * @param body
-     * @return The Referential the body belongs to
+     * @return An Optional containing the Referential needed if present
      */
     public static Optional<Referential> of(RigidBodyControl body) {
         for (Referential ref : referentials) {
