@@ -210,7 +210,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
                     public void run() {
                         contactPlatform.collided(getInstance());
                     }
-                }, 120);
+                }, 80);
             }
         }
         onGround = true;
@@ -223,6 +223,9 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
         location.set(new Vector3f(0, 1, 0)).addLocal(body.getPhysicsLocation());
         rayVector.set(new Vector3f(0, 1, 0)).multLocal(-1 - 0.1f).addLocal(location);
+        if(body.getPhysicsSpace() == null) {
+            return true;
+        }
         List<PhysicsRayTestResult> results = body.getPhysicsSpace().rayTest(location, rayVector);
 
         for (PhysicsRayTestResult physicsRayTestResult : results) {

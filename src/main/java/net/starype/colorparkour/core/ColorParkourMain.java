@@ -12,6 +12,8 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
+import com.simsilica.lemur.GuiGlobals;
+import com.simsilica.lemur.style.BaseStyles;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.core.module.ModuleManager;
 import net.starype.colorparkour.core.module.ModuleSY;
@@ -25,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ColorParkourMain extends SimpleApplication {
 
@@ -34,6 +38,7 @@ public class ColorParkourMain extends SimpleApplication {
     private ModuleManager moduleManager;
     private Player player;
     private TimerSY gameTimer;
+    private PlayerInventory inventory;
     public static final Quaternion INITIAL_ROTATION = new Quaternion(0, 0.7f, 0, 0.7f);
     public static final int WIDTH = 1500;
     public static final int HEIGHT = 500;
@@ -50,6 +55,7 @@ public class ColorParkourMain extends SimpleApplication {
         settings.setSamples(8);
         settings.setWidth(WIDTH);
         settings.setHeight(HEIGHT);
+        settings.setResizable(true);
         super.setDisplayStatView(false);
         super.setDisplayFps(true);
         this.moduleManager = new ModuleManager(this);
@@ -64,9 +70,17 @@ public class ColorParkourMain extends SimpleApplication {
     }
 
     @Override
+    public void reshape(int w, int h) {
+        System.out.println("Size changed");
+    }
+
+    @Override
     public void simpleInitApp() {
 
+        GuiGlobals.initialize(this);
         disableDefaultOptions();
+
+        inventory = new PlayerInventory(this);
         loadAudio();
 
         collManager = new CollisionManager(this);
@@ -74,9 +88,7 @@ public class ColorParkourMain extends SimpleApplication {
 
         PlatformBuilder builder = new PlatformBuilder(collManager, this);
 
-        LOGGER.info("Initializing collisions");
         player = new Player(this, cam, collManager, moduleManager);
-        player.initialize();
         moduleManager.attachPlayer(player);
 
         PhysicsSpace space = collManager.getAppState().getPhysicsSpace();
@@ -90,23 +102,33 @@ public class ColorParkourMain extends SimpleApplication {
                 .build();
 
         moduleManager.add(firstMap);
-        moduleManager.start();
-        player.resetPosition(moduleManager.getCurrentModule());
+
 
         gameTimer = new TimerSY(guiFont, ColorRGBA.Blue, new Vector2f(0, 50), "Timer: ", "mm:ss", "firstLevel");
         guiNode.attachChild(gameTimer.getBitmapText());
+        cam.setLocation(new Vector3f(0, 100, 0));
+        inventory.show(0);
 
         // Init keyboard inputs and light sources
         Setup.init(this);
-        //collManager.getAppState().setDebugEnabled(true);
-        PlayerInventory inventory = new PlayerInventory(this);
-        stateManager.attach(inventory);
     }
 
+    public void startGame() {
+        LOGGER.info("GAME HAS BEGUN");
+        moduleManager.start();
+        player.initialize();
+        player.resetPosition(moduleManager.getCurrentModule());
+        inputManager.setCursorVisible(false);
+    }
+    public boolean isPaused() {
+        return inventory.isGuiActive();
+    }
     @Override
     public void simpleUpdate(float tpf) {
         Referential.updateAll();
-        gameTimer.updateTimer(tpf);
+        if(!isPaused()) {
+            gameTimer.updateTimer(tpf);
+        }
         moduleManager.getCurrentModule().reversePlatforms();
         moduleManager.checkNext(player.getBody().getPhysicsLocation());
     }
@@ -121,7 +143,7 @@ public class ColorParkourMain extends SimpleApplication {
 
     private void loadAudio() {
         AudioNode node = new AudioNode(assetManager, "audio/sound.wav", AudioData.DataType.Stream);
-        node.setVolume(0.1f);
+        node.setVolume(0f);
         node.setLooping(true);
         node.setPositional(false);
         node.play();
@@ -132,7 +154,6 @@ public class ColorParkourMain extends SimpleApplication {
         inputManager.clearMappings();
         guiNode.detachAllChildren();
         stateManager.detach(stateManager.getState(FlyCamAppState.class));
-        inputManager.setCursorVisible(false);
     }
 
     public Player getPlayer() { return player; }
@@ -142,4 +163,5 @@ public class ColorParkourMain extends SimpleApplication {
     public CollisionManager getCollisionManager() {
         return collManager;
     }
+    public PlayerInventory getPlayerInventory() { return inventory; }
 }

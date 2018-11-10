@@ -7,6 +7,7 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.simsilica.lemur.GuiGlobals;
 import net.starype.colorparkour.core.ColorParkourMain;
 import net.starype.colorparkour.entity.platform.ColoredPlatform;
 import net.starype.colorparkour.entity.player.PlayerInventory;
@@ -91,15 +92,22 @@ public class Setup {
             public void execute(boolean keyPressed) {
 
                 InputManager inputManager = main.getInputManager();
+                PlayerInventory inventory = main.getPlayerInventory();
+                if(inventory.isGuiActive(0)) {
+                    return;
+                }
                 inputManager.getCursorPosition().set(WIDTH/2, HEIGHT/2);
-                if(inputManager.isCursorVisible()) {
-                    inputManager.setCursorVisible(false);
+                if(inventory.isGuiActive()) {
+                    GuiGlobals.getInstance().setCursorEventsEnabled(false);
                     main.getCamera().setRotation(INITIAL_ROTATION);
-                    main.getStateManager().getState(PlayerInventory.class).hide();
+                    inventory.activatePlayer();
+
                 } else {
+                    GuiGlobals.getInstance().setCursorEventsEnabled(true);
                     inputManager.setCursorVisible(true);
                     main.getCamera().setRotation(new Quaternion(0, 2, 0, 0));
-                    main.getStateManager().getState(PlayerInventory.class).show();
+                    main.getCollisionManager().getAppState().getPhysicsSpace().remove(main.getPlayer().getBody());
+                    inventory.show(1);
                 }
             }
         });

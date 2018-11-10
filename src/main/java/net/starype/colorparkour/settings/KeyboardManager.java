@@ -24,7 +24,7 @@ public class KeyboardManager {
 
     public void addKey(String name, final int key, ActionListener listener) {
 
-        main.getInputManager().addMapping(name,  new KeyTrigger(key));
+        main.getInputManager().addMapping(name, new KeyTrigger(key));
         main.getInputManager().addListener(listener, name);
     }
 

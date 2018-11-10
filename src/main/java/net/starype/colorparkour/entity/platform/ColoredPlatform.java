@@ -1,5 +1,6 @@
 package net.starype.colorparkour.entity.platform;
 
+import com.google.gson.annotations.SerializedName;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -16,10 +17,13 @@ import org.slf4j.LoggerFactory;
 public class ColoredPlatform extends PhysicEntity {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ColoredPlatform.class);
-
+ 
+    @SerializedName("rgba")
     private ColorRGBA color;
     private Material mat;
+    @SerializedName("name")
     private final String platformID;
+    @SerializedName("size")
     private Vector3f size;
 
     public ColoredPlatform(CollisionManager manager, SimpleApplication main, float[] size, float[] position, ColorRGBA color, String platformID) {

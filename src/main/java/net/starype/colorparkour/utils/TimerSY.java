@@ -4,6 +4,7 @@ import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
+import net.starype.colorparkour.core.ColorParkourMain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,10 +88,10 @@ public class TimerSY {
      */
     private BitmapText loadTimer(BitmapFont guiFont, ColorRGBA color, Vector2f position) {
         timerText = new BitmapText(guiFont, false);
-        timerText.setSize(guiFont.getCharSet().getRenderedSize());
+        timerText.setSize(guiFont.getCharSet().getRenderedSize()*2);
         timerText.setColor(color);
         timerText.setText("");
-        timerText.setLocalTranslation(position.x, position.y, 0);
+        timerText.setLocalTranslation(position.x, ColorParkourMain.HEIGHT, 0);
         LOGGER.debug("Timer " + timerID + " : BitmapText initialized !");
         return timerText;
     }

@@ -23,11 +23,13 @@ public class CameraSY implements AnalogListener {
     private Camera source;
     private Vector3f initialUp;
     private InputManager listener;
+    private ColorParkourMain main;
 
     private static final int SENSITIVITY = 700;
     private static final String[] MAPPINGS = {"left", "right", "top", "bottom"};
 
     protected CameraSY(ColorParkourMain main, Camera source) {
+        this.main = main;
         this.source = source;
         initialUp = source.getUp().clone();
         listener = main.getInputManager();
@@ -46,7 +48,7 @@ public class CameraSY implements AnalogListener {
     @Override
     public void onAnalog(String name, float value, float tpf) {
 
-        if(listener.isCursorVisible()) {
+        if(main.getPlayerInventory().isGuiActive()) {
             return;
         }
         switch (name) {
