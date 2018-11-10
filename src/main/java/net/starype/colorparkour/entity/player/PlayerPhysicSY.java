@@ -60,6 +60,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
     // In average, TPF_COEFF_AVERAGE * tpf = 1
     private static final int TPF_COEFF_AVERAGE = 58;
+    private boolean isJumping = false;
 
     protected PlayerPhysicSY(CollisionManager manager, Camera cam, Player player, ModuleManager moduleManager, ColorParkourMain main) {
         this.moduleManager = moduleManager;
@@ -109,7 +110,6 @@ public class PlayerPhysicSY implements PhysicsTickListener {
             float ySize = moduleManager.first().getSize().y;
             body.setLinearVelocity(new Vector3f());
             player.resetPosition(checkPoint.add(0, 2 + ySize, 0), moduleManager.getCurrentModule());
-            Referential.of(body).get().setEnabled(false);
             main.getViewPort().setBackgroundColor(ColorRGBA.randomColor());
         }
         camForward.set(cam.getDirection()).multLocal(0.6f * tpf * TPF_COEFF_AVERAGE);
@@ -166,8 +166,11 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
     public void jump() {
 
+        isJumping = true;
         if (jumpAmount <= 0)
             return;
+
+        jumpAmount--;
 
         Vector3f spaceSpeed = body.getLinearVelocity();
         /*
@@ -181,7 +184,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
             public void run() {
                 jumpReset = false;
             }
-        }, 30);
+        }, 10);
 
 
         if (lastContact != null && lastContact instanceof ContactEvent) {
@@ -201,18 +204,24 @@ public class PlayerPhysicSY implements PhysicsTickListener {
     public void manageCollisions() {
 
         if (!isOnGround(body)) {
-
-            if (lastContact != null && lastContact instanceof ContactEvent) {
-                jumpAmount--;
-                System.out.println("Loosing jump");
-                ((ContactEvent) lastContact).leave(this);
-                lastContact = null;
+            if (lastContact != null) {
+                if(!isJumping) {
+                    LOGGER.info("LOOSING A JUMP");
+                    jumpAmount--;
+                }
                 onGround = false;
+                isJumping = false;
+                if(lastContact instanceof ContactEvent) {
+                    ((ContactEvent) lastContact).leave(this);
+
+                }
+                lastContact = null;
             }
             return;
         }
         // If the boolean onGround hasn't been set to true yet (We want to set the jumpAmount only once)
         if (!onGround) {
+            LOGGER.info("JUMP GIVEN");
             jumpAmount = 1;
         }
         if (lastContact instanceof ContactEvent) {
@@ -220,19 +229,24 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
             contactPlatform.collision(this);
             if (!onGround) {
-                contactPlatform.collided(this);
-                LOGGER.info("COLLISION : " + jumpAmount);
-                body.setPhysicsRotation(new Quaternion(0, 1, 0, 0));
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        contactPlatform.collided(getInstance());
+                    }
+                }, 120);
+
+                //body.setPhysicsRotation(new Quaternion(0, 1, 0, 0));
             }
         }
         onGround = true;
     }
-
+    private PlayerPhysicSY getInstance() { return this;}
     protected boolean isOnGround(RigidBodyControl body) {
 
         Vector3f location = new Vector3f();
         Vector3f rayVector = new Vector3f();
-        float playerHeight = 0.1f;
+        float playerHeight = 0.3f;
         location.set(new Vector3f(0, 1, 0)).multLocal(playerHeight).addLocal(body.getPhysicsLocation());
         rayVector.set(new Vector3f(0, 1, 0)).multLocal(-playerHeight - 0.1f).addLocal(location);
         List<PhysicsRayTestResult> results = body.getPhysicsSpace().rayTest(location, rayVector);

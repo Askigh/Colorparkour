@@ -12,6 +12,7 @@ import net.starype.colorparkour.core.module.ModuleSY;
 import net.starype.colorparkour.entity.PhysicEntity;
 import net.starype.colorparkour.entity.platform.ColoredPlatform;
 import net.starype.colorparkour.entity.platform.MovingPlatform;
+import net.starype.colorparkour.utils.Referential;
 
 public class Player extends PhysicEntity {
 
@@ -22,11 +23,11 @@ public class Player extends PhysicEntity {
         super(manager, main);
         camera = new CameraSY(main, source);
         physicBody = new PlayerPhysicSY(manager, source, this, moduleManager, main);
-        physicBody.setAcceleration(1800)
+        physicBody.setAcceleration(2100)
                 .setLowSpeedFriction(-75)
                 .setFrictionExpansion(1.3f)
                 .setStandardFriction(-5)
-                .setJumpPower(19);
+                .setJumpPower(22);
     }
 
     public void initialize() {
@@ -36,7 +37,6 @@ public class Player extends PhysicEntity {
 
     public void resetPosition(Vector3f pos, ModuleSY module) {
         body.setLinearVelocity(new Vector3f());
-        System.out.println(pos);
         setPosition(pos);
         camera.getSource().setLocation(pos);
         camera.getSource().setRotation(new Quaternion(0, 0.7f, 0, 0.7f));
@@ -46,6 +46,7 @@ public class Player extends PhysicEntity {
                 col.setPosition(((MovingPlatform) col).getDeparture());
             }
         }
+        Referential.of(body).get().setEnabled(false);
     }
 
     public PlayerPhysicSY getPhysicPlayer() { return physicBody; }

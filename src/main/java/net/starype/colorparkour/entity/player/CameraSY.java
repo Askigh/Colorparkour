@@ -24,7 +24,7 @@ public class CameraSY implements AnalogListener {
     private Vector3f initialUp;
     private InputManager listener;
 
-    private static final int ROTATION_SPEED = 800;
+    private static final int SENSITIVITY = 700;
     private static final String[] MAPPINGS = {"left", "right", "top", "bottom"};
 
     protected CameraSY(ColorParkourMain main, Camera source) {
@@ -66,7 +66,7 @@ public class CameraSY implements AnalogListener {
     private void rotateCamera(float value, Vector3f axis) {
 
         Matrix3f mat = new Matrix3f();
-        mat.fromAngleNormalAxis(ROTATION_SPEED * value, axis);
+        mat.fromAngleNormalAxis(SENSITIVITY * value, axis);
 
         Vector3f up = source.getUp();
         Vector3f left = source.getLeft();

@@ -2,6 +2,8 @@ package net.starype.colorparkour.core;
 
 import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
+import com.jme3.audio.AudioData;
+import com.jme3.audio.AudioNode;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.light.Light;
 import com.jme3.math.ColorRGBA;
@@ -26,9 +28,9 @@ import java.util.Arrays;
 public class ColorParkourMain extends SimpleApplication {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SimpleApplication.class);
-    public static final Vector3f GAME_GRAVITY = new Vector3f(0, -40f, 0);
+    public static final Vector3f GAME_GRAVITY = new Vector3f(0, -50f, 0);
     public static final Vector3f LOW_GRAVITY = new Vector3f(0, -20f, 0);
-    public static final Vector3f HIGH_GRAVITY = new Vector3f(0, -55f, 0);
+    public static final Vector3f HIGH_GRAVITY = new Vector3f(0, -75f, 0);
     private CollisionManager collManager;
     private ModuleManager moduleManager;
     private Player player;
@@ -63,6 +65,7 @@ public class ColorParkourMain extends SimpleApplication {
     public void simpleInitApp() {
 
         disableDefaultOptions();
+        loadAudio();
 
         viewPort.setBackgroundColor(ColorRGBA.randomColor());
 
@@ -117,6 +120,14 @@ public class ColorParkourMain extends SimpleApplication {
         Arrays.asList(lights).forEach(l -> rootNode.addLight(l));
     }
 
+    private void loadAudio() {
+        AudioNode node = new AudioNode(assetManager, "audio/sound.wav", AudioData.DataType.Stream);
+        node.setVolume(0.1f);
+        node.setLooping(true);
+        node.setPositional(false);
+        node.play();
+        attachChilds(node);
+    }
     private void disableDefaultOptions() {
         // disables FlyByCamera, replaced by CameraSY
         guiNode.detachAllChildren();
