@@ -1,4 +1,4 @@
-package net.starype.colorparkour.core.module;
+package net.starype.colorparkour.module;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -10,7 +10,7 @@ import com.jme3.scene.Spatial;
 import net.starype.colorparkour.core.ColorParkourMain;
 import net.starype.colorparkour.entity.platform.ColoredPlatform;
 import net.starype.colorparkour.entity.platform.MovingPlatform;
-import net.starype.colorparkour.entity.platform.StickyMovingPlatform;
+import net.starype.colorparkour.entity.platform.event.LoadEvent;
 import net.starype.colorparkour.utils.PlatformJSONBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class ModuleSY {
     private List<ColoredPlatform> platforms;
     private ColorParkourMain main;
     private PhysicsSpace space;
-    private Vector3f finalPosition;
+    private Vector3f finalPosition = new Vector3f();
     private final String path;
     private String levelName;
 
@@ -38,16 +38,19 @@ public class ModuleSY {
         this.path = path;
     }
 
-    public ModuleSY build() {
-        this.finalPosition = platforms.get(platforms.size()-1).getPosition();
+    public ModuleSY build(ModuleManager manager) {
+        manager.add(this);
         return this;
     }
 
     public void setActive(boolean active) {
         for(ColoredPlatform platform : platforms) {
             if(active) {
-                main.getRootNode().attachChild(platform.getAppearance());
-                space.add(platform.getBody());
+                platform.loadBody(platform.getSize().x, platform.getSize().y, platform.getSize().z,
+                        platform.getPosition(), platform.getColor());
+                if(platform instanceof LoadEvent) {
+                    ((LoadEvent) platform).load();
+                }
             } else {
                 main.getRootNode().detachChild(platform.getAppearance());
                 space.remove(platform.getBody());
@@ -87,6 +90,9 @@ public class ModuleSY {
         for(ColoredPlatform plat : platforms) {
             if(plat instanceof MovingPlatform) {
                 MovingPlatform movPlat = (MovingPlatform) plat;
+                if(movPlat.getAppearance() == null) {
+                    continue;
+                }
                 movPlat.getAppearance().setLocalTranslation(movPlat.getBody().getPhysicsLocation().add(0, 1.1f, 0));
                 Vector3f position = movPlat.getPosition();
                 float distanceDep = position.add(movPlat.getDeparture().mult(-1)).length();
@@ -104,6 +110,7 @@ public class ModuleSY {
         }
     }
     public Vector3f getFinalPosition() {
+        finalPosition.set(platforms.get(platforms.size()-1).getPosition());
         return finalPosition;
     }
     public Vector3f getInitialLocation() { return platforms.get(0).getPosition(); }

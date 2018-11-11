@@ -30,7 +30,9 @@ public abstract class PhysicEntity {
     }
 
     public void setPosition(Vector3f pos) {
-        body.setPhysicsLocation(pos);
+        if(body != null) {
+            body.setPhysicsLocation(pos);
+        }
     }
     public RigidBodyControl getBody() {
         return body;

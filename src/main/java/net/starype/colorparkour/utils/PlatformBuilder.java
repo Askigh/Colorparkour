@@ -19,6 +19,9 @@ public class PlatformBuilder {
         this.manager = manager;
         this.main = main;
     }
+    public ColoredPlatform defaultPlatform() {
+        return colored(new float[]{5, 1, 5}, new float[]{0, 2, 0}, ColorRGBA.White, "1:0");
+    }
     public ColoredPlatform debug(float[] size, Vector3f position, ColorRGBA color, String platformID) {
         return new DebugPlatform(manager, main, size, position, color, platformID);
     }

@@ -1,4 +1,4 @@
-package net.starype.colorparkour.core.module;
+package net.starype.colorparkour.module;
 
 import com.jme3.math.Vector3f;
 import net.starype.colorparkour.core.ColorParkourMain;
@@ -19,14 +19,12 @@ public class ModuleManager {
     private List<ModuleSY> modules;
     private int currentModule;
     private ColorParkourMain main;
-    private Player player;
 
     public ModuleManager(ColorParkourMain main) {
         this.modules = new ArrayList<>();
         this.main = main;
     }
 
-    public void attachPlayer(Player player) { this.player = player; }
     public void add(ModuleSY... modules) {
         for(ModuleSY m : modules){
             this.modules.add(m);
@@ -53,11 +51,11 @@ public class ModuleManager {
             if(currentModule < modules.size() -1) {
                 currentModule++;
                 current.setActive(false);
-                player.resetPosition(getCurrentModule());
+                main.getPlayer().resetPosition(getCurrentModule());
                 start();
             } else {
                 System.out.println("Félicitations vous avez fini le jeu !");
-                player.resetPosition(getCurrentModule());
+                main.getPlayer().resetPosition(getCurrentModule());
             }
         }
     }

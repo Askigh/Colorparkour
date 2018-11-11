@@ -2,14 +2,13 @@ package net.starype.colorparkour.entity.player;
 
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Spatial;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.core.ColorParkourMain;
-import net.starype.colorparkour.core.module.ModuleManager;
-import net.starype.colorparkour.core.module.ModuleSY;
+import net.starype.colorparkour.module.ModuleManager;
+import net.starype.colorparkour.module.ModuleSY;
 import net.starype.colorparkour.entity.PhysicEntity;
 import net.starype.colorparkour.entity.platform.ColoredPlatform;
 import net.starype.colorparkour.entity.platform.MovingPlatform;

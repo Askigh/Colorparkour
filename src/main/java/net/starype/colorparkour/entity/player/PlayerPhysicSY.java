@@ -12,8 +12,8 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.core.ColorParkourMain;
-import net.starype.colorparkour.core.module.ModuleSY;
-import net.starype.colorparkour.core.module.ModuleManager;
+import net.starype.colorparkour.module.ModuleSY;
+import net.starype.colorparkour.module.ModuleManager;
 import net.starype.colorparkour.entity.platform.*;
 import net.starype.colorparkour.entity.platform.event.ContactEvent;
 import net.starype.colorparkour.utils.Referential;
@@ -97,6 +97,9 @@ public class PlayerPhysicSY implements PhysicsTickListener {
     @Override
     public void prePhysicsTick(PhysicsSpace space, float tpf) {
 
+        if(body.getPhysicsSpace() == null) {
+            return;
+        }
         manageCollisions();
         if (body.getPhysicsLocation().y < -10) {
             player.resetPosition(moduleManager.getCurrentModule());
@@ -223,9 +226,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
         location.set(new Vector3f(0, 1, 0)).addLocal(body.getPhysicsLocation());
         rayVector.set(new Vector3f(0, 1, 0)).multLocal(-1 - 0.1f).addLocal(location);
-        if(body.getPhysicsSpace() == null) {
-            return true;
-        }
+
         List<PhysicsRayTestResult> results = body.getPhysicsSpace().rayTest(location, rayVector);
 
         for (PhysicsRayTestResult physicsRayTestResult : results) {

@@ -4,8 +4,9 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import net.starype.colorparkour.collision.CollisionManager;
+import net.starype.colorparkour.entity.platform.event.LoadEvent;
 
-public class MovingPlatform extends ColoredPlatform {
+public class MovingPlatform extends ColoredPlatform implements LoadEvent {
 
     protected Vector3f departure;
     protected Vector3f arrival;
@@ -19,7 +20,11 @@ public class MovingPlatform extends ColoredPlatform {
         this.departure = departure;
         this.arrival = arrival;
         this.speed = speed;
+    }
+    @Override
+    public void load() {
         createMove();
+        body.setFriction(0);
     }
 
     private void createMove() {
@@ -51,5 +56,14 @@ public class MovingPlatform extends ColoredPlatform {
 
     public Vector3f getInitialDirection() {
         return initialDirection;
+    }
+
+    @Override
+    public Vector3f getPosition() {
+        if(body == null) {
+            return super.getPosition();
+        } else {
+            return body.getPhysicsLocation();
+        }
     }
 }

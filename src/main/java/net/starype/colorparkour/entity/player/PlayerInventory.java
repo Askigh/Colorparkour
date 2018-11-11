@@ -54,9 +54,7 @@ public class PlayerInventory {
 
         Button quitButton = pauseMenu.addChild(new Button("Quit Game"));
         quitButton.setColor(ColorRGBA.Black);
-        quitButton.setSize(new Vector3f(WIDTH, HEIGHT, 0));
         quitButton.addClickCommands((Command<Button>) source -> main.stop());
-        quitButton.scale(3);
         quitButton.setLocalTranslation(0, 0, 0);
 
         Button restartLevel = pauseMenu.addChild(new Button("Restart level"));
@@ -67,7 +65,6 @@ public class PlayerInventory {
         });
         restartLevel.setColor(ColorRGBA.Green);
         restartLevel.setLocalTranslation(new Vector3f(50, 200, 0));
-        restartLevel.scale(3);
         GUIS.add(pauseMenu);
     }
     public void activatePlayer() {

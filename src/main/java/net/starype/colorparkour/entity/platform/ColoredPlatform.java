@@ -19,6 +19,7 @@ public class ColoredPlatform extends PhysicEntity {
     public static final Logger LOGGER = LoggerFactory.getLogger(ColoredPlatform.class);
  
     @SerializedName("rgba")
+    private Vector3f position;
     private ColorRGBA color;
     private Material mat;
     @SerializedName("name")
@@ -33,13 +34,13 @@ public class ColoredPlatform extends PhysicEntity {
     public ColoredPlatform(CollisionManager manager, SimpleApplication main, float[] size, Vector3f pos,
                            ColorRGBA color, String platformID) {
         super(manager, main);
+        this.position = pos;
         this.color = color;
         this.size = new Vector3f(size[0], size[1], size[2]);
         this.platformID = platformID;
-        loadBody(size[0], size[1], size[2], pos, color);
     }
 
-    protected void loadBody(float sizeX, float sizeY, float sizeZ, Vector3f pos, ColorRGBA color) {
+    public void loadBody(float sizeX, float sizeY, float sizeZ, Vector3f pos, ColorRGBA color) {
 
         Box box = new Box(sizeX, sizeY, sizeZ);
         Box hitBox = new Box(sizeX+0.1f, sizeY+1, sizeZ+0.1f);
@@ -64,9 +65,7 @@ public class ColoredPlatform extends PhysicEntity {
         return mat;
     }
 
-    public String getPlatformID() {
-        return platformID;
-    }
+    public String getPlatformID() { return platformID; }
     public ColorRGBA getColor() {
         return color;
     }
@@ -74,5 +73,11 @@ public class ColoredPlatform extends PhysicEntity {
         this.color = color;
         mat.setColor("Color", color);
     }
+
+    @Override
+    public Vector3f getPosition() {
+        return position;
+    }
+
     public Vector3f getSize() { return size; }
 }
