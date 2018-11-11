@@ -25,12 +25,13 @@ There are 8 different effects :
 * Moving : Platforms that move at a constant speed, and no randomness in their movement. Be careful, they are not sticky!
 * Sticky : Same as Moving, but if you don't move, no panic! You always follow the platform. You are free to move though
 * Bounce : No platform. Just trampoline.
-* Low / High gravity : Looks like you are either in the moon or in Jupiter here. Gravity has changed!
+* Low / High gravity : Looks like you are either in the moon or in Jupiter for now. Gravity has changed!
 * Gravity direction change : The intensity of the gravity doesn't change. However, you may not fall downward anymore.
 
 As said above, the color of the platforms is significant. In fact, you need to choose which color you want, and only the
 platforms being this color and the white ones will be displayed. You can constantly change the color you want, and the
-current chosen coloris always displayed on the screen. For instance, if you are on a white platform and the two next ones
+current chosen color will always be displayed on the screen. For instance, if you are onto a white platform and the two
+next ones
 are blue and red, select "blue", jump onto the blue platform, jump again and as soon as you are in the air, switch the
 color to red and the red platform will appear.
 ***
