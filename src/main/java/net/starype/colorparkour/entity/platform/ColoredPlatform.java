@@ -73,6 +73,14 @@ public class ColoredPlatform extends PhysicEntity {
         this.color = color;
         mat.setColor("Color", color);
     }
+    public void show() {
+        main.getRootNode().attachChild(appearance);
+        body.setEnabled(true);
+    }
+    public void hide() {
+        main.getRootNode().detachChild(appearance);
+        body.setEnabled(false);
+    }
 
     @Override
     public Vector3f getPosition() {

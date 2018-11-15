@@ -10,7 +10,7 @@ import com.jme3.math.Vector3f;
 import com.simsilica.lemur.GuiGlobals;
 import net.starype.colorparkour.core.ColorParkourMain;
 import net.starype.colorparkour.entity.platform.ColoredPlatform;
-import net.starype.colorparkour.entity.player.PlayerInventory;
+import net.starype.colorparkour.entity.player.gui.PlayerInventory;
 import net.starype.colorparkour.entity.player.PlayerPhysicSY;
 import static net.starype.colorparkour.core.ColorParkourMain.*;
 
@@ -90,7 +90,6 @@ public class Setup {
         kManager.addLinkedKeyAction("No cursor", KeyInput.KEY_ESCAPE, new KeyboardManager.Action() {
             @Override
             public void execute(boolean keyPressed) {
-
                 InputManager inputManager = main.getInputManager();
                 PlayerInventory inventory = main.getPlayerInventory();
                 if(inventory.isGuiActive(0)) {
@@ -107,7 +106,7 @@ public class Setup {
                     inputManager.setCursorVisible(true);
                     main.getCamera().setRotation(new Quaternion(0, 2, 0, 0));
                     main.getCollisionManager().getAppState().getPhysicsSpace().remove(main.getPlayer().getBody());
-                    inventory.show(1);
+                    inventory.showOnly(1);
                 }
             }
         });

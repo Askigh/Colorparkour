@@ -1,14 +1,19 @@
 package net.starype.colorparkour.entity.player;
 
+import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.bullet.collision.PhysicsRayTestResult;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.collision.CollisionResults;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.core.ColorParkourMain;
@@ -22,8 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class PlayerPhysicSY implements PhysicsTickListener {
 
@@ -39,7 +42,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
     public boolean left = false, right = false, forward = false, backward = false;
     private float speedBoost = 1f;
 
-    private short jumpAmount = 0;
+    private boolean jumpBonus = false;
     private boolean onGround;
 
     private float low_speed_friction;
@@ -54,14 +57,13 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
     // In average, TPF_COEFF_AVERAGE * tpf = 1
     private static final int TPF_COEFF_AVERAGE = 58;
-    private boolean isJumping = false;
 
     PlayerPhysicSY(CollisionManager manager, Camera cam, Player player, ModuleManager moduleManager, ColorParkourMain main) {
         this.moduleManager = moduleManager;
         this.manager = manager;
         this.cam = cam;
         this.player = player;
-        this.body = createBody();
+        this.body = createBody(main);
         camForward = new Vector3f();
         camLeft = new Vector3f();
         walkDirection = new Vector3f();
@@ -76,16 +78,19 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         jump_power = 22f;
     }
 
-    private RigidBodyControl createBody() {
+    private RigidBodyControl createBody(ColorParkourMain main) {
 
         player.setAppearance(new Geometry("hit_box", new Box(0.1f, 0.1f, 0.1f)));
+        Material mat = new Material(main.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        mat.setColor("Color", ColorRGBA.Magenta);
+        player.getAppearance().setMaterial(mat);
         RigidBodyControl body = manager.loadObject(BoxCollisionShape.class, 20, true, player.getAppearance());
         manager.getAppState().getPhysicsSpace().add(body);
         body.setPhysicsLocation(cam.getLocation());
         body.setPhysicsRotation(cam.getRotation());
         body.setGravity(ColorParkourMain.GAME_GRAVITY);
         body.setFriction(1);
-
+        main.getRootNode().attachChild(player.getAppearance());
         player.setBody(body);
         return body;
     }
@@ -130,6 +135,9 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
         Optional<Referential> optionalRef = Referential.of(body);
 
+        if(!isOnGround(body)) {
+            return;
+        }
         if (!optionalRef.isPresent() || !optionalRef.get().isEnabled()) {
             body.setGravity(ColorParkourMain.GAME_GRAVITY);
             applyForcesTo(body);
@@ -158,11 +166,12 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
     public void jump() {
 
-        isJumping = true;
-        if (jumpAmount <= 0)
+        if(!isOnGround(body) && !jumpBonus) {
             return;
-
-        jumpAmount--;
+        }
+        if(!isOnGround(body)) {
+            jumpBonus = false;
+        }
 
         Vector3f spaceSpeed = body.getLinearVelocity();
         /*
@@ -175,45 +184,31 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         if (lastContact instanceof ContactEvent) {
             ((ContactEvent) lastContact).leaveByJump(this);
         }
-
     }
 
-    public void setJumpAmount(short jumpAmount) {
-        this.jumpAmount = jumpAmount;
-    }
+    public void addBonus() { this.jumpBonus = true; }
 
     private void manageCollisions() {
 
         if (!isOnGround(body)) {
             if (lastContact != null) {
-                if(!isJumping) {
-                    jumpAmount--;
-                }
                 onGround = false;
-                isJumping = false;
                 if(lastContact instanceof ContactEvent) {
                     ((ContactEvent) lastContact).leave(this);
-
                 }
                 lastContact = null;
             }
             return;
         }
-        // If the boolean onGround hasn't been set to true yet (We want to set the jumpAmount only once)
-        if (!onGround) {
-            jumpAmount = 1;
-        }
+        // If the boolean onGround hasn't been set to true yet (We want to set the jumpBonus only once)
+        //jumpBonus = 1;
         if (lastContact instanceof ContactEvent) {
             ContactEvent contactPlatform = (ContactEvent) lastContact;
 
             contactPlatform.collision(this);
             if (!onGround) {
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        contactPlatform.collided(getInstance());
-                    }
-                }, 80);
+                // Before there was a 80 ms delay
+                contactPlatform.collided(getInstance());
             }
         }
         onGround = true;
@@ -225,7 +220,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         Vector3f rayVector = new Vector3f();
 
         location.set(new Vector3f(0, 1, 0)).addLocal(body.getPhysicsLocation());
-        rayVector.set(new Vector3f(0, 1, 0)).multLocal(-1 - 0.1f).addLocal(location);
+        rayVector.set(new Vector3f(0, 2, 0)).multLocal(-1 - 0.1f).addLocal(location);
 
         List<PhysicsRayTestResult> results = body.getPhysicsSpace().rayTest(location, rayVector);
 
@@ -242,6 +237,20 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         }
         return false;
     }
+    /**
+     * This is an alternative method that could be useful, it looks a bit less precise than the other one
+     *
+    private boolean isOnGround(Spatial col1) {
+        BoundingBox box = new BoundingBox(col1.getLocalTranslation(), 0.1f, 0.1f, 0.1f);
+        for(ColoredPlatform platform : moduleManager.getCurrentModule().getPlatforms()) {
+            CollisionResults results = new CollisionResults();
+            box.collideWith(platform.getAppearance(), results);
+            if(results.size() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }*/
 
     PlayerPhysicSY setLowSpeedFriction(float low_speed_friction) {
         this.low_speed_friction = low_speed_friction;
@@ -268,39 +277,10 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         return this;
     }
 
-    public float getLow_speed_friction() {
-        return low_speed_friction;
-    }
-
-    public float getAcceleration() {
-        return acceleration;
-    }
-
-    public float getStandard_friction() {
-        return standard_friction;
-    }
-
-    public float getFriction_expansion() {
-        return friction_expansion;
-    }
-
-    public float getJump_power() {
-        return jump_power;
-    }
-
-    public void sprint() {
-        this.speedBoost = 2.7f;
-    }
-
-    public void walk() {
-        this.speedBoost = 1f;
-    }
-
+    public void sprint() { this.speedBoost = 2.7f; }
+    public void walk() { this.speedBoost = 1f; }
     public Vector3f getForce() { return force; }
-
-    public RigidBodyControl getBody() {
-        return body;
-    }
+    public RigidBodyControl getBody() { return body; }
 
     // non used overrided method
     @Override

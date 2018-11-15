@@ -25,7 +25,7 @@ public class CameraSY implements AnalogListener {
     private InputManager listener;
     private ColorParkourMain main;
 
-    private static final int SENSITIVITY = 700;
+    private static final int SENSITIVITY = 600;
     private static final String[] MAPPINGS = {"left", "right", "top", "bottom"};
 
     protected CameraSY(ColorParkourMain main, Camera source) {

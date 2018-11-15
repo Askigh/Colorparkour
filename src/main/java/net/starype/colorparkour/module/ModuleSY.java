@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import net.starype.colorparkour.core.ColorParkourMain;
@@ -52,8 +53,7 @@ public class ModuleSY {
                     ((LoadEvent) platform).load();
                 }
             } else {
-                main.getRootNode().detachChild(platform.getAppearance());
-                space.remove(platform.getBody());
+                platform.hide();
             }
         }
     }
@@ -106,6 +106,15 @@ public class ModuleSY {
                     movPlat.setDirection(movPlat.getDirection().mult(-1));
                     movPlat.resetMovement();
                 }
+            }
+        }
+    }
+    public void showOnly(ColorRGBA color) {
+        for(ColoredPlatform platform : platforms) {
+            if(!platform.getColor().equals(color) && !platform.getColor().equals(ColorRGBA.White)) {
+                platform.hide();
+            } else {
+                platform.show();
             }
         }
     }

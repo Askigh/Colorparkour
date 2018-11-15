@@ -38,16 +38,13 @@ public class CollisionManager {
      * @return a RigidBodyControl created from the data added
      */
     public RigidBodyControl loadObject(Class<? extends CollisionShape> type, int mass, boolean addControl, Object... datas) {
-        LOGGER.info("Loading an object");
         CollisionShape shape;
         // if a CollisionShapeFactory is required, for complex shapes
         if(type.equals(CollisionShape.class)
                 || type.equals(HullCollisionShape.class) || type.equals(BoxCollisionShape.class)) {
             shape = loadSpatialShape(datas[0], mass, type);
-            LOGGER.info("Box / CollisionShape");
         }
         else {
-            LOGGER.info("Other collisionshape");
             shape = loadShape(type, datas);
         }
 
@@ -55,7 +52,6 @@ public class CollisionManager {
         if(datas[0] instanceof Spatial && addControl) {
             ((Spatial) datas[0]).addControl(control);
         }
-        LOGGER.debug("Initialized new RigibBodyControl");
         return control;
     }
 

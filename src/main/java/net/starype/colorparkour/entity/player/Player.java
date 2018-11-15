@@ -47,7 +47,7 @@ public class Player extends PhysicEntity {
                 col.setPosition(((MovingPlatform) col).getDeparture());
             }
         }
-        Referential.of(body).get().setEnabled(false);
+        Referential.of(body).ifPresent(referential -> referential.setEnabled(false));
         main.getViewPort().setBackgroundColor(ColorRGBA.randomColor());
     }
 

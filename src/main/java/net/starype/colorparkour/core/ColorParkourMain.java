@@ -12,12 +12,13 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
+import com.jme3.util.SkyFactory;
 import com.simsilica.lemur.GuiGlobals;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.module.ModuleManager;
 import net.starype.colorparkour.module.ModuleSY;
 import net.starype.colorparkour.entity.player.Player;
-import net.starype.colorparkour.entity.player.PlayerInventory;
+import net.starype.colorparkour.entity.player.gui.PlayerInventory;
 import net.starype.colorparkour.settings.Setup;
 import net.starype.colorparkour.utils.PlatformBuilder;
 import net.starype.colorparkour.utils.Referential;
@@ -38,7 +39,7 @@ public class ColorParkourMain extends SimpleApplication {
     private TimerSY gameTimer;
     private PlayerInventory inventory;
     public static final int WIDTH = 1500;
-    public static final int HEIGHT = 500;
+    public static final int HEIGHT = 800;
 
     private ColorParkourMain() {
         LOGGER.info("Game initialization...");
@@ -65,7 +66,7 @@ public class ColorParkourMain extends SimpleApplication {
     public static void main(String[] args) { new ColorParkourMain(); }
 
     /**
-     * The {@link ColorParkourMain#simpleInitApp()} init all the contents required for the game loop
+     * The {@link ColorParkourMain#simpleInitApp()} inits all the contents required for the game loop
      * Once all is set up, the {@link ColorParkourMain#simpleUpdate(float)} takes care of what
      * needs to be updated and resetted each frame
      */
@@ -77,6 +78,7 @@ public class ColorParkourMain extends SimpleApplication {
          ***************************************************************/
         disableDefaultOptions();
         GuiGlobals.initialize(this);
+        GuiGlobals.getInstance().requestFocus(null);
         loadAudio();
         collManager = new CollisionManager(this);
         collManager.init();
@@ -104,12 +106,19 @@ public class ColorParkourMain extends SimpleApplication {
             Activates the main menu
          ****************************/
         cam.setLocation(new Vector3f(0, 100, 0));
-        inventory.show(0);
+        inventory.showOnly(0);
 
         /**********************************************************
-            Init the lights, and the inputs using KeyboardManager
+         Init the lights, and the inputs using KeyboardManager
          **********************************************************/
         Setup.init(this);
+
+        /***********************************************************
+          Creates the sky
+         ************************************************************/
+        rootNode.attachChild(SkyFactory.createSky(getAssetManager(), "assets/Textures/sky/Skysphere.jpg",
+                SkyFactory.EnvMapType.EquirectMap));
+
     }
 
     public void startGame() {
@@ -126,8 +135,8 @@ public class ColorParkourMain extends SimpleApplication {
                 .add(builder.ice(new float[]{5, 3f, 5}, new float[]{0f, -3f, 0f}, ColorRGBA.White, "0:0"),
                         builder.doubleJump(new float[]{5, 0.1f, 5}, new float[]{20, -1, 0}, ColorRGBA.Blue, "0:1"),
                         builder.colored(new float[]{5, 0.1f, 5}, new float[]{50, 1, 0}, ColorRGBA.Orange, "0:2"),
-                        builder.sticky(new float[]{5, 0.1f, 5}, new Vector3f(65, 1, 30),
-                                new Vector3f(65, 1, -30), 0.2f, ColorRGBA.Black, "0:3"),
+                        builder.moving(new float[]{5, 0.1f, 5}, new Vector3f(65, 1, 30),
+                                new Vector3f(65, 1, -30), 0.13f, ColorRGBA.Black, "0:3"),
                         builder.doubleJump(new float[]{2f, 0.3f, 2f}, new float[]{80, 0, -20f}, ColorRGBA.Red, "0:4"))
                 .build(moduleManager);
         new ModuleSY(this, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
@@ -160,8 +169,8 @@ public class ColorParkourMain extends SimpleApplication {
 
     // Plays the lovely Opening from 'Sword Art Online: Alicization'
     private void loadAudio() {
-        AudioNode node = new AudioNode(assetManager, "audio/sound.wav", AudioData.DataType.Stream);
-        node.setVolume(0.01f);
+        AudioNode node = new AudioNode(assetManager, "audio/sound1.wav", AudioData.DataType.Stream);
+        node.setVolume(0f);
         node.setLooping(true);
         node.setPositional(false);
         node.play();
