@@ -2,8 +2,8 @@
 
 **Welcome to the Colorparkour project !**
 
-You can find a gif showing the current advancement [here](https://i.imgur.com/aC1fDGU.gifv)
-(last gif update : around october 30th 2018)
+You can find a gif showing the current advancement [here](https://i.imgur.com/P2ckDKu.gifv)
+(last gif update : november 15th 2018)
 
 To keep yourself updated about was has been done or what needs to be done, you can always check the TODO list in the wiki.
 ***
