@@ -13,10 +13,11 @@ import net.starype.colorparkour.core.ColorParkourMain;
 /**
  * @author Askigh
  *
- * sets up a basic camera replacing {@link com.jme3.input.FlyByCamera}
- * incapsulated into a Player object, manages camera rotation
+ * Sets up a basic camera replacing {@link com.jme3.input.FlyByCamera}
+ * incapsulated into a Player object. Manages camera rotation
  *
- * all the classes ending with 'SY' are provided by Starype
+ * The classes whose names are similar or equal to other classes end with 'SY', in order not to mix up
+ * All of them are provided by Starype
  */
 public class CameraSY implements AnalogListener {
 

@@ -21,6 +21,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
 
+/**
+ * The classes whose names are similar or equal to other classes end with 'SY', in order not to mix up
+ * All of them are provided by Starype
+ */
 public class ModuleSY {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ModuleSY.class);

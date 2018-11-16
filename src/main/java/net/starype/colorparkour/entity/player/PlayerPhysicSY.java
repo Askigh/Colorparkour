@@ -25,6 +25,10 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The classes whose names are similar or equal to other classes end with 'SY', in order not to mix up
+ * All of them are provided by Starype
+ */
 public class PlayerPhysicSY implements PhysicsTickListener {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(PlayerPhysicSY.class);

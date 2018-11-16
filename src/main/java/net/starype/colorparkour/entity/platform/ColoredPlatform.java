@@ -83,8 +83,9 @@ public class ColoredPlatform extends PhysicEntity {
         return mat;
     }
 
-
-
+    /**
+     * Displays the platform with full properties : appearance, movement if necessary and physics body
+     */
     public void show() {
         main.getRootNode().attachChild(appearance);
         body.setEnabled(true);
@@ -92,6 +93,10 @@ public class ColoredPlatform extends PhysicEntity {
         appearance.setMaterial(loadMaterial(color));
     }
 
+    /**
+     * Remove the solidity of the platform
+     * @param invisible Whether the platform should be completely removed or not
+     */
     public void hide(boolean invisible) {
         if (invisible) {
             // Called only when the module has been finished, the body will be totally invisible

@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 
 /**
  * @author Lolilolulolilol
+ * The classes whose names are similar or equal to other classes end with 'SY', in order not to mix up
+ * All of them are provided by Starype
  */
 public class TimerSY {
 
@@ -28,7 +30,7 @@ public class TimerSY {
      * @param guiFont      See {@link #loadTimer(BitmapFont, ColorRGBA, Vector2f)} guiFont parameter
      * @param color        See {@link #loadTimer(BitmapFont, ColorRGBA, Vector2f)} color parameter
      * @param textPosition See {@link #loadTimer(BitmapFont, ColorRGBA, Vector2f)} textPosition parameter
-     * @param timerPrefix  This parameter defines which text should be displayed before the time
+     * @param timerPrefix  Defines which text should be displayed before the time
      * @param pattern      The defined time pattern.
      */
     public TimerSY(BitmapFont guiFont, ColorRGBA color, Vector2f textPosition, String timerPrefix, String pattern, String timerID) {

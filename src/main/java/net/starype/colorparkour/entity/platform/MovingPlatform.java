@@ -37,23 +37,18 @@ public class MovingPlatform extends ColoredPlatform implements LoadEvent {
     public void resetMovement() {
         body.setLinearVelocity(direction.mult(speed));
     }
-
     public Vector3f getDirection() {
         return direction;
     }
-
     public void setDirection(Vector3f direction) {
         this.direction = direction;
     }
-
     public Vector3f getDeparture() {
         return departure;
     }
-
     public Vector3f getArrival() {
         return arrival;
     }
-
     public Vector3f getInitialDirection() {
         return initialDirection;
     }
