@@ -80,13 +80,6 @@ public class Setup {
                 else physics.walk();
             }
         }.withReleaseActive(true));
-        kManager.addLinkedKeyAction("SuperColor", KeyInput.KEY_TAB, new KeyboardManager.Action() {
-            @Override
-            public void execute(boolean keyPressed) {
-                for(ColoredPlatform plat : main.getModuleManager().getCurrentModule().getPlatforms())
-                    plat.setColor(ColorRGBA.randomColor());
-            }
-        });
         kManager.addLinkedKeyAction("No cursor", KeyInput.KEY_ESCAPE, new KeyboardManager.Action() {
             @Override
             public void execute(boolean keyPressed) {
@@ -108,6 +101,30 @@ public class Setup {
                     main.getCollisionManager().getAppState().getPhysicsSpace().remove(main.getPlayer().getBody());
                     inventory.showOnly(1);
                 }
+            }
+        });
+        kManager.addLinkedKeyAction("1", KeyInput.KEY_1, new KeyboardManager.Action() {
+            @Override
+            public void execute(boolean keyPressed) {
+                main.getPlayerInventory().highlight("red", ColorRGBA.Red);
+            }
+        });
+        kManager.addLinkedKeyAction("2", KeyInput.KEY_2, new KeyboardManager.Action() {
+            @Override
+            public void execute(boolean keyPressed) {
+                main.getPlayerInventory().highlight("blue", ColorRGBA.Blue);
+            }
+        });
+        kManager.addLinkedKeyAction("3", KeyInput.KEY_3, new KeyboardManager.Action() {
+            @Override
+            public void execute(boolean keyPressed) {
+                main.getPlayerInventory().highlight("yellow", ColorRGBA.Yellow);
+            }
+        });
+        kManager.addLinkedKeyAction("4", KeyInput.KEY_4, new KeyboardManager.Action() {
+            @Override
+            public void execute(boolean keyPressed) {
+                main.getPlayerInventory().highlight("green", ColorRGBA.Green);
             }
         });
 

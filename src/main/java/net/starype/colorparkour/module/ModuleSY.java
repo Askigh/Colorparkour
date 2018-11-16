@@ -53,9 +53,11 @@ public class ModuleSY {
                     ((LoadEvent) platform).load();
                 }
             } else {
-                platform.hide();
+                platform.hide(true);
             }
         }
+        if(active)
+            showOnly(ColorRGBA.White);
     }
 
     public void loadPlatforms() throws FileNotFoundException, NullPointerException {
@@ -112,7 +114,7 @@ public class ModuleSY {
     public void showOnly(ColorRGBA color) {
         for(ColoredPlatform platform : platforms) {
             if(!platform.getColor().equals(color) && !platform.getColor().equals(ColorRGBA.White)) {
-                platform.hide();
+                platform.hide(false);
             } else {
                 platform.show();
             }

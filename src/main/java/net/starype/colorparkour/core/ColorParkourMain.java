@@ -31,7 +31,7 @@ import java.util.Arrays;
 public class ColorParkourMain extends SimpleApplication {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(SimpleApplication.class);
-    public static final Vector3f GAME_GRAVITY = new Vector3f(0, -50f, 0);
+    public static final Vector3f GAME_GRAVITY = new Vector3f(0, -60f, 0);
     public static final Quaternion INITIAL_ROTATION = new Quaternion(0, 0.7f, 0, 0.7f);
     private CollisionManager collManager;
     private ModuleManager moduleManager;
@@ -66,7 +66,7 @@ public class ColorParkourMain extends SimpleApplication {
     public static void main(String[] args) { new ColorParkourMain(); }
 
     /**
-     * The {@link ColorParkourMain#simpleInitApp()} inits all the contents required for the game loop
+     * The simpleInitApp method inits all the contents required for the game loop
      * Once all is set up, the {@link ColorParkourMain#simpleUpdate(float)} takes care of what
      * needs to be updated and resetted each frame
      */
@@ -116,9 +116,8 @@ public class ColorParkourMain extends SimpleApplication {
         /***********************************************************
           Creates the sky
          ************************************************************/
-        rootNode.attachChild(SkyFactory.createSky(getAssetManager(), "assets/Textures/sky/Skysphere.jpg",
+        rootNode.attachChild(SkyFactory.createSky(getAssetManager(), "assets/sky/Skysphere.jpg",
                 SkyFactory.EnvMapType.EquirectMap));
-
     }
 
     public void startGame() {
@@ -126,17 +125,17 @@ public class ColorParkourMain extends SimpleApplication {
         moduleManager.start();
         player.initialize();
         player.resetPosition(moduleManager.getCurrentModule());
-        inputManager.setCursorVisible(false);
     }
 
+    // This needs to be replaced by the json loader
     public void createModules(PlatformBuilder builder) {
         PhysicsSpace space = collManager.getAppState().getPhysicsSpace();
         new ModuleSY(this, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
                 .add(builder.ice(new float[]{5, 3f, 5}, new float[]{0f, -3f, 0f}, ColorRGBA.White, "0:0"),
                         builder.doubleJump(new float[]{5, 0.1f, 5}, new float[]{20, -1, 0}, ColorRGBA.Blue, "0:1"),
-                        builder.colored(new float[]{5, 0.1f, 5}, new float[]{50, 1, 0}, ColorRGBA.Orange, "0:2"),
+                        builder.colored(new float[]{5, 0.1f, 5}, new float[]{50, 1, 0}, ColorRGBA.Green, "0:2"),
                         builder.moving(new float[]{5, 0.1f, 5}, new Vector3f(65, 1, 30),
-                                new Vector3f(65, 1, -30), 0.13f, ColorRGBA.Black, "0:3"),
+                                new Vector3f(65, 1, -30), 0.13f, ColorRGBA.White, "0:3"),
                         builder.doubleJump(new float[]{2f, 0.3f, 2f}, new float[]{80, 0, -20f}, ColorRGBA.Red, "0:4"))
                 .build(moduleManager);
         new ModuleSY(this, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
@@ -150,12 +149,16 @@ public class ColorParkourMain extends SimpleApplication {
     }
 
     /**
-     * This methods takes car of everything that needs to be updated constantly, such as
+     * This method takes care of everything that needs to be updated constantly, such as
      * referentials, timer, platforms movement and end module check
      * @param tpf time per frame
      */
     @Override
     public void simpleUpdate(float tpf) {
+        /*
+            Due to collision detection problem using ray casting,
+            referentials are not used since it's impossible to play with sticky platforms
+         */
         Referential.updateAll();
         if(!isPaused()) {
             gameTimer.updateTimer(tpf);
@@ -164,12 +167,13 @@ public class ColorParkourMain extends SimpleApplication {
         moduleManager.checkNext(player.getBody().getPhysicsLocation());
     }
 
-    public void attachChilds(Spatial... spatials) { Arrays.asList(spatials).forEach(s -> rootNode.attachChild(s)); }
-    public void attachLights(Light... lights) { Arrays.asList(lights).forEach(l -> rootNode.addLight(l)); }
-
     // Plays the lovely Opening from 'Sword Art Online: Alicization'
     private void loadAudio() {
         AudioNode node = new AudioNode(assetManager, "audio/sound1.wav", AudioData.DataType.Stream);
+        /*
+            When you run 100 times a day your game, it may sometimes be a little bit annoying to hear
+            the same ten seconds of the same music constantly. Therefore the volume is set to 0
+         */
         node.setVolume(0f);
         node.setLooping(true);
         node.setPositional(false);
@@ -177,15 +181,18 @@ public class ColorParkourMain extends SimpleApplication {
         attachChilds(node);
     }
     private void disableDefaultOptions() {
-        // disables FlyByCamera and mappings, replaced by CameraSY and Setup
+        // disables FlyByCamera and mappings, replacing them by CameraSY and Setup
         inputManager.clearMappings();
         guiNode.detachAllChildren();
         stateManager.detach(stateManager.getState(FlyCamAppState.class));
     }
-    public boolean isPaused() {
+
+    public void attachChilds(Spatial... spatials) { Arrays.asList(spatials).forEach(s -> rootNode.attachChild(s)); }
+    public void attachLights(Light... lights) { Arrays.asList(lights).forEach(l -> rootNode.addLight(l)); }
+
+    private boolean isPaused() {
         return inventory.isGuiActive();
     }
-
     public Player getPlayer() { return player; }
     public ModuleManager getModuleManager() { return moduleManager; }
     public CollisionManager getCollisionManager() { return collManager; }

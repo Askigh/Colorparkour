@@ -27,7 +27,7 @@ public class Player extends PhysicEntity {
                 .setLowSpeedFriction(-75)
                 .setFrictionExpansion(1.3f)
                 .setStandardFriction(-5)
-                .setJumpPower(22);
+                .setJumpPower(24);
     }
 
     public void initialize() {

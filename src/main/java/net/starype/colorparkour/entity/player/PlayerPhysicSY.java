@@ -1,19 +1,16 @@
 package net.starype.colorparkour.entity.player;
 
-import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.bullet.collision.PhysicsRayTestResult;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.collision.CollisionResults;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import net.starype.colorparkour.collision.CollisionManager;
 import net.starype.colorparkour.core.ColorParkourMain;
@@ -80,7 +77,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
     private RigidBodyControl createBody(ColorParkourMain main) {
 
-        player.setAppearance(new Geometry("hit_box", new Box(0.1f, 0.1f, 0.1f)));
+        player.setAppearance(new Geometry("hit_box", new Box(0.2f, 0.2f, 0.2f)));
         Material mat = new Material(main.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Magenta);
         player.getAppearance().setMaterial(mat);
@@ -90,7 +87,6 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         body.setPhysicsRotation(cam.getRotation());
         body.setGravity(ColorParkourMain.GAME_GRAVITY);
         body.setFriction(1);
-        main.getRootNode().attachChild(player.getAppearance());
         player.setBody(body);
         return body;
     }
@@ -114,7 +110,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         walkDirection.set(0, 0, 0);
 
         // We want the camera to be at the top of the body
-        cam.setLocation(body.getPhysicsLocation().add(0, 1.5f, 0));
+        cam.setLocation(body.getPhysicsLocation().add(0, 1.1f, 0));
 
         /*
             Here we set the value of walkDirection depending of the key pressed.

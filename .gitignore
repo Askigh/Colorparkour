@@ -1,7 +1,5 @@
 /out
 /.idea
-/build
-/.gradle
 /gradle
 gradlew
 gradlew.bat
@@ -12,3 +10,6 @@ lwjgl.dll
 lwjgl64.dll
 OpenAL32.dll
 OpenAL64.dll
+src/main/resources/assets/sky/test.jpg
+src/main/resources/assets/sky/test2.jpg
+src/main/java/net/starype/colorparkour/entity/platform/DebugPlatform.java
