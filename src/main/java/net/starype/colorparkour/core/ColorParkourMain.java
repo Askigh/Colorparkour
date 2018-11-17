@@ -133,10 +133,10 @@ public class ColorParkourMain extends SimpleApplication {
         new ModuleSY(this, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
                 .add(builder.ice(new float[]{5, 3f, 5}, new float[]{0f, -3f, 0f}, ColorRGBA.White, "0:0"),
                         builder.doubleJump(new float[]{5, 0.1f, 5}, new float[]{20, -1, 0}, ColorRGBA.Blue, "0:1"),
-                        builder.colored(new float[]{5, 0.1f, 5}, new float[]{50, 1, 0}, ColorRGBA.Green, "0:2"),
-                        builder.moving(new float[]{5, 0.1f, 5}, new Vector3f(65, 1, 30),
+                        builder.colored(new float[]{5, 0.1f, 5}, new float[]{47, 1, 0}, ColorRGBA.Green, "0:2"),
+                        builder.moving(new float[]{5, 0.1f, 5}, new Vector3f(57, 1, 30),
                                 new Vector3f(65, 1, -30), 0.13f, ColorRGBA.White, "0:3"),
-                        builder.doubleJump(new float[]{2f, 0.3f, 2f}, new float[]{80, 0, -20f}, ColorRGBA.Red, "0:4"))
+                        builder.doubleJump(new float[]{2f, 0.3f, 2f}, new float[]{77, 0, -20f}, ColorRGBA.Red, "0:4"))
                 .build(moduleManager);
         new ModuleSY(this, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
                 .add(builder.defaultPlatform())

@@ -173,6 +173,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
             jumpBonus = false;
         }
 
+        speedBoost-= 0.5f;
         Vector3f spaceSpeed = body.getLinearVelocity();
         /*
             Modification of the "classic" physics. If the body is falling, we still want
@@ -184,6 +185,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         if (lastContact instanceof ContactEvent) {
             ((ContactEvent) lastContact).leaveByJump(this);
         }
+        speedBoost+= 0.5f;
     }
 
     public void addBonus() { this.jumpBonus = true; }
@@ -277,7 +279,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         return this;
     }
 
-    public void sprint() { this.speedBoost = 2.7f; }
+    public void sprint() { this.speedBoost = 2.2f; }
     public void walk() { this.speedBoost = 1f; }
     public Vector3f getForce() { return force; }
     public RigidBodyControl getBody() { return body; }
