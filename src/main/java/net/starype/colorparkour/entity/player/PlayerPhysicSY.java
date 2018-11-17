@@ -12,7 +12,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
-import net.starype.colorparkour.collision.CollisionManager;
+import net.starype.colorparkour.utils.CollisionManager;
 import net.starype.colorparkour.core.ColorParkourMain;
 import net.starype.colorparkour.module.ModuleSY;
 import net.starype.colorparkour.module.ModuleManager;

@@ -3,7 +3,7 @@ package net.starype.colorparkour.entity.platform;
 import com.jme3.app.SimpleApplication;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import net.starype.colorparkour.collision.CollisionManager;
+import net.starype.colorparkour.utils.CollisionManager;
 import net.starype.colorparkour.entity.platform.event.ContactEvent;
 import net.starype.colorparkour.entity.player.PlayerPhysicSY;
 import org.slf4j.Logger;

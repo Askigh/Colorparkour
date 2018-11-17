@@ -1,4 +1,4 @@
-package net.starype.colorparkour.collision;
+package net.starype.colorparkour.utils;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
@@ -8,11 +8,21 @@ import com.jme3.bullet.collision.shapes.HullCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.scene.Spatial;
+import net.starype.colorparkour.entity.PhysicalEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 
+/**
+ * Util class that helps creating and storing all kind of physical objects.
+ * If used, every physical object should be added in the phyisics space present in the
+ * {@link BulletAppState} instance. Use {@link BulletAppState#getPhysicsSpace()} to get
+ * the physics space.
+ *
+ * If your physical object is a {@link PhysicalEntity}, then call
+ * {@link PhysicalEntity#addInPhysicsSpace()} instead
+ */
 public class CollisionManager {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(CollisionManager.class);
@@ -31,11 +41,11 @@ public class CollisionManager {
     }
 
     /**
-     * Loads a defined object and add it in the current physics space
+     * Loads a defined object
      * @param type The kind of shape you want to get
      * @param mass The mass of the body created. If non null, it will create a dynamic object
      * @param datas The parameters (only primitives or spatial) required in the constructor of the type class
-     * @return a RigidBodyControl created from the data added
+     * @return a RigidBodyControl created from the datas added
      */
     public RigidBodyControl loadObject(Class<? extends CollisionShape> type, int mass, boolean addControl, Object... datas) {
         CollisionShape shape;

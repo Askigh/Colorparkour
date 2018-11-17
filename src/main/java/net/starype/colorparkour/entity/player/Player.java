@@ -5,16 +5,22 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Spatial;
-import net.starype.colorparkour.collision.CollisionManager;
+import net.starype.colorparkour.utils.CollisionManager;
 import net.starype.colorparkour.core.ColorParkourMain;
 import net.starype.colorparkour.module.ModuleManager;
 import net.starype.colorparkour.module.ModuleSY;
-import net.starype.colorparkour.entity.PhysicEntity;
+import net.starype.colorparkour.entity.PhysicalEntity;
 import net.starype.colorparkour.entity.platform.ColoredPlatform;
 import net.starype.colorparkour.entity.platform.MovingPlatform;
 import net.starype.colorparkour.utils.Referential;
 
-public class Player extends PhysicEntity {
+/**
+ * Player is a special kind of physical entity. In fact, its body and appearance are not
+ * set here, since Player uses a class called {@link PlayerPhysicSY} to create and manage them.
+ *
+ * The player class encapsulates two other objects : A {@link CameraSY} and, as said below, a PlayerPhysicSY
+ */
+public class Player extends PhysicalEntity {
 
     private CameraSY camera;
     private PlayerPhysicSY physicBody;

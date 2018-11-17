@@ -14,7 +14,7 @@ import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import com.jme3.util.SkyFactory;
 import com.simsilica.lemur.GuiGlobals;
-import net.starype.colorparkour.collision.CollisionManager;
+import net.starype.colorparkour.utils.CollisionManager;
 import net.starype.colorparkour.module.ModuleManager;
 import net.starype.colorparkour.module.ModuleSY;
 import net.starype.colorparkour.entity.player.Player;

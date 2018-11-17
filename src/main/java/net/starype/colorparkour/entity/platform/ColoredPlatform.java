@@ -3,21 +3,18 @@ package net.starype.colorparkour.entity.platform;
 import com.google.gson.annotations.SerializedName;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
-import net.starype.colorparkour.collision.CollisionManager;
-import net.starype.colorparkour.core.ColorParkourMain;
-import net.starype.colorparkour.entity.PhysicEntity;
+import net.starype.colorparkour.utils.CollisionManager;
+import net.starype.colorparkour.entity.PhysicalEntity;
 import net.starype.colorparkour.entity.platform.event.LoadEvent;
-import net.starype.colorparkour.module.ModuleSY;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ColoredPlatform extends PhysicEntity {
+public class ColoredPlatform extends PhysicalEntity {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ColoredPlatform.class);
 
