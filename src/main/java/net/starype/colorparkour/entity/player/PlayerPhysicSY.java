@@ -158,7 +158,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         force.set(walkDirection.mult(acceleration * speedBoost)
                 .add(new Vector3f(flatSpeed.x * friction, spaceSpeed.y, flatSpeed.y * friction)));
         if(!isOnGround(body) && !noKeyTouched()) {
-            force.multLocal(0.5f);
+            force.multLocal(0.8f);
         }
         control.applyCentralForce(force);
     }

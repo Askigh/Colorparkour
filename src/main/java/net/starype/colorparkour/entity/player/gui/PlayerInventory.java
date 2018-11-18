@@ -81,11 +81,6 @@ public class PlayerInventory {
         Container pauseMenu = new Container();
         pauseMenu.setLocalTranslation((WIDTH - 400) / 2, HEIGHT / 2 + 100, 0);
 
-        Button quitButton = pauseMenu.addChild(new Button("Quit Game"));
-        quitButton.setColor(ColorRGBA.Black);
-        quitButton.addClickCommands((Command<Button>) source -> main.stop());
-        quitButton.setLocalTranslation(0, 0, 0);
-
         Button restartLevel = pauseMenu.addChild(new Button("Restart level"));
         restartLevel.addClickCommands(source -> {
             main.getPlayer().resetPosition(main.getModuleManager().getCurrentModule());
@@ -94,6 +89,16 @@ public class PlayerInventory {
         restartLevel.setColor(ColorRGBA.Black);
         restartLevel.setLocalTranslation(new Vector3f(50, 200, 0));
 
+        Button skyBox = pauseMenu.addChild(new Button("Enable Sky"));
+        skyBox.setColor(ColorRGBA.Green);
+        skyBox.addClickCommands(source -> {
+            skyBox.setColor(skyBox.getColor().equals(ColorRGBA.Green) ? ColorRGBA.Black : ColorRGBA.Green);
+            if(skyBox.getColor().equals(ColorRGBA.Black)) {
+                main.setSkyEnabled(false);
+            } else {
+                main.setSkyEnabled(true);
+            }
+        });
         Button changeFOV = pauseMenu.addChild(new Button("Enable FOV Change using arrows"));
         changeFOV.setColor(ColorRGBA.Green);
         changeFOV.addClickCommands(source -> {
@@ -104,6 +109,10 @@ public class PlayerInventory {
         backToMenu.setColor(ColorRGBA.Black);
         backToMenu.addClickCommands(source -> showOnly(0));
 
+        Button quitButton = pauseMenu.addChild(new Button("Quit Game"));
+        quitButton.setColor(ColorRGBA.Black);
+        quitButton.addClickCommands((Command<Button>) source -> main.stop());
+        quitButton.setLocalTranslation(0, 0, 0);
         GUIS.add(new ColorParkourGUI(pauseMenu).withInputActions(true));
 
         playerInventory = new Container();

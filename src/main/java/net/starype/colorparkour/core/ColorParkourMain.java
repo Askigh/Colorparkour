@@ -37,6 +37,7 @@ public class ColorParkourMain extends SimpleApplication {
     public static final Logger LOGGER = LoggerFactory.getLogger(SimpleApplication.class);
     public static final Vector3f GAME_GRAVITY = new Vector3f(0, -60f, 0);
     public static final Quaternion INITIAL_ROTATION = new Quaternion(0, 0.7f, 0, 0.7f);
+    private Spatial sky;
     private CollisionManager collManager;
     private ModuleManager moduleManager;
     private Player player;
@@ -121,8 +122,9 @@ public class ColorParkourMain extends SimpleApplication {
         /***********************************************************
           Creates the sky
          ************************************************************/
-        rootNode.attachChild(SkyFactory.createSky(getAssetManager(), "assets/sky/Skysphere.jpg",
-                SkyFactory.EnvMapType.EquirectMap));
+        sky = SkyFactory.createSky(getAssetManager(), "assets/sky/Skysphere.jpg",
+                SkyFactory.EnvMapType.EquirectMap);
+        rootNode.attachChild(sky);
     }
 
     public void startGame() {
@@ -138,10 +140,10 @@ public class ColorParkourMain extends SimpleApplication {
         new ModuleSY(this, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
                 .add(builder.ice(new float[]{5, 3f, 5}, new float[]{0f, -3f, 0f}, ColorRGBA.White, "0:0"),
                         builder.doubleJump(new float[]{5, 0.1f, 5}, new float[]{20, -1, 0}, ColorRGBA.Blue, "0:1"),
-                        builder.colored(new float[]{5, 0.1f, 5}, new float[]{47, 1, 0}, ColorRGBA.Green, "0:2"),
-                        builder.moving(new float[]{5, 0.1f, 5}, new Vector3f(57, 1, 30),
+                        builder.colored(new float[]{5, 0.1f, 5}, new float[]{44, 1, 0}, ColorRGBA.Green, "0:2"),
+                        builder.moving(new float[]{5, 0.1f, 5}, new Vector3f(54, 1, 30),
                                 new Vector3f(65, 1, -30), 0.13f, ColorRGBA.White, "0:3"),
-                        builder.doubleJump(new float[]{2f, 0.3f, 2f}, new float[]{77, 0, -20f}, ColorRGBA.Red, "0:4"))
+                        builder.doubleJump(new float[]{2f, 0.3f, 2f}, new float[]{74, 0, -20f}, ColorRGBA.Red, "0:4"))
                 .build(moduleManager);
         new ModuleSY(this, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
                 .add(builder.defaultPlatform())
@@ -199,6 +201,14 @@ public class ColorParkourMain extends SimpleApplication {
             settings.setIcons(images);
         } catch (IOException e) {
             LOGGER.error("Cannot load icon");
+        }
+    }
+    public void setSkyEnabled(boolean b) {
+        if(b) {
+            rootNode.attachChild(sky);
+        } else {
+            rootNode.detachChild(sky);
+            renderer.setBackgroundColor(ColorRGBA.randomColor());
         }
     }
 
