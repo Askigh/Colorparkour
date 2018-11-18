@@ -10,6 +10,7 @@ import com.jme3.math.Vector3f;
 import com.simsilica.lemur.GuiGlobals;
 import net.starype.colorparkour.core.ColorParkourMain;
 import net.starype.colorparkour.entity.platform.ColoredPlatform;
+import net.starype.colorparkour.entity.player.CameraSY;
 import net.starype.colorparkour.entity.player.gui.PlayerInventory;
 import net.starype.colorparkour.entity.player.PlayerPhysicSY;
 import static net.starype.colorparkour.core.ColorParkourMain.*;
@@ -80,7 +81,7 @@ public class Setup {
                 else physics.walk();
             }
         }.withReleaseActive(true));
-        kManager.addLinkedKeyAction("No cursor", KeyInput.KEY_ESCAPE, new KeyboardManager.Action() {
+        kManager.addLinkedKeyAction("Escape", KeyInput.KEY_ESCAPE, new KeyboardManager.Action() {
             @Override
             public void execute(boolean keyPressed) {
                 InputManager inputManager = main.getInputManager();
@@ -125,6 +126,24 @@ public class Setup {
             @Override
             public void execute(boolean keyPressed) {
                 main.getPlayerInventory().highlight("green", ColorRGBA.Green);
+            }
+        });
+        kManager.addLinkedKeyAction("Increase FOV", KeyInput.KEY_RIGHT, new KeyboardManager.Action() {
+            @Override
+            public void execute(boolean keyPressed) {
+                if(main.getPlayerInventory().isChangeFOVActive()) {
+                    CameraSY camSY = main.getPlayer().getCamera();
+                    camSY.setFov(camSY.getFov()+1);
+                }
+            }
+        });
+        kManager.addLinkedKeyAction("Lower FOV", KeyInput.KEY_LEFT, new KeyboardManager.Action() {
+            @Override
+            public void execute(boolean keyPressed) {
+                if(main.getPlayerInventory().isChangeFOVActive()) {
+                    CameraSY camSY = main.getPlayer().getCamera();
+                    camSY.setFov(camSY.getFov()-1);
+                }
             }
         });
 

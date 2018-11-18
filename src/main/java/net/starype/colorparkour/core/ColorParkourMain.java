@@ -26,6 +26,10 @@ import net.starype.colorparkour.utils.TimerSY;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 public class ColorParkourMain extends SimpleApplication {
@@ -54,6 +58,7 @@ public class ColorParkourMain extends SimpleApplication {
         settings.setWidth(WIDTH);
         settings.setHeight(HEIGHT);
         settings.setResizable(true);
+        loadIcon();
         super.setDisplayStatView(false);
         super.setDisplayFps(true);
         this.moduleManager = new ModuleManager(this);
@@ -185,6 +190,16 @@ public class ColorParkourMain extends SimpleApplication {
         inputManager.clearMappings();
         guiNode.detachAllChildren();
         stateManager.detach(stateManager.getState(FlyCamAppState.class));
+    }
+    private void loadIcon() {
+        BufferedImage[] images = new BufferedImage[2];
+        try {
+            images[0] = ImageIO.read(new File("src/main/resources/assets/icons/icon16.png"));
+            images[1] = ImageIO.read(new File("src/main/resources/assets/icons/icon32.png"));
+            settings.setIcons(images);
+        } catch (IOException e) {
+            LOGGER.error("Cannot load icon");
+        }
     }
 
     public void attachChilds(Spatial... spatials) { Arrays.asList(spatials).forEach(s -> rootNode.attachChild(s)); }

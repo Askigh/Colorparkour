@@ -135,9 +135,6 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
         Optional<Referential> optionalRef = Referential.of(body);
 
-        if(!isOnGround(body)) {
-            return;
-        }
         if (!optionalRef.isPresent() || !optionalRef.get().isEnabled()) {
             body.setGravity(ColorParkourMain.GAME_GRAVITY);
             applyForcesTo(body);
@@ -160,10 +157,15 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
         force.set(walkDirection.mult(acceleration * speedBoost)
                 .add(new Vector3f(flatSpeed.x * friction, spaceSpeed.y, flatSpeed.y * friction)));
+        if(!isOnGround(body) && !noKeyTouched()) {
+            force.multLocal(0.5f);
+        }
         control.applyCentralForce(force);
     }
 
-
+    private boolean noKeyTouched() {
+        return !left && !right && !forward && !backward;
+    }
     public void jump() {
 
         if(!isOnGround(body) && !jumpBonus) {

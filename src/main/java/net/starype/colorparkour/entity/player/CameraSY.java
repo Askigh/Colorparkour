@@ -26,7 +26,8 @@ public class CameraSY implements AnalogListener {
     private InputManager listener;
     private ColorParkourMain main;
 
-    private static final int SENSITIVITY = 600;
+    private int sensitivity = 600;
+    private int fov = 70;
     private static final String[] MAPPINGS = {"left", "right", "top", "bottom"};
 
     protected CameraSY(ColorParkourMain main, Camera source) {
@@ -72,7 +73,7 @@ public class CameraSY implements AnalogListener {
     private void rotateCamera(float value, Vector3f axis) {
 
         Matrix3f mat = new Matrix3f();
-        mat.fromAngleNormalAxis(SENSITIVITY * value, axis);
+        mat.fromAngleNormalAxis(sensitivity * value, axis);
 
         Vector3f up = source.getUp();
         Vector3f left = source.getLeft();
@@ -89,4 +90,13 @@ public class CameraSY implements AnalogListener {
         source.setAxes(q);
     }
     public Camera getSource() { return source; }
+
+    public int getSensitivity() { return sensitivity; }
+    public void setSensitivity(int sensitivity) { this.sensitivity = sensitivity; }
+    public int getFov() { return fov; }
+    public void setFov(int fov) {
+        this.fov = fov;
+        source.setFrustumPerspective(fov, 1, 1, 100);
+        System.out.println(fov);
+    }
 }

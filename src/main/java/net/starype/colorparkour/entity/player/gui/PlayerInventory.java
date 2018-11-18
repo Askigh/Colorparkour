@@ -15,6 +15,7 @@ public class PlayerInventory {
 
     private ColorParkourMain main;
     private final List<ColorParkourGUI> GUIS = new ArrayList<>();
+    private boolean changeFOV = true;
     private Container playerInventory;
     private Container highlighted;
     private List<Node> copy;
@@ -66,17 +67,16 @@ public class PlayerInventory {
     private void loadMenus() {
 
         Container gameMenu = new Container();
-        gameMenu.setLocalTranslation((WIDTH - 200) / 2, HEIGHT / 2 + 50, 0);
+        gameMenu.setLocalTranslation((WIDTH - 400) / 2, HEIGHT / 2 + 100, 0);
         GUIS.add(new ColorParkourGUI(gameMenu).withInputActions(true));
 
-        Button play = gameMenu.addChild(new Button("Play"));
+        Button play = gameMenu.addChild(new Button(null));
+        play.setBackground(new IconComponent("assets/icons/play.png"));
         play.setColor(ColorRGBA.Orange);
-        play.setSize(new Vector3f(300, 100, 0));
         play.addClickCommands((Command<Button>) source -> {
             main.startGame();
             activatePlayer();
         });
-        play.scale(5);
 
         Container pauseMenu = new Container();
         pauseMenu.setLocalTranslation((WIDTH - 400) / 2, HEIGHT / 2 + 100, 0);
@@ -93,12 +93,22 @@ public class PlayerInventory {
         });
         restartLevel.setColor(ColorRGBA.Black);
         restartLevel.setLocalTranslation(new Vector3f(50, 200, 0));
+
+        Button changeFOV = pauseMenu.addChild(new Button("Enable FOV Change using arrows"));
+        changeFOV.setColor(ColorRGBA.Green);
+        changeFOV.addClickCommands(source -> {
+            this.changeFOV = !this.changeFOV;
+            changeFOV.setColor(changeFOV.getColor().equals(ColorRGBA.Black) ? ColorRGBA.Green : ColorRGBA.Black);
+        });
+        Button backToMenu = pauseMenu.addChild(new Button("Back to the menu"));
+        backToMenu.setColor(ColorRGBA.Black);
+        backToMenu.addClickCommands(source -> showOnly(0));
+
         GUIS.add(new ColorParkourGUI(pauseMenu).withInputActions(true));
 
         playerInventory = new Container();
         GUIS.add(new ColorParkourGUI(playerInventory));
 
-        //playerInventory.setBackground(new IconComponent("assets/Textures/slots/bar.png"));
         createInventoryBar(playerInventory, "red", "blue", "yellow", "green");
         copy = new ArrayList<>(playerInventory.getLayout().getChildren());
         playerInventory.detachChildAt(0);
@@ -189,6 +199,9 @@ public class PlayerInventory {
     public boolean isGuiActive(int index) {
         return GUIS.get(index).isActive();
     }
+    public boolean isChangeFOVActive() { return changeFOV; }
+
+    public void setChangeFOV(boolean b) { this.changeFOV = b; }
 
     private static class ColorIcon extends Label {
         private String color;

@@ -38,6 +38,7 @@ public class Player extends PhysicalEntity {
 
     public void initialize() {
         camera.initMappings();
+        camera.getSource().setFrustumPerspective(camera.getFov(), 1, 1, 100);
         physicBody.initListener();
     }
 
