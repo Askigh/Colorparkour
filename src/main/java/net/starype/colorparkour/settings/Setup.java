@@ -22,16 +22,12 @@ public class Setup {
         initKeys(main);
     }
     private static void setUpLight(ColorParkourMain main) {
-        // We add light so we see the scene
-        AmbientLight al = new AmbientLight();
-        al.setColor(ColorRGBA.White.mult(1.3f));
 
+        DirectionalLight sun = new DirectionalLight();
+        sun.setColor(ColorRGBA.Yellow);
+        sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
 
-        DirectionalLight dl = new DirectionalLight();
-        dl.setColor(ColorRGBA.White);
-        dl.setDirection(new Vector3f(2.8f, -2.8f, -2.8f).normalizeLocal());
-
-        main.attachLights(al, dl);
+        main.attachLights(sun);
     }
 
     private static void initKeys(ColorParkourMain main) {

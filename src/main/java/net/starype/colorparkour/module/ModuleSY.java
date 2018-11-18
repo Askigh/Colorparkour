@@ -35,6 +35,7 @@ public class ModuleSY {
     private Vector3f finalPosition = new Vector3f();
     private final String path;
     private String levelName;
+    private boolean loaded = false;
 
     public ModuleSY(ColorParkourMain main, PhysicsSpace space, String path) {
         this.platforms = new ArrayList<>();
@@ -49,17 +50,24 @@ public class ModuleSY {
     }
 
     public void setActive(boolean active) {
-        for(ColoredPlatform platform : platforms) {
-            if(active) {
-                platform.loadBody(platform.getSize().x, platform.getSize().y, platform.getSize().z,
-                        platform.getPosition(), platform.getColor());
-                if(platform instanceof LoadEvent) {
-                    ((LoadEvent) platform).load();
+
+        boolean load = loaded;
+        for (ColoredPlatform platform : platforms) {
+            if (active) {
+                if (!loaded) {
+                    load = true;
+                    platform.loadBody(platform.getSize().x, platform.getSize().y, platform.getSize().z,
+                            platform.getPosition(), platform.getColor());
+                    if (platform instanceof LoadEvent) {
+                        ((LoadEvent) platform).load();
+                    }
                 }
             } else {
                 platform.hide(true);
             }
+
         }
+        loaded = load;
         if(active)
             showOnly(ColorRGBA.White);
     }
@@ -79,24 +87,26 @@ public class ModuleSY {
         Arrays.asList(plats).forEach(p -> platforms.add(p));
         return this;
     }
+
     public Optional<ColoredPlatform> getPlatformBySpatial(Spatial spatial) {
         for (ColoredPlatform plat : platforms)
-            if(plat.getAppearance().equals(spatial))
+            if (plat.getAppearance().equals(spatial))
                 return Optional.of(plat);
         return Optional.empty();
     }
+
     public Optional<ColoredPlatform> getPlatformByBody(RigidBodyControl body) {
         for (ColoredPlatform plat : platforms)
-            if(plat.getBody().equals(body))
+            if (plat.getBody().equals(body))
                 return Optional.of(plat);
         return Optional.empty();
     }
 
     public void reversePlatforms() {
-        for(ColoredPlatform plat : platforms) {
-            if(plat instanceof MovingPlatform) {
+        for (ColoredPlatform plat : platforms) {
+            if (plat instanceof MovingPlatform) {
                 MovingPlatform movPlat = (MovingPlatform) plat;
-                if(movPlat.getAppearance() == null) {
+                if (movPlat.getAppearance() == null) {
                     continue;
                 }
                 movPlat.getAppearance().setLocalTranslation(movPlat.getBody().getPhysicsLocation().add(0, 1.1f, 0));
@@ -108,29 +118,38 @@ public class ModuleSY {
                 boolean closeToArr = distanceArr < 2f && dir.equals(movPlat.getInitialDirection());
                 boolean closeToDep = distanceDep < 2f && dir.mult(-1).equals(movPlat.getInitialDirection());
 
-                if(closeToArr || closeToDep) {
+                if (closeToArr || closeToDep) {
                     movPlat.setDirection(movPlat.getDirection().mult(-1));
                     movPlat.resetMovement();
                 }
             }
         }
     }
+
     public void showOnly(ColorRGBA color) {
-        for(ColoredPlatform platform : platforms) {
-            if(!platform.getColor().equals(color) && !platform.getColor().equals(ColorRGBA.White)) {
+        for (ColoredPlatform platform : platforms) {
+            if (!platform.getColor().equals(color) && !platform.getColor().equals(ColorRGBA.White)) {
                 platform.hide(false);
             } else {
                 platform.show();
             }
         }
     }
+
     public Vector3f getFinalPosition() {
-        finalPosition.set(platforms.get(platforms.size()-1).getPosition());
+        finalPosition.set(platforms.get(platforms.size() - 1).getPosition());
         return finalPosition;
     }
-    public Vector3f getInitialLocation() { return platforms.get(0).getPosition(); }
-    public List<ColoredPlatform> getPlatforms() { return platforms; }
-    public String getPath(){
+
+    public Vector3f getInitialLocation() {
+        return platforms.get(0).getPosition();
+    }
+
+    public List<ColoredPlatform> getPlatforms() {
+        return platforms;
+    }
+
+    public String getPath() {
         return path;
     }
 }

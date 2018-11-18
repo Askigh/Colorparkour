@@ -81,7 +81,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
 
     private RigidBodyControl createBody(ColorParkourMain main) {
 
-        player.setAppearance(new Geometry("hit_box", new Box(0.2f, 0.2f, 0.2f)));
+        player.setAppearance(new Geometry("hit_box", new Box(0.6f, 1f, 0.6f)));
         Material mat = new Material(main.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", ColorRGBA.Magenta);
         player.getAppearance().setMaterial(mat);
@@ -105,6 +105,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         if(body.getPhysicsSpace() == null) {
             return;
         }
+        body.setAngularVelocity(new Vector3f());
         manageCollisions();
         if (body.getPhysicsLocation().y < -10) {
             player.resetPosition(moduleManager.getCurrentModule());
@@ -158,7 +159,11 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         force.set(walkDirection.mult(acceleration * speedBoost)
                 .add(new Vector3f(flatSpeed.x * friction, spaceSpeed.y, flatSpeed.y * friction)));
         if(!isOnGround(body) && !noKeyTouched()) {
-            force.multLocal(0.8f);
+            float factor = spaceSpeed.dot(walkDirection);
+            factor /= (spaceSpeed.length() * walkDirection.length());
+            if(factor < 0)
+                factor = -factor;
+            force.multLocal(factor);
         }
         control.applyCentralForce(force);
     }
@@ -175,7 +180,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
             jumpBonus = false;
         }
 
-        speedBoost-= 0.5f;
+        speedBoost-= 0.4f;
         Vector3f spaceSpeed = body.getLinearVelocity();
         /*
             Modification of the "classic" physics. If the body is falling, we still want
@@ -187,7 +192,7 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         if (lastContact instanceof ContactEvent) {
             ((ContactEvent) lastContact).leaveByJump(this);
         }
-        speedBoost+= 0.5f;
+        speedBoost+= 0.4f;
     }
 
     public void addBonus() { this.jumpBonus = true; }
