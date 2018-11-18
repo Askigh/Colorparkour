@@ -96,7 +96,7 @@ public class CameraSY implements AnalogListener {
     public int getFov() { return fov; }
     public void setFov(int fov) {
         this.fov = fov;
-        source.setFrustumPerspective(fov, 1, 1, 100);
+        source.setFrustumPerspective(fov, 1500/800, 0.01f, 100);
         System.out.println(fov);
     }
 }

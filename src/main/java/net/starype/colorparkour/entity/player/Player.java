@@ -38,7 +38,7 @@ public class Player extends PhysicalEntity {
 
     public void initialize() {
         camera.initMappings();
-        camera.getSource().setFrustumPerspective(camera.getFov(), 1, 1, 100);
+        camera.getSource().setFrustumPerspective(camera.getFov(), 1500/800, 0.01f, 100);
         physicBody.initListener();
     }
 
@@ -55,7 +55,6 @@ public class Player extends PhysicalEntity {
             }
         }
         Referential.of(body).ifPresent(referential -> referential.setEnabled(false));
-        main.getViewPort().setBackgroundColor(ColorRGBA.randomColor());
     }
 
     public PlayerPhysicSY getPhysicPlayer() { return physicBody; }

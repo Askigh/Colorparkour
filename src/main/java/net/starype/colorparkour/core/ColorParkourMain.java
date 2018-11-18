@@ -208,7 +208,7 @@ public class ColorParkourMain extends SimpleApplication {
             rootNode.attachChild(sky);
         } else {
             rootNode.detachChild(sky);
-            renderer.setBackgroundColor(ColorRGBA.randomColor());
+            viewPort.setBackgroundColor(new ColorRGBA(0.5f, 0.6f, 0.7f, 1.0f));
         }
     }
 
