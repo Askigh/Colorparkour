@@ -224,7 +224,10 @@ public class PlayerPhysicSY implements PhysicsTickListener {
     }
     private PlayerPhysicSY getInstance() { return this;}
 
-    private boolean isOnGround(RigidBodyControl body) {
+    public boolean isOnGround(RigidBodyControl body) {
+        if(body == null || body.getPhysicsSpace() == null) {
+            return false;
+        }
         Vector3f location = new Vector3f();
         Vector3f rayVector = new Vector3f();
 

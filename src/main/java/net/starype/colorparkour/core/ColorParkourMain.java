@@ -137,6 +137,7 @@ public class ColorParkourMain extends SimpleApplication {
     // This needs to be replaced by the json loader
     public void createModules(PlatformBuilder builder) {
         PhysicsSpace space = collManager.getAppState().getPhysicsSpace();
+
         new ModuleSY(this, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
                 .add(builder.ice(new float[]{5, 3f, 5}, new float[]{0f, -3f, 0f}, ColorRGBA.White, "0:0"),
                         builder.doubleJump(new float[]{5, 0.1f, 5}, new float[]{20, -1, 0}, ColorRGBA.Blue, "0:1"),
@@ -147,11 +148,16 @@ public class ColorParkourMain extends SimpleApplication {
                 .build(moduleManager);
         new ModuleSY(this, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
                 .add(builder.defaultPlatform())
-                .add(builder.moving(new float[]{1.2f, 0.5f, 1.2f}, new Vector3f(5, 0, 10),
-                        new Vector3f(-5, 0, 20), 0.1f, ColorRGBA.Green, "1:1"))
-                .add(builder.moving(new float[]{2.5f, 1f, 2.5f}, new Vector3f(-5, 0, 25),
-                        new Vector3f(5, 6, 30), 0.2f, ColorRGBA.Green, "1:2"))
-                .add(builder.colored(new float[]{1, 1, 1}, new float[]{5, 6, 33}, ColorRGBA.Black, "1:3"))
+                .add(builder.moving(new float[]{1.2f, 0.5f, 1.2f}, new Vector3f(5, 0, 15),
+                        new Vector3f(-5, 0, 25), 0.1f, ColorRGBA.Green, "1:1"))
+                .add(builder.moving(new float[]{2.5f, 1f, 2.5f}, new Vector3f(-5, 0, 30),
+                        new Vector3f(5, 6, 35), 0.2f, ColorRGBA.Green, "1:2"))
+                .add(builder.colored(new float[]{1, 1, 1}, new float[]{5, 6, 38}, ColorRGBA.White, "1:3"))
+                .build(moduleManager);
+        new ModuleSY(this, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
+                .add(builder.defaultPlatform())
+                .add(builder.colored(new float[]{0.3f, 5, 5}, new float[]{9, 8, 0}, ColorRGBA.Yellow, ""))
+                .add(builder.colored(new float[]{2, 1, 2}, new float[]{13, 0, 0}, ColorRGBA.Yellow, ""))
                 .build(moduleManager);
     }
 

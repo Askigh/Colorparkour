@@ -56,7 +56,6 @@ public class ColoredPlatform extends PhysicalEntity {
         appearance = new Geometry("box", box);
         mat = loadMaterial(color);
         appearance.setMaterial(mat);
-        main.getRootNode().attachChild(appearance);
 
         int mass = this instanceof MovingPlatform ? Integer.MAX_VALUE : 0;
         body = manager.loadObject(BoxCollisionShape.class, mass, false, new Geometry("hitbox", hitBox));

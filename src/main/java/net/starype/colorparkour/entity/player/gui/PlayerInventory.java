@@ -75,16 +75,25 @@ public class PlayerInventory {
         play.setColor(ColorRGBA.Orange);
         play.addClickCommands((Command<Button>) source -> {
             main.startGame();
-            activatePlayer();
+            activatePlayer(true);
         });
 
         Container pauseMenu = new Container();
         pauseMenu.setLocalTranslation((WIDTH - 400) / 2, HEIGHT / 2 + 100, 0);
 
+        Button resume = pauseMenu.addChild(new Button("Resume"));
+        resume.setColor(ColorRGBA.Black);
+        resume.addClickCommands(source -> activatePlayer(false));
         Button restartLevel = pauseMenu.addChild(new Button("Restart level"));
         restartLevel.addClickCommands(source -> {
             main.getPlayer().resetPosition(main.getModuleManager().getCurrentModule());
-            activatePlayer();
+            activatePlayer(true);
+        });
+        Button previousLevel = pauseMenu.addChild(new Button("Previous level"));
+        previousLevel.setColor(ColorRGBA.Black);
+        previousLevel.addClickCommands(source -> {
+            main.getModuleManager().previous();
+            activatePlayer(true);
         });
         restartLevel.setColor(ColorRGBA.Black);
         restartLevel.setLocalTranslation(new Vector3f(50, 200, 0));
@@ -187,11 +196,14 @@ public class PlayerInventory {
         }
     }
 
-    public void activatePlayer() {
+    public void activatePlayer(boolean resetRotation) {
         hideAll();
         showOnly(2, 3);
         GuiGlobals.getInstance().setCursorEventsEnabled(false);
-        main.getCamera().setRotation(INITIAL_ROTATION);
+        if(resetRotation) {
+            LOGGER.info("RESETTING ROTATION");
+            main.getCamera().setRotation(INITIAL_ROTATION);
+        }
         main.getCollisionManager().getAppState().getPhysicsSpace().add(main.getPlayer().getBody());
         main.getInputManager().setCursorVisible(false);
     }

@@ -9,7 +9,6 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.simsilica.lemur.GuiGlobals;
 import net.starype.colorparkour.core.ColorParkourMain;
-import net.starype.colorparkour.entity.platform.ColoredPlatform;
 import net.starype.colorparkour.entity.player.CameraSY;
 import net.starype.colorparkour.entity.player.gui.PlayerInventory;
 import net.starype.colorparkour.entity.player.PlayerPhysicSY;
@@ -35,6 +34,7 @@ public class Setup {
         KeyboardManager kManager = new KeyboardManager(main);
         PlayerPhysicSY physics = main.getPlayer().getPhysicPlayer();
 
+        // Movement controls
         kManager.addLinkedKeyAction("Left", KeyInput.KEY_A, new KeyboardManager.Action() {
 
             @Override
@@ -69,7 +69,7 @@ public class Setup {
                 physics.jump();
             }
         });
-        kManager.addLinkedKeyAction("Sprint", KeyInput.KEY_F, new KeyboardManager.Action() {
+        kManager.addLinkedKeyAction("Sprint", KeyInput.KEY_LSHIFT, new KeyboardManager.Action() {
             @Override
             public void execute(boolean keyPressed) {
                 if(keyPressed)
@@ -77,6 +77,8 @@ public class Setup {
                 else physics.walk();
             }
         }.withReleaseActive(true));
+
+        // Menu opening
         kManager.addLinkedKeyAction("Escape", KeyInput.KEY_ESCAPE, new KeyboardManager.Action() {
             @Override
             public void execute(boolean keyPressed) {
@@ -88,18 +90,19 @@ public class Setup {
                 inputManager.getCursorPosition().set(WIDTH/2, HEIGHT/2);
                 if(inventory.isGuiActive()) {
                     GuiGlobals.getInstance().setCursorEventsEnabled(false);
-                    main.getCamera().setRotation(INITIAL_ROTATION);
-                    inventory.activatePlayer();
+                    inventory.activatePlayer(false);
 
                 } else {
                     GuiGlobals.getInstance().setCursorEventsEnabled(true);
                     inputManager.setCursorVisible(true);
-                    main.getCamera().setRotation(new Quaternion(0, 2, 0, 0));
+                    //main.getCamera().setRotation(new Quaternion(0, 2, 0, 0));
                     main.getCollisionManager().getAppState().getPhysicsSpace().remove(main.getPlayer().getBody());
                     inventory.showOnly(1);
                 }
             }
         });
+
+        // Color switches
         kManager.addLinkedKeyAction("1", KeyInput.KEY_1, new KeyboardManager.Action() {
             @Override
             public void execute(boolean keyPressed) {
@@ -124,6 +127,8 @@ public class Setup {
                 main.getPlayerInventory().highlight("green", ColorRGBA.Green);
             }
         });
+
+        // FOV changes
         kManager.addLinkedKeyAction("Increase FOV", KeyInput.KEY_RIGHT, new KeyboardManager.Action() {
             @Override
             public void execute(boolean keyPressed) {

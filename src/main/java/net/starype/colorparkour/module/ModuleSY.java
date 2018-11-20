@@ -50,29 +50,38 @@ public class ModuleSY {
     }
 
     public void setActive(boolean active) {
-
-        boolean load = loaded;
+        boolean alreadyLoaded = loaded;
         for (ColoredPlatform platform : platforms) {
+            // Actions when we want to enable the level
             if (active) {
                 if (!loaded) {
-                    load = true;
-                    platform.loadBody(platform.getSize().x, platform.getSize().y, platform.getSize().z,
-                            platform.getPosition(), platform.getColor());
-                    if (platform instanceof LoadEvent) {
-                        ((LoadEvent) platform).load();
-                    }
+                    alreadyLoaded = true;
+                    loadPlatform(platform);
+                } else {
+                    platform.show();
                 }
+                // Actions when we want to disable the level
             } else {
                 platform.hide(true);
             }
 
         }
-        loaded = load;
-        if(active)
+        loaded = alreadyLoaded;
+        if (active) {
             showOnly(ColorRGBA.White);
+        }
     }
 
-    public void loadPlatforms() throws FileNotFoundException, NullPointerException {
+    private void loadPlatform(ColoredPlatform platform) {
+        platform.loadBody(platform.getSize().x, platform.getSize().y, platform.getSize().z,
+                platform.getPosition(), platform.getColor());
+        if (platform instanceof LoadEvent) {
+            ((LoadEvent) platform).load();
+        }
+        platform.show();
+    }
+
+    public void loadPlatformsFromJson() throws FileNotFoundException, NullPointerException {
         Gson gson = new Gson();
         JsonObject datas = gson.fromJson(new FileReader(new File(path)), JsonObject.class);
 

@@ -26,11 +26,11 @@ public class ModuleManager {
     }
 
     public void add(ModuleSY... modules) {
-        for(ModuleSY m : modules){
+        for (ModuleSY m : modules) {
             this.modules.add(m);
             try {
-                m.loadPlatforms();
-            } catch (FileNotFoundException e){
+                m.loadPlatformsFromJson();
+            } catch (FileNotFoundException e) {
                 LOGGER.debug("exists: " + new File(m.getPath()).exists());
                 LOGGER.error("ModuleSY configuration file not found !");
             }
@@ -42,13 +42,15 @@ public class ModuleManager {
     }
 
     public void checkNext(Vector3f playerPos) {
+        if (!main.getPlayer().getPhysicPlayer().isOnGround(main.getPlayer().getBody())) {
+            return;
+        }
         ModuleSY current = modules.get(currentModule);
         Vector3f end = current.getFinalPosition();
-        ColoredPlatform lastPlatform = current.getPlatforms().get(current.getPlatforms().size()-1);
+        ColoredPlatform lastPlatform = current.getPlatforms().get(current.getPlatforms().size() - 1);
         float distanceMax = lastPlatform.getSize().x + lastPlatform.getSize().y / 2;
-        if (playerPos.add(0,-1,0).add(end.mult(-1)).length() < distanceMax) {
-            float ySize = first().getSize().y;
-            if(currentModule < modules.size() -1) {
+        if (playerPos.add(0, -1, 0).add(end.mult(-1)).length() < distanceMax) {
+            if (currentModule < modules.size() - 1) {
                 currentModule++;
                 current.setActive(false);
                 main.getPlayer().resetPosition(getCurrentModule());
@@ -59,18 +61,30 @@ public class ModuleManager {
             }
         }
     }
-    public void back() {
-        if(currentModule != 0)
+
+    public void previous() {
+        if (currentModule != 0) {
+            getCurrentModule().setActive(false);
             currentModule--;
+            main.getPlayer().resetPosition(getCurrentModule());
+            getCurrentModule().setActive(true);
+        }
     }
+
     public ModuleSY getCurrentModule() {
         return modules.get(currentModule);
     }
+
     public ColoredPlatform first() {
         return getCurrentModule().getPlatforms().get(0);
     }
+
     public ColoredPlatform last() {
-        return getCurrentModule().getPlatforms().get(getCurrentModule().getPlatforms().size()-1);
+        return getCurrentModule().getPlatforms().get(getCurrentModule().getPlatforms().size() - 1);
     }
-    public List<ModuleSY> getModules() {return modules; }
+
+    public List<ModuleSY> getModules() {
+        return modules;
+    }
+
 }
