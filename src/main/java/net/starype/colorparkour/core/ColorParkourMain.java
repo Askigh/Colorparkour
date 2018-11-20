@@ -159,6 +159,11 @@ public class ColorParkourMain extends SimpleApplication {
                 .add(builder.colored(new float[]{0.3f, 5, 5}, new float[]{9, 8, 0}, ColorRGBA.Yellow, ""))
                 .add(builder.colored(new float[]{2, 1, 2}, new float[]{13, 0, 0}, ColorRGBA.Yellow, ""))
                 .build(moduleManager);
+        new ModuleSY(this, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
+                .add()
+                .add()
+                .add()
+                .build(moduleManager);
     }
 
     /**
@@ -209,8 +214,8 @@ public class ColorParkourMain extends SimpleApplication {
             LOGGER.error("Cannot load icon");
         }
     }
-    public void setSkyEnabled(boolean b) {
-        if(b) {
+    public void setSkyEnabled(boolean enabled) {
+        if(enabled) {
             rootNode.attachChild(sky);
         } else {
             rootNode.detachChild(sky);

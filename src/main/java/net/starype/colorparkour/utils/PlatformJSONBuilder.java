@@ -19,6 +19,10 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * {@link PlatformJSONBuilder} is actually not ready to work. Currently in building,
+ * it will be used to load easily new levels from json files
+ */
 public enum PlatformJSONBuilder {
 
     COLORED(ColoredPlatform.class, "normal"),

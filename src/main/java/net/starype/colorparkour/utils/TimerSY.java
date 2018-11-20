@@ -43,9 +43,9 @@ public class TimerSY {
     }
 
     /**
-     * This method is updating the timeStamp. This method should be called each frame update.
+     * Updates the timeStamp. Needs to be called for each frame update.
      *
-     * @param tpf This parameter is the time per frame.
+     * @param tpf the delta time
      */
     private void updateTime(float tpf) {
         timeStamp += tpf;
@@ -59,7 +59,7 @@ public class TimerSY {
     }
 
     /**
-     * This method updates the timer.
+     * Updates the timer.
      */
     public void updateTimer(float tpf) {
         updateTime(tpf);
@@ -82,7 +82,7 @@ public class TimerSY {
     }
 
     /**
-     * This method load the BitmapText object.
+     * Loads the BitmapText object.
      *
      * @param guiFont  The text font.
      * @param color    The text color.

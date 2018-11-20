@@ -29,6 +29,7 @@ public class ModuleManager {
         for (ModuleSY m : modules) {
             this.modules.add(m);
             try {
+                // As the json builder is not finished, it will always throw a FileNotFoundException
                 m.loadPlatformsFromJson();
             } catch (FileNotFoundException e) {
                 LOGGER.debug("exists: " + new File(m.getPath()).exists());
