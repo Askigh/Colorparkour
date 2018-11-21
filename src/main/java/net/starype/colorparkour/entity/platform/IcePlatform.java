@@ -11,6 +11,7 @@ public class IcePlatform extends ColoredPlatform implements ContactEvent, LoadEv
 
     public IcePlatform(CollisionManager manager, SimpleApplication main, float[] size, float[] position, ColorRGBA color, String platformID) {
         super(manager, main, size, position, color, platformID);
+        setTexture("ice.png");
     }
 
     @Override

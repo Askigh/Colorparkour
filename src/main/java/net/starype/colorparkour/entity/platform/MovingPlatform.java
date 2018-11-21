@@ -17,6 +17,7 @@ public class MovingPlatform extends ColoredPlatform implements LoadEvent {
     public MovingPlatform(CollisionManager manager, SimpleApplication main, float[] size, Vector3f departure, Vector3f arrival,
                           float speed, ColorRGBA color, String platformID) {
         super(manager, main, size, departure, color, platformID);
+        setTexture("moving.png");
         this.departure = departure;
         this.arrival = arrival;
         this.speed = speed;

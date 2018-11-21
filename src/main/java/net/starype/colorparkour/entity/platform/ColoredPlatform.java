@@ -4,10 +4,12 @@ import com.google.gson.annotations.SerializedName;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
+import com.jme3.texture.Texture;
 import net.starype.colorparkour.utils.CollisionManager;
 import net.starype.colorparkour.entity.PhysicalEntity;
 import net.starype.colorparkour.entity.platform.event.LoadEvent;
@@ -26,6 +28,7 @@ public class ColoredPlatform extends PhysicalEntity {
     private final String platformID;
     @SerializedName("size")
     private Vector3f size;
+    private String texture = "black.png";
 
     public ColoredPlatform(CollisionManager manager, SimpleApplication main, float[] size, float[] position, ColorRGBA color, String platformID) {
         this(manager, main, size, new Vector3f(position[0], position[1], position[2]), color, platformID);
@@ -76,6 +79,7 @@ public class ColoredPlatform extends PhysicalEntity {
     private Material loadMaterial(ColorRGBA color) {
         Material mat = new Material(main.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", color);
+        mat.setTexture("ColorMap", main.getAssetManager().loadTexture("assets/platforms/"+texture));
         return mat;
     }
 
@@ -110,4 +114,6 @@ public class ColoredPlatform extends PhysicalEntity {
     public String getPlatformID() { return platformID; }
     public ColorRGBA getColor() { return color; }
     public Vector3f getSize() { return size; }
+    public String getTexture() { return texture; }
+    public void setTexture(String texture) { this.texture = texture; }
 }
