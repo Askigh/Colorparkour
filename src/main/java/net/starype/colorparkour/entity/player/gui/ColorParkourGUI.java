@@ -7,9 +7,11 @@ public class ColorParkourGUI {
     private boolean active;
     private boolean inputActions = false;
     private Panel gui;
+    private final String name;
 
-    public ColorParkourGUI(Panel gui) {
+    public ColorParkourGUI(String name, Panel gui) {
         this.gui = gui;
+        this.name = name;
     }
 
     public boolean isActive() { return active; }
@@ -21,4 +23,5 @@ public class ColorParkourGUI {
     }
 
     public Panel getGUI() { return gui; }
+    public String getName() { return name; }
 }

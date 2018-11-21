@@ -172,7 +172,6 @@ public class PlayerPhysicSY implements PhysicsTickListener {
         return !left && !right && !forward && !backward;
     }
     public void jump() {
-
         if(!isOnGround(body) && !jumpBonus) {
             return;
         }

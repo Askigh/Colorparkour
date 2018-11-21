@@ -58,6 +58,7 @@ public class ModuleManager {
                 start();
             } else {
                 System.out.println("Félicitations vous avez fini le jeu !");
+                main.end();
                 main.getPlayer().resetPosition(getCurrentModule());
             }
         }

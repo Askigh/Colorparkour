@@ -45,6 +45,8 @@ public class ColorParkourMain extends SimpleApplication {
     private PlayerInventory inventory;
     public static final int WIDTH = 1500;
     public static final int HEIGHT = 800;
+    private boolean raceFinished = false;
+    private boolean started = false;
 
     private ColorParkourMain() {
         LOGGER.info("Game initialization...");
@@ -54,11 +56,11 @@ public class ColorParkourMain extends SimpleApplication {
         setShowSettings(false); // disables the default window that asks for settings
 
         //Settings
-        settings.setTitle("ColOrParkOur");
+        settings.setTitle("ColorParkour");
         settings.setSamples(8);
         settings.setWidth(WIDTH);
         settings.setHeight(HEIGHT);
-        settings.setResizable(true);
+        settings.setResizable(false);
         loadIcon();
         super.setDisplayStatView(false);
         super.setDisplayFps(true);
@@ -112,7 +114,7 @@ public class ColorParkourMain extends SimpleApplication {
             Activates the main menu
          ****************************/
         cam.setLocation(new Vector3f(0, 100, 0));
-        inventory.showOnly(0);
+        inventory.showOnly(1);
 
         /**********************************************************
          Init the lights, and the inputs using KeyboardManager
@@ -132,6 +134,7 @@ public class ColorParkourMain extends SimpleApplication {
         moduleManager.start();
         player.initialize();
         player.resetPosition(moduleManager.getCurrentModule());
+        started = true;
     }
 
     // This needs to be replaced by the json loader
@@ -162,8 +165,8 @@ public class ColorParkourMain extends SimpleApplication {
         new ModuleSY(this, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
                 .add()
                 .add()
-                .add()
-                .build(moduleManager);
+                .add();
+                //.build(moduleManager);
     }
 
     /**
@@ -178,21 +181,20 @@ public class ColorParkourMain extends SimpleApplication {
             referentials are not used since it's impossible to play with sticky platforms
          */
         Referential.updateAll();
-        if(!isPaused()) {
+        if(!isPaused() && !raceFinished) {
             gameTimer.updateTimer(tpf);
         }
         moduleManager.getCurrentModule().reversePlatforms();
         moduleManager.checkNext(player.getBody().getPhysicsLocation());
     }
 
-    // Plays the lovely Opening from 'Sword Art Online: Alicization'
     private void loadAudio() {
-        AudioNode node = new AudioNode(assetManager, "audio/sound1.wav", AudioData.DataType.Stream);
+        AudioNode node = new AudioNode(assetManager, "audio/sds_remix.wav", AudioData.DataType.Stream);
         /*
             When you run 100 times a day your game, it may sometimes be a little bit annoying to hear
             the same ten seconds of the same music constantly. Therefore the volume is set to 0
          */
-        node.setVolume(0f);
+        node.setVolume(0.1f);
         node.setLooping(true);
         node.setPositional(false);
         node.play();
@@ -229,6 +231,8 @@ public class ColorParkourMain extends SimpleApplication {
     private boolean isPaused() {
         return inventory.isGuiActive();
     }
+    public boolean hasStarted() { return started; }
+    public void end() { raceFinished = true; }
     public Player getPlayer() { return player; }
     public ModuleManager getModuleManager() { return moduleManager; }
     public CollisionManager getCollisionManager() { return collManager; }
