@@ -82,7 +82,7 @@ public class ColorParkourMain extends SimpleApplication {
     public void simpleInitApp() {
 
         /***************************************************************
-            Init the basics features, disables some of the default ones
+            Inits the basics features, disables some of the default ones
          ***************************************************************/
         disableDefaultOptions();
         GuiGlobals.initialize(this);
@@ -143,7 +143,7 @@ public class ColorParkourMain extends SimpleApplication {
 
         new ModuleSY(this, space, this.getClass().getResource("/levels/firstLevel.json").getPath())
                 .add(builder.ice(new float[]{5, 3f, 5}, new float[]{0f, -3f, 0f}, ColorRGBA.White, "0:0"),
-                        builder.doubleJump(new float[]{5, 0.1f, 5}, new float[]{20, -1, 0}, ColorRGBA.Blue, "0:1"),
+                        builder.doubleJump(new float[]{5, 0.1f, 5}, new float[]{20, -1, 0}, ColorRGBA.Yellow, "0:1"),
                         builder.colored(new float[]{5, 0.1f, 5}, new float[]{44, 1, 0}, ColorRGBA.Green, "0:2"),
                         builder.moving(new float[]{5, 0.1f, 5}, new Vector3f(54, 1, 30),
                                 new Vector3f(65, 1, -30), 0.13f, ColorRGBA.White, "0:3"),
@@ -194,7 +194,7 @@ public class ColorParkourMain extends SimpleApplication {
             When you run 100 times a day your game, it may sometimes be a little bit annoying to hear
             the same ten seconds of the same music constantly. Therefore the volume is set to 0
          */
-        node.setVolume(0.1f);
+        node.setVolume(0f);
         node.setLooping(true);
         node.setPositional(false);
         node.play();

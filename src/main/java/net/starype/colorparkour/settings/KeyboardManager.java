@@ -8,6 +8,10 @@ import net.starype.colorparkour.core.ColorParkourMain;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class should me merged with {@link net.starype.colorparkour.entity.player.gui.list.ControlSettings}
+ */
+@Deprecated
 public class KeyboardManager {
 
     private List<Action> actions;

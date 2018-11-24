@@ -3,13 +3,15 @@ package net.starype.colorparkour.entity.platform;
 import com.google.gson.annotations.SerializedName;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
+import com.jme3.effect.ParticleEmitter;
+import com.jme3.effect.ParticleMesh;
+import com.jme3.effect.shapes.EmitterBoxShape;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
-import com.jme3.texture.Texture;
 import net.starype.colorparkour.utils.CollisionManager;
 import net.starype.colorparkour.entity.PhysicalEntity;
 import net.starype.colorparkour.entity.platform.event.LoadEvent;
@@ -68,6 +70,30 @@ public class ColoredPlatform extends PhysicalEntity {
 
         super.addInPhysicsSpace();
         body.setGravity(new Vector3f());
+
+        ParticleEmitter fire =
+                new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 100);
+        Material mat_red = new Material(main.getAssetManager(),
+                "Common/MatDefs/Misc/Particle.j3md");
+        mat_red.setTexture("Texture", main.getAssetManager().loadTexture(
+                "assets/particles/fire.png"));
+        mat_red.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
+        fire.setMaterial(mat_red);
+        fire.setImagesX(2);
+        fire.setImagesY(2);
+        fire.setStartSize(0.1f);
+        fire.setEndSize(0.1f);
+        fire.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 1, 0));
+        fire.setEndColor(new ColorRGBA(1f, 0f, 0f, 1f));
+        fire.setStartColor(new ColorRGBA(1f, 0f, 0f, 1f));
+        fire.setShape(new EmitterBoxShape(new Vector3f(-5f,0f,-5f),new Vector3f(5f,0f,5f)));
+        fire.setLocalTranslation(pos.add(0, 0.7f, 0));
+        fire.setRotateSpeed(4);
+        fire.setGravity(0, 0, 0);
+        fire.setLowLife(1f);
+        fire.setHighLife(3f);
+        fire.getParticleInfluencer().setVelocityVariation(0.6f);
+        main.getRootNode().attachChild(fire);
     }
 
     /**
@@ -80,6 +106,7 @@ public class ColoredPlatform extends PhysicalEntity {
         Material mat = new Material(main.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", color);
         mat.setTexture("ColorMap", main.getAssetManager().loadTexture("assets/platforms/"+texture));
+        mat.getAdditionalRenderState().setBlendMode(RenderState.BlendMode.Alpha);
         return mat;
     }
 
@@ -103,7 +130,7 @@ public class ColoredPlatform extends PhysicalEntity {
             main.getRootNode().detachChild(appearance);
         } else {
             // Called when we just want to inform the player that the platform is not solid anymore
-            appearance.setMaterial(loadMaterial(color.add(new ColorRGBA(0.9f, 0.9f, 0.9f, -1))));
+            appearance.setMaterial(loadMaterial(color.add(new ColorRGBA(0.9f, 0.9f, 0.9f, 0))));
         }
         // In any case we don't want the body to be solid anymore
         body.setEnabled(false);
