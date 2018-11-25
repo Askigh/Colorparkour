@@ -5,6 +5,7 @@ import com.jme3.math.Vector3f;
 import com.simsilica.lemur.Button;
 import com.simsilica.lemur.Command;
 import com.simsilica.lemur.Container;
+import net.arikia.dev.drpc.DiscordRichPresence;
 import net.starype.colorparkour.core.ColorParkourMain;
 import net.starype.colorparkour.entity.player.gui.PlayerInventory;
 
@@ -22,11 +23,28 @@ public class PauseMenu extends Container {
         ColorParkourMain main = inventory.getMainInstance();
         Button resume = addChild(new Button("Resume"));
         resume.setColor(ColorRGBA.Black);
-        resume.addClickCommands(source -> inventory.activatePlayer(false));
+        resume.addClickCommands(source -> {
+            inventory.activatePlayer(false);
+            main.getRpcManager().update(new DiscordRichPresence
+                    .Builder("Level: " + main.getModuleManager().getCurrentModule().getLevelName())
+                    .setDetails("In Game"+ main.getModuleManager().getCurrentModule().getLevelName())
+                    .setStartTimestamps(main.getRpcManager().getStartTimestamps())
+                    .setBigImage("green_-_1024", "ColorParkour " + ColorParkourMain.VERSION)
+                    .build()
+            );
+        });
         Button restartLevel = addChild(new Button("Restart level"));
         restartLevel.addClickCommands(source -> {
             main.getPlayer().resetPosition(main.getModuleManager().getCurrentModule());
             inventory.activatePlayer(true);
+            main.getRpcManager().setStartTimestamps(System.currentTimeMillis());
+            main.getRpcManager().update(new DiscordRichPresence
+                    .Builder("Level: " + main.getModuleManager().getCurrentModule().getLevelName())
+                    .setDetails("In Game")
+                    .setStartTimestamps(main.getRpcManager().getStartTimestamps())
+                    .setBigImage("green_-_1024", "ColorParkour " + ColorParkourMain.VERSION)
+                    .build()
+            );
         });
         Button previousLevel = addChild(new Button("Previous level"));
         previousLevel.setColor(ColorRGBA.Black);
@@ -65,7 +83,9 @@ public class PauseMenu extends Container {
 
         Button quitButton = addChild(new Button("Quit Game"));
         quitButton.setColor(ColorRGBA.Black);
-        quitButton.addClickCommands((Command<Button>) source -> main.stop());
+        quitButton.addClickCommands((Command<Button>) source -> {
+            main.stop();
+        });
         quitButton.setLocalTranslation(0, 0, 0);
     }
 }

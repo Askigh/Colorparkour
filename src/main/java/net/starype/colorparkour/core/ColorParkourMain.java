@@ -14,6 +14,8 @@ import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import com.jme3.util.SkyFactory;
 import com.simsilica.lemur.GuiGlobals;
+import net.arikia.dev.drpc.DiscordRichPresence;
+import net.starype.colorparkour.rpc.DiscordRPCManager;
 import net.starype.colorparkour.utils.CollisionManager;
 import net.starype.colorparkour.module.ModuleManager;
 import net.starype.colorparkour.module.ModuleSY;
@@ -47,6 +49,8 @@ public class ColorParkourMain extends SimpleApplication {
     public static final int HEIGHT = 800;
     private boolean raceFinished = false;
     private boolean started = false;
+    private DiscordRPCManager rpcManager;
+    public static final String VERSION = "ALPHA";
 
     private ColorParkourMain() {
         LOGGER.info("Game initialization...");
@@ -65,6 +69,8 @@ public class ColorParkourMain extends SimpleApplication {
         super.setDisplayStatView(false);
         super.setDisplayFps(true);
         this.moduleManager = new ModuleManager(this);
+        this.rpcManager = new DiscordRPCManager(this);
+        this.rpcManager.init();
 
         //Starting the window.
         LOGGER.info("Window is opening.");
@@ -127,6 +133,17 @@ public class ColorParkourMain extends SimpleApplication {
         sky = SkyFactory.createSky(getAssetManager(), "assets/sky/Skysphere.jpg",
                 SkyFactory.EnvMapType.EquirectMap);
         rootNode.attachChild(sky);
+       this.rpcManager.update(new DiscordRichPresence
+               .Builder("Waiting ....")
+               .setBigImage("green_-_1024", "ColorParkour " + VERSION)
+               .build()
+       );
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        this.rpcManager.stop();
     }
 
     public void startGame() {
@@ -135,6 +152,14 @@ public class ColorParkourMain extends SimpleApplication {
         player.initialize();
         player.resetPosition(moduleManager.getCurrentModule());
         started = true;
+        this.rpcManager.setStartTimestamps(System.currentTimeMillis());
+        this.rpcManager.update(new DiscordRichPresence
+                .Builder("Level: " + getModuleManager().getCurrentModule().getLevelName())
+                .setDetails("In Game")
+                .setStartTimestamps(this.rpcManager.getStartTimestamps())
+                .setBigImage("green_-_1024", "ColorParkour " + VERSION)
+                .build()
+        );
     }
 
     // This needs to be replaced by the json loader
@@ -237,4 +262,8 @@ public class ColorParkourMain extends SimpleApplication {
     public ModuleManager getModuleManager() { return moduleManager; }
     public CollisionManager getCollisionManager() { return collManager; }
     public PlayerInventory getPlayerInventory() { return inventory; }
+
+    public DiscordRPCManager getRpcManager() {
+        return rpcManager;
+    }
 }

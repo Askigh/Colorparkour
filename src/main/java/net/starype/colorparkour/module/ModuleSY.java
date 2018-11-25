@@ -161,4 +161,8 @@ public class ModuleSY {
     public String getPath() {
         return path;
     }
+
+    public String getLevelName() {
+        return levelName;
+    }
 }

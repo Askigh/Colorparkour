@@ -8,6 +8,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.simsilica.lemur.GuiGlobals;
+import net.arikia.dev.drpc.DiscordRichPresence;
 import net.starype.colorparkour.core.ColorParkourMain;
 import net.starype.colorparkour.entity.player.CameraSY;
 import net.starype.colorparkour.entity.player.gui.PlayerInventory;
@@ -47,13 +48,25 @@ public class Setup {
                 if(inventory.isGuiActive()) {
                     GuiGlobals.getInstance().setCursorEventsEnabled(false);
                     inventory.activatePlayer(false);
-
+                    main.getRpcManager().update(new DiscordRichPresence
+                            .Builder("Level: " + main.getModuleManager().getCurrentModule().getLevelName())
+                            .setDetails("In Game"+ main.getModuleManager().getCurrentModule().getLevelName())
+                            .setStartTimestamps(main.getRpcManager().getStartTimestamps())
+                            .setBigImage("green_-_1024", "ColorParkour " + main.VERSION)
+                            .build()
+                    );
                 } else {
                     GuiGlobals.getInstance().setCursorEventsEnabled(true);
                     inputManager.setCursorVisible(true);
                     //main.getCamera().setRotation(new Quaternion(0, 2, 0, 0));
                     main.getCollisionManager().getAppState().getPhysicsSpace().remove(main.getPlayer().getBody());
                     inventory.showOnly(2);
+                    main.getRpcManager().update(new DiscordRichPresence
+                            .Builder("Level: " + main.getModuleManager().getCurrentModule().getLevelName())
+                            .setDetails("On pause")
+                            .setBigImage("green_-_1024", "ColorParkour " +main.VERSION)
+                            .build()
+                    );
                 }
             }
         });
@@ -64,24 +77,28 @@ public class Setup {
             @Override
             public void execute(boolean keyPressed) {
                 selector.highlight("red", ColorRGBA.Red);
+                main.getRpcManager().update("red");
             }
         });
         kManager.addLinkedKeyAction("2", KeyInput.KEY_2, new KeyboardManager.Action() {
             @Override
             public void execute(boolean keyPressed) {
                 selector.highlight("blue", ColorRGBA.Blue);
+                main.getRpcManager().update("blue");
             }
         });
         kManager.addLinkedKeyAction("3", KeyInput.KEY_3, new KeyboardManager.Action() {
             @Override
             public void execute(boolean keyPressed) {
                 selector.highlight("yellow", ColorRGBA.Yellow);
+                main.getRpcManager().update("yellow");
             }
         });
         kManager.addLinkedKeyAction("4", KeyInput.KEY_4, new KeyboardManager.Action() {
             @Override
             public void execute(boolean keyPressed) {
                 selector.highlight("green", ColorRGBA.Green);
+                main.getRpcManager().update("green");
             }
         });
 
